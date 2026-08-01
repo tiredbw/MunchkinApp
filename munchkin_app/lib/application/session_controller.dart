@@ -120,14 +120,7 @@ class SessionController extends Notifier<SessionState> {
         snapshot: snapshot,
         snapshotStore: _snapshotStore,
       );
-      await server.sendAsHost(
-        GameCommand.setConnection(
-          playerId: server.state.players
-              .firstWhere((player) => player.isHost)
-              .id,
-          connected: true,
-        ),
-      );
+      await server.connectHost();
       final addresses = await localIpv4Addresses();
       await _attach(
         LocalHostConnection(server),

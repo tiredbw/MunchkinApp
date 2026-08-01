@@ -224,4 +224,31 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get connectionError => 'Не удалось подключиться к ведущему';
+
+  @override
+  String get levelRewardClaimed => 'Уровень за победу получен';
+
+  @override
+  String get recordPhysicalRoll => 'Записать реальный бросок';
+
+  @override
+  String get useCheatDie => 'Читерский кубик';
+
+  @override
+  String get appealCheatDie => 'Оспорить читерский кубик';
+
+  @override
+  String get diceAppealPending => 'Ожидание решения ведущего по апелляции';
+
+  @override
+  String get restoreOriginalRoll => 'Вернуть исходный';
+
+  @override
+  String get keepCheatRoll => 'Оставить результат';
+
+  @override
+  String get originalRoll => 'Исходный бросок';
+
+  @override
+  String get cheatDieApplied => 'применён читерский кубик';
 }

@@ -46,13 +46,15 @@ class GameEngine {
   }) {
     final now = _clock.now();
     _validateSettings(settings);
+    final normalizedHostName = _normalizeName(hostName);
+    _validatePlayerName(normalizedHostName);
     return GameState(
       roomId: roomId,
       settings: settings,
       players: <Player>[
         Player(
           id: hostPlayerId,
-          name: _normalizeName(hostName),
+          name: normalizedHostName,
           isHost: true,
           level: settings.initialLevel,
           strength: settings.initialStrength,
@@ -70,9 +72,12 @@ class GameEngine {
     required String actorId,
   }) {
     try {
+      _require(
+        state.phase != RoomPhase.ended,
+        GameErrorCode.invalidState,
+        'The game has ended.',
+      );
       final next = command.map(
-        joinPlayer: (value) => _join(state, value),
-        setConnection: (value) => _setConnection(state, value),
         updateSettings: (value) =>
             _updateSettings(state, actorId, value.settings),
         closeLobby: (_) => _closeLobby(state, actorId),
@@ -81,12 +86,10 @@ class GameEngine {
         shuffleTurnOrder: (_) => _shuffle(state, actorId),
         confirmOrder: (_) => _confirmOrder(state, actorId),
         startGame: (_) => _startGame(state, actorId),
-        adjustStats: (value) => _adjustStats(
-          state,
-          actorId,
-          levelDelta: value.levelDelta,
-          strengthDelta: value.strengthDelta,
-        ),
+        adjustStats: (value) =>
+            _adjustStats(state, actorId, strengthDelta: value.strengthDelta),
+        adjustPlayerLevel: (value) =>
+            _adjustPlayerLevel(state, actorId, value.playerId, value.delta),
         endTurn: (_) => _endTurn(state, actorId),
         startBattle: (_) => _startBattle(state, actorId),
         declareVictory: (_) => _declareVictory(state, actorId),
@@ -98,11 +101,52 @@ class GameEngine {
         raiseLevel: (_) => _raiseLevel(state, actorId),
         finishBattle: (_) => _finishBattle(state, actorId),
         rollDice: (_) => _rollDice(state, actorId),
+        recordPhysicalRoll: (value) =>
+            _recordPhysicalRoll(state, actorId, value.value),
+        useCheatDie: (value) => _useCheatDie(state, actorId, value.value),
+        appealCheatDie: (_) => _appealCheatDie(state, actorId),
+        resolveDiceAppeal: (value) =>
+            _resolveDiceAppeal(state, actorId, value.accepted),
         removePlayer: (value) => _removePlayer(state, actorId, value.playerId),
         leaveRoom: (_) => _leaveRoom(state, actorId),
         endGame: (_) => _endGame(state, actorId),
       );
       return GameAccepted(_commit(next));
+    } on _RuleViolation catch (error) {
+      return GameRejected(error.code, error.message);
+    }
+  }
+
+  GameResult addPlayer(
+    GameState state, {
+    required String playerId,
+    required String name,
+  }) {
+    try {
+      return GameAccepted(
+        _commit(_join(state, playerId: playerId, name: name)),
+      );
+    } on _RuleViolation catch (error) {
+      return GameRejected(error.code, error.message);
+    }
+  }
+
+  GameResult setPlayerConnection(
+    GameState state, {
+    required String playerId,
+    required bool connected,
+  }) {
+    try {
+      _require(
+        state.phase != RoomPhase.ended,
+        GameErrorCode.invalidState,
+        'The game has ended.',
+      );
+      return GameAccepted(
+        _commit(
+          _setConnection(state, playerId: playerId, connected: connected),
+        ),
+      );
     } on _RuleViolation catch (error) {
       return GameRejected(error.code, error.message);
     }
@@ -121,7 +165,11 @@ class GameEngine {
     );
   }
 
-  GameState _join(GameState state, JoinPlayer command) {
+  GameState _join(
+    GameState state, {
+    required String playerId,
+    required String name,
+  }) {
     _require(
       state.phase == RoomPhase.lobby,
       GameErrorCode.invalidState,
@@ -132,23 +180,19 @@ class GameEngine {
       GameErrorCode.roomFull,
       'The room is full.',
     );
-    final name = _normalizeName(command.name);
-    _require(
-      name.isNotEmpty && name.length <= 24,
-      GameErrorCode.invalidValue,
-      'Name must contain 1 to 24 characters.',
-    );
+    final normalizedName = _normalizeName(name);
+    _validatePlayerName(normalizedName);
     _require(
       state.players.every(
-        (player) => player.name.toLowerCase() != name.toLowerCase(),
+        (player) => player.name.toLowerCase() != normalizedName.toLowerCase(),
       ),
       GameErrorCode.duplicateName,
       'This name is already in use.',
     );
     final player = Player(
-      id: command.playerId,
-      name: name,
-      isHost: command.isHost,
+      id: playerId,
+      name: normalizedName,
+      isHost: false,
       level: state.settings.initialLevel,
       strength: state.settings.initialStrength,
       lastSeenAt: _clock.now(),
@@ -156,14 +200,16 @@ class GameEngine {
     return state.copyWith(players: <Player>[...state.players, player]);
   }
 
-  GameState _setConnection(GameState state, SetConnection command) {
-    final index = state.players.indexWhere(
-      (player) => player.id == command.playerId,
-    );
+  GameState _setConnection(
+    GameState state, {
+    required String playerId,
+    required bool connected,
+  }) {
+    final index = state.players.indexWhere((player) => player.id == playerId);
     _require(index >= 0, GameErrorCode.playerNotFound, 'Player was not found.');
     final players = [...state.players];
     players[index] = players[index].copyWith(
-      isConnected: command.connected,
+      isConnected: connected,
       lastSeenAt: _clock.now(),
     );
     return state.copyWith(players: players);
@@ -283,24 +329,17 @@ class GameEngine {
   GameState _adjustStats(
     GameState state,
     String actorId, {
-    required int levelDelta,
     required int strengthDelta,
   }) {
     _require(
-      levelDelta.abs() <= 1 && const {-5, -1, 0, 1, 5}.contains(strengthDelta),
+      const {-5, -1, 1, 5}.contains(strengthDelta),
       GameErrorCode.invalidValue,
       'Unsupported stat adjustment.',
     );
     final index = state.players.indexWhere((player) => player.id == actorId);
     _require(index >= 0, GameErrorCode.playerNotFound, 'Player was not found.');
     final player = state.players[index];
-    final level = player.level + levelDelta;
     final strength = player.strength + strengthDelta;
-    _require(
-      level >= state.settings.minLevel && level <= state.settings.maxLevel,
-      GameErrorCode.invalidValue,
-      'Level is outside the room limits.',
-    );
     _require(
       strength >= state.settings.minStrength &&
           strength <= state.settings.maxStrength,
@@ -308,7 +347,33 @@ class GameEngine {
       'Strength is outside the room limits.',
     );
     final players = [...state.players];
-    players[index] = player.copyWith(level: level, strength: strength);
+    players[index] = player.copyWith(strength: strength);
+    return state.copyWith(players: players);
+  }
+
+  GameState _adjustPlayerLevel(
+    GameState state,
+    String actorId,
+    String playerId,
+    int delta,
+  ) {
+    _requireHost(state, actorId);
+    _require(
+      delta == -1 || delta == 1,
+      GameErrorCode.invalidValue,
+      'Unsupported level adjustment.',
+    );
+    final index = state.players.indexWhere((player) => player.id == playerId);
+    _require(index >= 0, GameErrorCode.playerNotFound, 'Player was not found.');
+    final player = state.players[index];
+    final level = player.level + delta;
+    _require(
+      level >= state.settings.minLevel && level <= state.settings.maxLevel,
+      GameErrorCode.invalidValue,
+      'Level is outside the room limits.',
+    );
+    final players = [...state.players];
+    players[index] = player.copyWith(level: level);
     return state.copyWith(players: players);
   }
 
@@ -319,6 +384,7 @@ class GameEngine {
       GameErrorCode.invalidState,
       'Finish the battle first.',
     );
+    _requireNoPendingDiceAppeal(state);
     final current = state.turnOrder.indexOf(actorId);
     _require(
       current >= 0,
@@ -327,6 +393,8 @@ class GameEngine {
     );
     return state.copyWith(
       activePlayerId: state.turnOrder[(current + 1) % state.turnOrder.length],
+      lastDiceRoll: null,
+      diceAppeal: null,
     );
   }
 
@@ -435,6 +503,8 @@ class GameEngine {
     );
     return state.copyWith(
       battle: battle.copyWith(status: BattleStatus.escaping),
+      lastDiceRoll: null,
+      diceAppeal: null,
     );
   }
 
@@ -446,8 +516,10 @@ class GameEngine {
       GameErrorCode.invalidState,
       'The player is not escaping.',
     );
+    _requireNoPendingDiceAppeal(state);
     return state.copyWith(
       battle: battle.copyWith(status: BattleStatus.endedWithoutVictory),
+      lastDiceRoll: state.lastDiceRoll?.copyWith(finalized: true),
     );
   }
 
@@ -459,7 +531,21 @@ class GameEngine {
       GameErrorCode.invalidState,
       'The battle has not been won.',
     );
-    return _adjustStats(state, actorId, levelDelta: 1, strengthDelta: 0);
+    _require(
+      !battle.levelRewardClaimed,
+      GameErrorCode.invalidState,
+      'The victory level was already claimed.',
+    );
+    final index = state.players.indexWhere((player) => player.id == actorId);
+    final players = [...state.players];
+    final player = players[index];
+    if (player.level < state.settings.maxLevel) {
+      players[index] = player.copyWith(level: player.level + 1);
+    }
+    return state.copyWith(
+      players: players,
+      battle: battle.copyWith(levelRewardClaimed: true),
+    );
   }
 
   GameState _finishBattle(GameState state, String actorId) {
@@ -471,7 +557,8 @@ class GameEngine {
       GameErrorCode.invalidState,
       'Resolve the battle first.',
     );
-    return state.copyWith(battle: null);
+    _requireNoPendingDiceAppeal(state);
+    return state.copyWith(battle: null, lastDiceRoll: null, diceAppeal: null);
   }
 
   GameState _rollDice(GameState state, String actorId) {
@@ -486,12 +573,118 @@ class GameEngine {
       GameErrorCode.invalidState,
       'The room uses a physical die.',
     );
+    _requireNoPendingDiceAppeal(state);
+    _requireDiceAttemptAvailable(state);
+    final value = _random.nextInt(6) + 1;
     return state.copyWith(
       lastDiceRoll: DiceRoll(
         id: '${state.roomId}-${state.revision + 1}',
         playerId: actorId,
-        value: _random.nextInt(6) + 1,
+        value: value,
+        originalValue: value,
+        source: DiceRollSource.virtual,
         rolledAt: _clock.now(),
+      ),
+      diceAppeal: null,
+    );
+  }
+
+  GameState _recordPhysicalRoll(GameState state, String actorId, int value) {
+    _requireActive(state, actorId);
+    _require(
+      state.phase == RoomPhase.playing &&
+          state.settings.diceMode == DiceMode.physical,
+      GameErrorCode.invalidState,
+      'The room does not use a physical die.',
+    );
+    _validateDiceValue(value);
+    _requireNoPendingDiceAppeal(state);
+    _requireDiceAttemptAvailable(state);
+    return state.copyWith(
+      lastDiceRoll: DiceRoll(
+        id: '${state.roomId}-${state.revision + 1}',
+        playerId: actorId,
+        value: value,
+        originalValue: value,
+        source: DiceRollSource.physical,
+        rolledAt: _clock.now(),
+      ),
+      diceAppeal: null,
+    );
+  }
+
+  GameState _useCheatDie(GameState state, String actorId, int value) {
+    _requireActive(state, actorId);
+    _validateDiceValue(value);
+    _requireNoPendingDiceAppeal(state);
+    final roll = state.lastDiceRoll;
+    _require(
+      roll != null && roll.playerId == actorId,
+      GameErrorCode.invalidState,
+      'Roll the die before using the cheat die.',
+    );
+    _require(
+      roll!.cheatedBy == null,
+      GameErrorCode.invalidState,
+      'The cheat die was already used for this roll.',
+    );
+    _require(
+      !roll.finalized,
+      GameErrorCode.invalidState,
+      'This die result is already final.',
+    );
+    return state.copyWith(
+      lastDiceRoll: roll.copyWith(value: value, cheatedBy: actorId),
+      diceAppeal: null,
+    );
+  }
+
+  GameState _appealCheatDie(GameState state, String actorId) {
+    _requirePlayer(state, actorId);
+    final roll = state.lastDiceRoll;
+    _require(
+      roll?.cheatedBy != null,
+      GameErrorCode.invalidState,
+      'There is no cheat die result to appeal.',
+    );
+    _require(
+      !roll!.finalized,
+      GameErrorCode.invalidState,
+      'This die result is already final.',
+    );
+    _require(
+      roll.cheatedBy != actorId,
+      GameErrorCode.forbidden,
+      'You cannot appeal your own cheat die.',
+    );
+    _require(
+      state.diceAppeal == null,
+      GameErrorCode.invalidState,
+      'This cheat die has already been appealed.',
+    );
+    return state.copyWith(
+      diceAppeal: DiceAppeal(rollId: roll.id, requestedBy: actorId),
+    );
+  }
+
+  GameState _resolveDiceAppeal(GameState state, String actorId, bool accepted) {
+    _requireHost(state, actorId);
+    final appeal = state.diceAppeal;
+    final roll = state.lastDiceRoll;
+    _require(
+      appeal?.status == DiceAppealStatus.pending &&
+          roll != null &&
+          appeal!.rollId == roll.id,
+      GameErrorCode.invalidState,
+      'There is no pending dice appeal.',
+    );
+    return state.copyWith(
+      lastDiceRoll: accepted ? roll!.copyWith(value: roll.originalValue) : roll,
+      diceAppeal: appeal!.copyWith(
+        status: accepted
+            ? DiceAppealStatus.accepted
+            : DiceAppealStatus.rejected,
+        resolvedBy: actorId,
       ),
     );
   }
@@ -538,6 +731,10 @@ class GameEngine {
       turnOrder: order,
       activePlayerId: active,
       battle: battle,
+      lastDiceRoll: removed.id == state.activePlayerId
+          ? null
+          : state.lastDiceRoll,
+      diceAppeal: removed.id == state.activePlayerId ? null : state.diceAppeal,
     );
   }
 
@@ -547,6 +744,42 @@ class GameEngine {
       phase: RoomPhase.ended,
       battle: null,
       activePlayerId: null,
+      lastDiceRoll: null,
+      diceAppeal: null,
+    );
+  }
+
+  void _requireDiceAttemptAvailable(GameState state) {
+    if (state.battle?.status == BattleStatus.escaping) {
+      _require(
+        state.lastDiceRoll == null,
+        GameErrorCode.invalidState,
+        'The escape die was already rolled.',
+      );
+    }
+  }
+
+  void _requireNoPendingDiceAppeal(GameState state) {
+    _require(
+      state.diceAppeal?.status != DiceAppealStatus.pending,
+      GameErrorCode.invalidState,
+      'The host must resolve the dice appeal first.',
+    );
+  }
+
+  void _validateDiceValue(int value) {
+    _require(
+      value >= 1 && value <= 6,
+      GameErrorCode.invalidValue,
+      'A D6 result must be between 1 and 6.',
+    );
+  }
+
+  void _validatePlayerName(String name) {
+    _require(
+      name.isNotEmpty && name.length <= 24,
+      GameErrorCode.invalidValue,
+      'Name must contain 1 to 24 characters.',
     );
   }
 

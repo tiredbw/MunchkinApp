@@ -6,35 +6,6 @@ part of 'game_command.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-JoinPlayer _$JoinPlayerFromJson(Map<String, dynamic> json) => JoinPlayer(
-  playerId: json['playerId'] as String,
-  name: json['name'] as String,
-  isHost: json['isHost'] as bool? ?? false,
-  $type: json['type'] as String?,
-);
-
-Map<String, dynamic> _$JoinPlayerToJson(JoinPlayer instance) =>
-    <String, dynamic>{
-      'playerId': instance.playerId,
-      'name': instance.name,
-      'isHost': instance.isHost,
-      'type': instance.$type,
-    };
-
-SetConnection _$SetConnectionFromJson(Map<String, dynamic> json) =>
-    SetConnection(
-      playerId: json['playerId'] as String,
-      connected: json['connected'] as bool,
-      $type: json['type'] as String?,
-    );
-
-Map<String, dynamic> _$SetConnectionToJson(SetConnection instance) =>
-    <String, dynamic>{
-      'playerId': instance.playerId,
-      'connected': instance.connected,
-      'type': instance.$type,
-    };
-
 UpdateSettings _$UpdateSettingsFromJson(Map<String, dynamic> json) =>
     UpdateSettings(
       RoomSettings.fromJson(json['settings'] as Map<String, dynamic>),
@@ -84,15 +55,27 @@ Map<String, dynamic> _$StartGameToJson(StartGame instance) => <String, dynamic>{
 };
 
 AdjustStats _$AdjustStatsFromJson(Map<String, dynamic> json) => AdjustStats(
-  levelDelta: (json['levelDelta'] as num?)?.toInt() ?? 0,
   strengthDelta: (json['strengthDelta'] as num?)?.toInt() ?? 0,
   $type: json['type'] as String?,
 );
 
 Map<String, dynamic> _$AdjustStatsToJson(AdjustStats instance) =>
     <String, dynamic>{
-      'levelDelta': instance.levelDelta,
       'strengthDelta': instance.strengthDelta,
+      'type': instance.$type,
+    };
+
+AdjustPlayerLevel _$AdjustPlayerLevelFromJson(Map<String, dynamic> json) =>
+    AdjustPlayerLevel(
+      playerId: json['playerId'] as String,
+      delta: (json['delta'] as num).toInt(),
+      $type: json['type'] as String?,
+    );
+
+Map<String, dynamic> _$AdjustPlayerLevelToJson(AdjustPlayerLevel instance) =>
+    <String, dynamic>{
+      'playerId': instance.playerId,
+      'delta': instance.delta,
       'type': instance.$type,
     };
 
@@ -164,6 +147,33 @@ RollDice _$RollDiceFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$RollDiceToJson(RollDice instance) => <String, dynamic>{
   'type': instance.$type,
 };
+
+RecordPhysicalRoll _$RecordPhysicalRollFromJson(Map<String, dynamic> json) =>
+    RecordPhysicalRoll(
+      (json['value'] as num).toInt(),
+      $type: json['type'] as String?,
+    );
+
+Map<String, dynamic> _$RecordPhysicalRollToJson(RecordPhysicalRoll instance) =>
+    <String, dynamic>{'value': instance.value, 'type': instance.$type};
+
+UseCheatDie _$UseCheatDieFromJson(Map<String, dynamic> json) =>
+    UseCheatDie((json['value'] as num).toInt(), $type: json['type'] as String?);
+
+Map<String, dynamic> _$UseCheatDieToJson(UseCheatDie instance) =>
+    <String, dynamic>{'value': instance.value, 'type': instance.$type};
+
+AppealCheatDie _$AppealCheatDieFromJson(Map<String, dynamic> json) =>
+    AppealCheatDie($type: json['type'] as String?);
+
+Map<String, dynamic> _$AppealCheatDieToJson(AppealCheatDie instance) =>
+    <String, dynamic>{'type': instance.$type};
+
+ResolveDiceAppeal _$ResolveDiceAppealFromJson(Map<String, dynamic> json) =>
+    ResolveDiceAppeal(json['accepted'] as bool, $type: json['type'] as String?);
+
+Map<String, dynamic> _$ResolveDiceAppealToJson(ResolveDiceAppeal instance) =>
+    <String, dynamic>{'accepted': instance.accepted, 'type': instance.$type};
 
 RemovePlayer _$RemovePlayerFromJson(Map<String, dynamic> json) =>
     RemovePlayer(json['playerId'] as String, $type: json['type'] as String?);

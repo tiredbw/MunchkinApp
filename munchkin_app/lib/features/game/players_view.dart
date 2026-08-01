@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../application/session_controller.dart';
+import '../../domain/commands/game_command.dart';
 import '../../l10n/app_localizations.dart';
 
 class PlayersView extends ConsumerWidget {
@@ -10,6 +11,9 @@ class PlayersView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final game = ref.watch(sessionControllerProvider).game!;
+    final session = ref.watch(sessionControllerProvider);
+    final controller = ref.read(sessionControllerProvider.notifier);
+    final isHost = controller.isHost;
     final l10n = AppLocalizations.of(context);
     return ListView.builder(
       padding: const EdgeInsets.all(16),
@@ -30,19 +34,58 @@ class PlayersView extends ConsumerWidget {
             subtitle: Text(
               '${l10n.level}: ${player.level}  ·  ${l10n.strength}: ${player.strength}',
             ),
-            trailing: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  '${player.totalPower}',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                Text(
-                  l10n.totalPower,
-                  style: Theme.of(context).textTheme.labelSmall,
-                ),
-              ],
-            ),
+            trailing: isHost
+                ? SizedBox(
+                    width: 136,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        IconButton(
+                          onPressed:
+                              session.busy ||
+                                  player.level <= game.settings.minLevel
+                              ? null
+                              : () => controller.send(
+                                  GameCommand.adjustPlayerLevel(
+                                    playerId: player.id,
+                                    delta: -1,
+                                  ),
+                                ),
+                          icon: const Icon(Icons.remove),
+                        ),
+                        Text(
+                          '${player.totalPower}',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        IconButton(
+                          onPressed:
+                              session.busy ||
+                                  player.level >= game.settings.maxLevel
+                              ? null
+                              : () => controller.send(
+                                  GameCommand.adjustPlayerLevel(
+                                    playerId: player.id,
+                                    delta: 1,
+                                  ),
+                                ),
+                          icon: const Icon(Icons.add),
+                        ),
+                      ],
+                    ),
+                  )
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        '${player.totalPower}',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      Text(
+                        l10n.totalPower,
+                        style: Theme.of(context).textTheme.labelSmall,
+                      ),
+                    ],
+                  ),
           ),
         );
       },

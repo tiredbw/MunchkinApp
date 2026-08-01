@@ -71,7 +71,11 @@ class LocalGameClient implements GameConnection {
           if (data is! String) return;
           try {
             final envelope = NetworkEnvelope.decode(data);
-            _handleEnvelope(envelope, welcome);
+            unawaited(
+              _handleEnvelope(envelope, welcome).catchError((Object error) {
+                if (!welcome.isCompleted) welcome.completeError(error);
+              }),
+            );
           } on Object catch (error, stackTrace) {
             if (!welcome.isCompleted) welcome.completeError(error, stackTrace);
           }
@@ -110,7 +114,10 @@ class LocalGameClient implements GameConnection {
     }
   }
 
-  void _handleEnvelope(NetworkEnvelope envelope, Completer<void> welcome) {
+  Future<void> _handleEnvelope(
+    NetworkEnvelope envelope,
+    Completer<void> welcome,
+  ) async {
     if (envelope.protocolVersion != currentProtocolVersion ||
         envelope.roomId != invite.roomId) {
       throw const FormatException('Protocol or room mismatch.');
@@ -119,7 +126,7 @@ class LocalGameClient implements GameConnection {
       case 'welcome':
         _playerId = envelope.payload['playerId'] as String;
         _resumeSecret = envelope.payload['resumeSecret'] as String;
-        _storeIdentity();
+        await _storeIdentity();
         _readState(envelope.payload['state']);
         if (!welcome.isCompleted) welcome.complete();
       case 'snapshot':

@@ -40,6 +40,9 @@ class _TurnViewState extends ConsumerState<TurnView> {
     final l10n = AppLocalizations.of(context);
     final active = game.activePlayer;
     final isActive = controller.playerId == game.activePlayerId;
+    final roll = game.lastDiceRoll;
+    final appeal = game.diceAppeal;
+    final appealPending = appeal?.status == DiceAppealStatus.pending;
     return ListView(
       padding: const EdgeInsets.all(20),
       children: <Widget>[
@@ -62,16 +65,81 @@ class _TurnViewState extends ConsumerState<TurnView> {
           ),
         ),
         const SizedBox(height: 16),
-        if (game.lastDiceRoll != null)
-          _DiceResult(game: game, roll: game.lastDiceRoll!),
-        if (isActive && game.settings.diceMode == DiceMode.virtual) ...<Widget>[
+        if (roll != null) _DiceResult(game: game, roll: roll),
+        if (roll?.cheatedBy != null &&
+            !roll!.finalized &&
+            controller.playerId != roll.cheatedBy &&
+            appeal == null) ...<Widget>[
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            onPressed: session.busy
+                ? null
+                : () => controller.send(const GameCommand.appealCheatDie()),
+            icon: const Icon(Icons.gavel),
+            label: Text(l10n.appealCheatDie),
+          ),
+        ],
+        if (controller.isHost && appealPending) ...<Widget>[
+          const SizedBox(height: 8),
+          Text(l10n.diceAppealPending, textAlign: TextAlign.center),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: session.busy
+                      ? null
+                      : () => controller.send(
+                          const GameCommand.resolveDiceAppeal(true),
+                        ),
+                  child: Text(l10n.restoreOriginalRoll),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: FilledButton(
+                  onPressed: session.busy
+                      ? null
+                      : () => controller.send(
+                          const GameCommand.resolveDiceAppeal(false),
+                        ),
+                  child: Text(l10n.keepCheatRoll),
+                ),
+              ),
+            ],
+          ),
+        ] else if (appealPending) ...<Widget>[
+          const SizedBox(height: 8),
+          Text(l10n.diceAppealPending, textAlign: TextAlign.center),
+        ],
+        if (isActive &&
+            roll?.playerId == controller.playerId &&
+            roll?.cheatedBy == null &&
+            !appealPending) ...<Widget>[
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            onPressed: session.busy
+                ? null
+                : () => _sendSelectedDie(context, controller, cheat: true),
+            icon: const Icon(Icons.auto_fix_high),
+            label: Text(l10n.useCheatDie),
+          ),
+        ],
+        if (isActive &&
+            game.battle?.status != BattleStatus.escaping &&
+            !appealPending) ...<Widget>[
           const SizedBox(height: 12),
           OutlinedButton.icon(
             onPressed: session.busy
                 ? null
-                : () => controller.send(const GameCommand.rollDice()),
+                : game.settings.diceMode == DiceMode.virtual
+                ? () => controller.send(const GameCommand.rollDice())
+                : () => _sendSelectedDie(context, controller, cheat: false),
             icon: const Icon(Icons.casino),
-            label: Text(l10n.rollDice),
+            label: Text(
+              game.settings.diceMode == DiceMode.virtual
+                  ? l10n.rollDice
+                  : l10n.recordPhysicalRoll,
+            ),
           ),
         ],
       ],
@@ -85,6 +153,40 @@ class _TurnViewState extends ConsumerState<TurnView> {
         .inMilliseconds;
     if (milliseconds <= 0) return 0;
     return (milliseconds / 1000).ceil();
+  }
+
+  Future<void> _sendSelectedDie(
+    BuildContext context,
+    SessionController controller, {
+    required bool cheat,
+  }) async {
+    final value = await showModalBottomSheet<int>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            alignment: WrapAlignment.center,
+            children: <Widget>[
+              for (var value = 1; value <= 6; value++)
+                FilledButton.tonal(
+                  onPressed: () => Navigator.pop(context, value),
+                  child: Text('$value'),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (value == null) return;
+    await controller.send(
+      cheat
+          ? GameCommand.useCheatDie(value)
+          : GameCommand.recordPhysicalRoll(value),
+    );
   }
 }
 
@@ -136,7 +238,8 @@ class _BattlePanel extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             FilledButton(
-              onPressed: busy
+              onPressed:
+                  busy || game.diceAppeal?.status == DiceAppealStatus.pending
                   ? null
                   : () => controller.send(const GameCommand.declareVictory()),
               child: Text(l10n.canWin),
@@ -193,16 +296,22 @@ class _BattlePanel extends ConsumerWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
-            if (game.settings.diceMode == DiceMode.virtual)
-              OutlinedButton.icon(
-                onPressed: busy
-                    ? null
-                    : () => controller.send(const GameCommand.rollDice()),
-                icon: const Icon(Icons.casino),
-                label: Text(l10n.rollDice),
+            OutlinedButton.icon(
+              onPressed: busy || game.lastDiceRoll != null
+                  ? null
+                  : game.settings.diceMode == DiceMode.virtual
+                  ? () => controller.send(const GameCommand.rollDice())
+                  : () => _recordPhysicalRoll(context, controller),
+              icon: const Icon(Icons.casino),
+              label: Text(
+                game.settings.diceMode == DiceMode.virtual
+                    ? l10n.rollDice
+                    : l10n.recordPhysicalRoll,
               ),
+            ),
             FilledButton(
-              onPressed: busy
+              onPressed:
+                  busy || game.diceAppeal?.status == DiceAppealStatus.pending
                   ? null
                   : () => controller.send(const GameCommand.resolveEscape()),
               child: Text(l10n.finishEscape),
@@ -226,13 +335,16 @@ class _BattlePanel extends ConsumerWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
-            OutlinedButton.icon(
-              onPressed: busy
-                  ? null
-                  : () => controller.send(const GameCommand.raiseLevel()),
-              icon: const Icon(Icons.arrow_upward),
-              label: Text(l10n.raiseLevel),
-            ),
+            if (!battle.levelRewardClaimed)
+              OutlinedButton.icon(
+                onPressed: busy
+                    ? null
+                    : () => controller.send(const GameCommand.raiseLevel()),
+                icon: const Icon(Icons.arrow_upward),
+                label: Text(l10n.raiseLevel),
+              )
+            else
+              Text(l10n.levelRewardClaimed, textAlign: TextAlign.center),
             FilledButton(
               onPressed: busy
                   ? null
@@ -244,11 +356,39 @@ class _BattlePanel extends ConsumerWidget {
       case BattleStatus.endedWithoutVictory:
         if (!isActive) return Center(child: Text(l10n.escapingNow));
         return FilledButton(
-          onPressed: busy
+          onPressed: busy || game.diceAppeal?.status == DiceAppealStatus.pending
               ? null
               : () => controller.send(const GameCommand.finishBattle()),
           child: Text(l10n.finishBattle),
         );
+    }
+  }
+
+  Future<void> _recordPhysicalRoll(
+    BuildContext context,
+    SessionController controller,
+  ) async {
+    final value = await showModalBottomSheet<int>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Wrap(
+            spacing: 8,
+            children: <Widget>[
+              for (var value = 1; value <= 6; value++)
+                FilledButton.tonal(
+                  onPressed: () => Navigator.pop(context, value),
+                  child: Text('$value'),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (value != null) {
+      await controller.send(GameCommand.recordPhysicalRoll(value));
     }
   }
 
@@ -359,6 +499,13 @@ class _DiceResult extends StatelessWidget {
             context,
           ).diceResult(player?.name ?? '—', roll.value),
         ),
+        subtitle: roll.cheatedBy == null
+            ? null
+            : Text(
+                '${AppLocalizations.of(context).originalRoll}: '
+                '${roll.originalValue} · '
+                '${AppLocalizations.of(context).cheatDieApplied}',
+              ),
       ),
     );
   }

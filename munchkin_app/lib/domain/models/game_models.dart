@@ -17,6 +17,10 @@ enum BattleStatus {
   endedWithoutVictory,
 }
 
+enum DiceRollSource { virtual, physical }
+
+enum DiceAppealStatus { pending, accepted, rejected }
+
 @freezed
 abstract class RoomSettings with _$RoomSettings {
   const factory RoomSettings({
@@ -60,6 +64,7 @@ abstract class BattleState with _$BattleState {
     @Default(BattleStatus.fighting) BattleStatus status,
     DateTime? endsAt,
     String? intervenedBy,
+    @Default(false) bool levelRewardClaimed,
   }) = _BattleState;
 
   factory BattleState.fromJson(Map<String, Object?> json) =>
@@ -72,12 +77,33 @@ abstract class DiceRoll with _$DiceRoll {
     required String id,
     required String playerId,
     required int value,
+    required int originalValue,
     @Default(6) int sides,
+    required DiceRollSource source,
+    String? cheatedBy,
+    @Default(false) bool finalized,
     required DateTime rolledAt,
   }) = _DiceRoll;
 
-  factory DiceRoll.fromJson(Map<String, Object?> json) =>
-      _$DiceRollFromJson(json);
+  factory DiceRoll.fromJson(Map<String, Object?> json) {
+    final migrated = <String, Object?>{...json};
+    migrated['originalValue'] ??= migrated['value'];
+    migrated['source'] ??= DiceRollSource.virtual.name;
+    return _$DiceRollFromJson(migrated);
+  }
+}
+
+@freezed
+abstract class DiceAppeal with _$DiceAppeal {
+  const factory DiceAppeal({
+    required String rollId,
+    required String requestedBy,
+    @Default(DiceAppealStatus.pending) DiceAppealStatus status,
+    String? resolvedBy,
+  }) = _DiceAppeal;
+
+  factory DiceAppeal.fromJson(Map<String, Object?> json) =>
+      _$DiceAppealFromJson(json);
 }
 
 @freezed
@@ -95,6 +121,7 @@ abstract class GameState with _$GameState {
     String? activePlayerId,
     BattleState? battle,
     DiceRoll? lastDiceRoll,
+    DiceAppeal? diceAppeal,
     required DateTime createdAt,
     required DateTime updatedAt,
   }) = _GameState;

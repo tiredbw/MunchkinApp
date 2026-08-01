@@ -517,6 +517,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not connect to the host'**
   String get connectionError;
+
+  /// No description provided for @levelRewardClaimed.
+  ///
+  /// In en, this message translates to:
+  /// **'Victory level received'**
+  String get levelRewardClaimed;
+
+  /// No description provided for @recordPhysicalRoll.
+  ///
+  /// In en, this message translates to:
+  /// **'Record physical roll'**
+  String get recordPhysicalRoll;
+
+  /// No description provided for @useCheatDie.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Cheat Die'**
+  String get useCheatDie;
+
+  /// No description provided for @appealCheatDie.
+  ///
+  /// In en, this message translates to:
+  /// **'Appeal Cheat Die'**
+  String get appealCheatDie;
+
+  /// No description provided for @diceAppealPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the host to resolve the dice appeal'**
+  String get diceAppealPending;
+
+  /// No description provided for @restoreOriginalRoll.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore original'**
+  String get restoreOriginalRoll;
+
+  /// No description provided for @keepCheatRoll.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep result'**
+  String get keepCheatRoll;
+
+  /// No description provided for @originalRoll.
+  ///
+  /// In en, this message translates to:
+  /// **'Original roll'**
+  String get originalRoll;
+
+  /// No description provided for @cheatDieApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'Cheat Die applied'**
+  String get cheatDieApplied;
 }
 
 class _AppLocalizationsDelegate

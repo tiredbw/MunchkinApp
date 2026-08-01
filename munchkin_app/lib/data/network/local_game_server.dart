@@ -146,6 +146,11 @@ class LocalGameServer {
     );
   }
 
+  Future<void> connectHost() async {
+    final host = _state.players.firstWhere((player) => player.isHost);
+    await _markConnected(host.id, true);
+  }
+
   Future<void> stop() async {
     _stopping = true;
     _battleTimer?.cancel();
@@ -276,19 +281,22 @@ class LocalGameServer {
       final name = envelope.payload['name'] as String? ?? '';
       playerId = _uuid.v4();
       issuedSecret = _secureToken();
-      final result = _engine.apply(
-        _state,
-        GameCommand.joinPlayer(playerId: playerId, name: name),
-        actorId: 'system',
-      );
+      final result = await _enqueueSystemMutation(() {
+        final result = _engine.addPlayer(
+          _state,
+          playerId: playerId,
+          name: name,
+        );
+        if (result is GameAccepted) {
+          _resumeTokenHashes[playerId] = _hash(issuedSecret);
+        }
+        return result;
+      });
       if (result is GameRejected) {
         _sendError(socket, result.code.name, result.message);
         await socket.close(WebSocketStatus.policyViolation);
         return null;
       }
-      _state = (result as GameAccepted).state;
-      _resumeTokenHashes[playerId] = _hash(issuedSecret);
-      await _publish();
     }
 
     final previous = _sockets[playerId];
@@ -325,7 +333,13 @@ class LocalGameServer {
       _sendError(socket, 'invalidCommand', 'Command payload is missing.');
       return;
     }
-    final command = GameCommand.fromJson(rawCommand);
+    late final GameCommand command;
+    try {
+      command = GameCommand.fromJson(rawCommand);
+    } on Object catch (error) {
+      _sendError(socket, 'invalidCommand', '$error');
+      return;
+    }
     final reply = await _enqueueCommand(
       messageId: envelope.messageId,
       actorId: actorId,
@@ -404,15 +418,34 @@ class LocalGameServer {
   }
 
   Future<void> _markConnected(String playerId, bool connected) async {
-    final result = _engine.apply(
-      _state,
-      GameCommand.setConnection(playerId: playerId, connected: connected),
-      actorId: 'system',
+    await _enqueueSystemMutation(
+      () => _engine.setPlayerConnection(
+        _state,
+        playerId: playerId,
+        connected: connected,
+      ),
     );
-    if (result is GameAccepted) {
-      _state = result.state;
-      await _publish();
-    }
+  }
+
+  Future<GameResult> _enqueueSystemMutation(GameResult Function() operation) {
+    final completer = Completer<GameResult>();
+    _queue = _queue
+        .then((_) async {
+          final result = operation();
+          if (result is GameAccepted) {
+            _state = result.state;
+            await _publish();
+          }
+          completer.complete(result);
+        })
+        .catchError((Object error, StackTrace stackTrace) {
+          if (!completer.isCompleted) {
+            completer.complete(
+              GameRejected(GameErrorCode.invalidState, '$error'),
+            );
+          }
+        });
+    return completer.future;
   }
 
   Future<void> _publish() async {
@@ -441,15 +474,22 @@ class LocalGameServer {
   void _scheduleBattleTimer() {
     _battleTimer?.cancel();
     final endsAt = _state.battle?.endsAt;
-    if (_state.battle?.status != BattleStatus.countdown || endsAt == null)
+    if (_state.battle?.status != BattleStatus.countdown || endsAt == null) {
       return;
+    }
     final delay = endsAt.difference(DateTime.now().toUtc());
     _battleTimer = Timer(delay.isNegative ? Duration.zero : delay, () {
-      final resolved = _engine.resolveExpiredTimers(_state);
-      if (resolved.revision != _state.revision) {
-        _state = resolved;
-        unawaited(_publish());
-      }
+      unawaited(
+        _enqueueSystemMutation(() {
+          final resolved = _engine.resolveExpiredTimers(_state);
+          return resolved.revision == _state.revision
+              ? const GameRejected(
+                  GameErrorCode.invalidState,
+                  'Timer is no longer active.',
+                )
+              : GameAccepted(resolved);
+        }),
+      );
     });
   }
 

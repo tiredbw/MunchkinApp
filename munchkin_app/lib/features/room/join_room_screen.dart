@@ -69,6 +69,8 @@ class _JoinRoomScreenState extends ConsumerState<JoinRoomScreen> {
             TextFormField(
               controller: _host,
               decoration: InputDecoration(labelText: l10n.hostAddress),
+              validator: (value) =>
+                  (value?.trim().isEmpty ?? true) ? l10n.invalidForm : null,
             ),
             const SizedBox(height: 12),
             Row(
@@ -78,6 +80,12 @@ class _JoinRoomScreenState extends ConsumerState<JoinRoomScreen> {
                     controller: _port,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(labelText: l10n.port),
+                    validator: (value) {
+                      final port = int.tryParse(value?.trim() ?? '');
+                      return port == null || port < 1 || port > 65535
+                          ? l10n.invalidForm
+                          : null;
+                    },
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -90,6 +98,14 @@ class _JoinRoomScreenState extends ConsumerState<JoinRoomScreen> {
                       labelText: l10n.pin,
                       counterText: '',
                     ),
+                    validator: (value) {
+                      if (_scannedInvite?.token.isNotEmpty ?? false) {
+                        return null;
+                      }
+                      return RegExp(r'^\d{6}$').hasMatch(value?.trim() ?? '')
+                          ? null
+                          : l10n.invalidForm;
+                    },
                   ),
                 ),
               ],
@@ -98,6 +114,8 @@ class _JoinRoomScreenState extends ConsumerState<JoinRoomScreen> {
             TextFormField(
               controller: _room,
               decoration: InputDecoration(labelText: l10n.roomId),
+              validator: (value) =>
+                  (value?.trim().isEmpty ?? true) ? l10n.invalidForm : null,
             ),
             const SizedBox(height: 24),
             FilledButton(
@@ -137,15 +155,13 @@ class _JoinRoomScreenState extends ConsumerState<JoinRoomScreen> {
 
   Future<void> _join() async {
     if (!_formKey.currentState!.validate()) return;
-    final invite =
-        _scannedInvite ??
-        RoomInvite(
-          host: _host.text.trim(),
-          port: int.tryParse(_port.text) ?? 0,
-          roomId: _room.text.trim(),
-          token: '',
-          pin: _pin.text.trim(),
-        );
+    final invite = RoomInvite(
+      host: _host.text.trim(),
+      port: int.tryParse(_port.text) ?? 0,
+      roomId: _room.text.trim(),
+      token: _scannedInvite?.token ?? '',
+      pin: _pin.text.trim(),
+    );
     if (invite.host.isEmpty || invite.port < 1 || invite.roomId.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppLocalizations.of(context).invalidForm)),

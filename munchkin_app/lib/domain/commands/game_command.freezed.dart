@@ -15,15 +15,7 @@ GameCommand _$GameCommandFromJson(
   Map<String, dynamic> json
 ) {
         switch (json['type']) {
-                  case 'JoinPlayer':
-          return JoinPlayer.fromJson(
-            json
-          );
-                case 'SetConnection':
-          return SetConnection.fromJson(
-            json
-          );
-                case 'UpdateSettings':
+                  case 'UpdateSettings':
           return UpdateSettings.fromJson(
             json
           );
@@ -53,6 +45,10 @@ GameCommand _$GameCommandFromJson(
           );
                 case 'AdjustStats':
           return AdjustStats.fromJson(
+            json
+          );
+                case 'AdjustPlayerLevel':
+          return AdjustPlayerLevel.fromJson(
             json
           );
                 case 'EndTurn':
@@ -97,6 +93,22 @@ GameCommand _$GameCommandFromJson(
           );
                 case 'RollDice':
           return RollDice.fromJson(
+            json
+          );
+                case 'RecordPhysicalRoll':
+          return RecordPhysicalRoll.fromJson(
+            json
+          );
+                case 'UseCheatDie':
+          return UseCheatDie.fromJson(
+            json
+          );
+                case 'AppealCheatDie':
+          return AppealCheatDie.fromJson(
+            json
+          );
+                case 'ResolveDiceAppeal':
+          return ResolveDiceAppeal.fromJson(
             json
           );
                 case 'RemovePlayer':
@@ -169,12 +181,10 @@ extension GameCommandPatterns on GameCommand {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( JoinPlayer value)?  joinPlayer,TResult Function( SetConnection value)?  setConnection,TResult Function( UpdateSettings value)?  updateSettings,TResult Function( CloseLobby value)?  closeLobby,TResult Function( ReopenLobby value)?  reopenLobby,TResult Function( SetTurnOrder value)?  setTurnOrder,TResult Function( ShuffleTurnOrder value)?  shuffleTurnOrder,TResult Function( ConfirmOrder value)?  confirmOrder,TResult Function( StartGame value)?  startGame,TResult Function( AdjustStats value)?  adjustStats,TResult Function( EndTurn value)?  endTurn,TResult Function( StartBattle value)?  startBattle,TResult Function( DeclareVictory value)?  declareVictory,TResult Function( Intervene value)?  intervene,TResult Function( RequestHelp value)?  requestHelp,TResult Function( ResumeBattle value)?  resumeBattle,TResult Function( StartEscape value)?  startEscape,TResult Function( ResolveEscape value)?  resolveEscape,TResult Function( RaiseLevel value)?  raiseLevel,TResult Function( FinishBattle value)?  finishBattle,TResult Function( RollDice value)?  rollDice,TResult Function( RemovePlayer value)?  removePlayer,TResult Function( LeaveRoom value)?  leaveRoom,TResult Function( EndGame value)?  endGame,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( UpdateSettings value)?  updateSettings,TResult Function( CloseLobby value)?  closeLobby,TResult Function( ReopenLobby value)?  reopenLobby,TResult Function( SetTurnOrder value)?  setTurnOrder,TResult Function( ShuffleTurnOrder value)?  shuffleTurnOrder,TResult Function( ConfirmOrder value)?  confirmOrder,TResult Function( StartGame value)?  startGame,TResult Function( AdjustStats value)?  adjustStats,TResult Function( AdjustPlayerLevel value)?  adjustPlayerLevel,TResult Function( EndTurn value)?  endTurn,TResult Function( StartBattle value)?  startBattle,TResult Function( DeclareVictory value)?  declareVictory,TResult Function( Intervene value)?  intervene,TResult Function( RequestHelp value)?  requestHelp,TResult Function( ResumeBattle value)?  resumeBattle,TResult Function( StartEscape value)?  startEscape,TResult Function( ResolveEscape value)?  resolveEscape,TResult Function( RaiseLevel value)?  raiseLevel,TResult Function( FinishBattle value)?  finishBattle,TResult Function( RollDice value)?  rollDice,TResult Function( RecordPhysicalRoll value)?  recordPhysicalRoll,TResult Function( UseCheatDie value)?  useCheatDie,TResult Function( AppealCheatDie value)?  appealCheatDie,TResult Function( ResolveDiceAppeal value)?  resolveDiceAppeal,TResult Function( RemovePlayer value)?  removePlayer,TResult Function( LeaveRoom value)?  leaveRoom,TResult Function( EndGame value)?  endGame,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case JoinPlayer() when joinPlayer != null:
-return joinPlayer(_that);case SetConnection() when setConnection != null:
-return setConnection(_that);case UpdateSettings() when updateSettings != null:
+case UpdateSettings() when updateSettings != null:
 return updateSettings(_that);case CloseLobby() when closeLobby != null:
 return closeLobby(_that);case ReopenLobby() when reopenLobby != null:
 return reopenLobby(_that);case SetTurnOrder() when setTurnOrder != null:
@@ -182,7 +192,8 @@ return setTurnOrder(_that);case ShuffleTurnOrder() when shuffleTurnOrder != null
 return shuffleTurnOrder(_that);case ConfirmOrder() when confirmOrder != null:
 return confirmOrder(_that);case StartGame() when startGame != null:
 return startGame(_that);case AdjustStats() when adjustStats != null:
-return adjustStats(_that);case EndTurn() when endTurn != null:
+return adjustStats(_that);case AdjustPlayerLevel() when adjustPlayerLevel != null:
+return adjustPlayerLevel(_that);case EndTurn() when endTurn != null:
 return endTurn(_that);case StartBattle() when startBattle != null:
 return startBattle(_that);case DeclareVictory() when declareVictory != null:
 return declareVictory(_that);case Intervene() when intervene != null:
@@ -193,7 +204,11 @@ return startEscape(_that);case ResolveEscape() when resolveEscape != null:
 return resolveEscape(_that);case RaiseLevel() when raiseLevel != null:
 return raiseLevel(_that);case FinishBattle() when finishBattle != null:
 return finishBattle(_that);case RollDice() when rollDice != null:
-return rollDice(_that);case RemovePlayer() when removePlayer != null:
+return rollDice(_that);case RecordPhysicalRoll() when recordPhysicalRoll != null:
+return recordPhysicalRoll(_that);case UseCheatDie() when useCheatDie != null:
+return useCheatDie(_that);case AppealCheatDie() when appealCheatDie != null:
+return appealCheatDie(_that);case ResolveDiceAppeal() when resolveDiceAppeal != null:
+return resolveDiceAppeal(_that);case RemovePlayer() when removePlayer != null:
 return removePlayer(_that);case LeaveRoom() when leaveRoom != null:
 return leaveRoom(_that);case EndGame() when endGame != null:
 return endGame(_that);case _:
@@ -214,12 +229,10 @@ return endGame(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( JoinPlayer value)  joinPlayer,required TResult Function( SetConnection value)  setConnection,required TResult Function( UpdateSettings value)  updateSettings,required TResult Function( CloseLobby value)  closeLobby,required TResult Function( ReopenLobby value)  reopenLobby,required TResult Function( SetTurnOrder value)  setTurnOrder,required TResult Function( ShuffleTurnOrder value)  shuffleTurnOrder,required TResult Function( ConfirmOrder value)  confirmOrder,required TResult Function( StartGame value)  startGame,required TResult Function( AdjustStats value)  adjustStats,required TResult Function( EndTurn value)  endTurn,required TResult Function( StartBattle value)  startBattle,required TResult Function( DeclareVictory value)  declareVictory,required TResult Function( Intervene value)  intervene,required TResult Function( RequestHelp value)  requestHelp,required TResult Function( ResumeBattle value)  resumeBattle,required TResult Function( StartEscape value)  startEscape,required TResult Function( ResolveEscape value)  resolveEscape,required TResult Function( RaiseLevel value)  raiseLevel,required TResult Function( FinishBattle value)  finishBattle,required TResult Function( RollDice value)  rollDice,required TResult Function( RemovePlayer value)  removePlayer,required TResult Function( LeaveRoom value)  leaveRoom,required TResult Function( EndGame value)  endGame,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( UpdateSettings value)  updateSettings,required TResult Function( CloseLobby value)  closeLobby,required TResult Function( ReopenLobby value)  reopenLobby,required TResult Function( SetTurnOrder value)  setTurnOrder,required TResult Function( ShuffleTurnOrder value)  shuffleTurnOrder,required TResult Function( ConfirmOrder value)  confirmOrder,required TResult Function( StartGame value)  startGame,required TResult Function( AdjustStats value)  adjustStats,required TResult Function( AdjustPlayerLevel value)  adjustPlayerLevel,required TResult Function( EndTurn value)  endTurn,required TResult Function( StartBattle value)  startBattle,required TResult Function( DeclareVictory value)  declareVictory,required TResult Function( Intervene value)  intervene,required TResult Function( RequestHelp value)  requestHelp,required TResult Function( ResumeBattle value)  resumeBattle,required TResult Function( StartEscape value)  startEscape,required TResult Function( ResolveEscape value)  resolveEscape,required TResult Function( RaiseLevel value)  raiseLevel,required TResult Function( FinishBattle value)  finishBattle,required TResult Function( RollDice value)  rollDice,required TResult Function( RecordPhysicalRoll value)  recordPhysicalRoll,required TResult Function( UseCheatDie value)  useCheatDie,required TResult Function( AppealCheatDie value)  appealCheatDie,required TResult Function( ResolveDiceAppeal value)  resolveDiceAppeal,required TResult Function( RemovePlayer value)  removePlayer,required TResult Function( LeaveRoom value)  leaveRoom,required TResult Function( EndGame value)  endGame,}){
 final _that = this;
 switch (_that) {
-case JoinPlayer():
-return joinPlayer(_that);case SetConnection():
-return setConnection(_that);case UpdateSettings():
+case UpdateSettings():
 return updateSettings(_that);case CloseLobby():
 return closeLobby(_that);case ReopenLobby():
 return reopenLobby(_that);case SetTurnOrder():
@@ -227,7 +240,8 @@ return setTurnOrder(_that);case ShuffleTurnOrder():
 return shuffleTurnOrder(_that);case ConfirmOrder():
 return confirmOrder(_that);case StartGame():
 return startGame(_that);case AdjustStats():
-return adjustStats(_that);case EndTurn():
+return adjustStats(_that);case AdjustPlayerLevel():
+return adjustPlayerLevel(_that);case EndTurn():
 return endTurn(_that);case StartBattle():
 return startBattle(_that);case DeclareVictory():
 return declareVictory(_that);case Intervene():
@@ -238,7 +252,11 @@ return startEscape(_that);case ResolveEscape():
 return resolveEscape(_that);case RaiseLevel():
 return raiseLevel(_that);case FinishBattle():
 return finishBattle(_that);case RollDice():
-return rollDice(_that);case RemovePlayer():
+return rollDice(_that);case RecordPhysicalRoll():
+return recordPhysicalRoll(_that);case UseCheatDie():
+return useCheatDie(_that);case AppealCheatDie():
+return appealCheatDie(_that);case ResolveDiceAppeal():
+return resolveDiceAppeal(_that);case RemovePlayer():
 return removePlayer(_that);case LeaveRoom():
 return leaveRoom(_that);case EndGame():
 return endGame(_that);}
@@ -255,12 +273,10 @@ return endGame(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( JoinPlayer value)?  joinPlayer,TResult? Function( SetConnection value)?  setConnection,TResult? Function( UpdateSettings value)?  updateSettings,TResult? Function( CloseLobby value)?  closeLobby,TResult? Function( ReopenLobby value)?  reopenLobby,TResult? Function( SetTurnOrder value)?  setTurnOrder,TResult? Function( ShuffleTurnOrder value)?  shuffleTurnOrder,TResult? Function( ConfirmOrder value)?  confirmOrder,TResult? Function( StartGame value)?  startGame,TResult? Function( AdjustStats value)?  adjustStats,TResult? Function( EndTurn value)?  endTurn,TResult? Function( StartBattle value)?  startBattle,TResult? Function( DeclareVictory value)?  declareVictory,TResult? Function( Intervene value)?  intervene,TResult? Function( RequestHelp value)?  requestHelp,TResult? Function( ResumeBattle value)?  resumeBattle,TResult? Function( StartEscape value)?  startEscape,TResult? Function( ResolveEscape value)?  resolveEscape,TResult? Function( RaiseLevel value)?  raiseLevel,TResult? Function( FinishBattle value)?  finishBattle,TResult? Function( RollDice value)?  rollDice,TResult? Function( RemovePlayer value)?  removePlayer,TResult? Function( LeaveRoom value)?  leaveRoom,TResult? Function( EndGame value)?  endGame,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( UpdateSettings value)?  updateSettings,TResult? Function( CloseLobby value)?  closeLobby,TResult? Function( ReopenLobby value)?  reopenLobby,TResult? Function( SetTurnOrder value)?  setTurnOrder,TResult? Function( ShuffleTurnOrder value)?  shuffleTurnOrder,TResult? Function( ConfirmOrder value)?  confirmOrder,TResult? Function( StartGame value)?  startGame,TResult? Function( AdjustStats value)?  adjustStats,TResult? Function( AdjustPlayerLevel value)?  adjustPlayerLevel,TResult? Function( EndTurn value)?  endTurn,TResult? Function( StartBattle value)?  startBattle,TResult? Function( DeclareVictory value)?  declareVictory,TResult? Function( Intervene value)?  intervene,TResult? Function( RequestHelp value)?  requestHelp,TResult? Function( ResumeBattle value)?  resumeBattle,TResult? Function( StartEscape value)?  startEscape,TResult? Function( ResolveEscape value)?  resolveEscape,TResult? Function( RaiseLevel value)?  raiseLevel,TResult? Function( FinishBattle value)?  finishBattle,TResult? Function( RollDice value)?  rollDice,TResult? Function( RecordPhysicalRoll value)?  recordPhysicalRoll,TResult? Function( UseCheatDie value)?  useCheatDie,TResult? Function( AppealCheatDie value)?  appealCheatDie,TResult? Function( ResolveDiceAppeal value)?  resolveDiceAppeal,TResult? Function( RemovePlayer value)?  removePlayer,TResult? Function( LeaveRoom value)?  leaveRoom,TResult? Function( EndGame value)?  endGame,}){
 final _that = this;
 switch (_that) {
-case JoinPlayer() when joinPlayer != null:
-return joinPlayer(_that);case SetConnection() when setConnection != null:
-return setConnection(_that);case UpdateSettings() when updateSettings != null:
+case UpdateSettings() when updateSettings != null:
 return updateSettings(_that);case CloseLobby() when closeLobby != null:
 return closeLobby(_that);case ReopenLobby() when reopenLobby != null:
 return reopenLobby(_that);case SetTurnOrder() when setTurnOrder != null:
@@ -268,7 +284,8 @@ return setTurnOrder(_that);case ShuffleTurnOrder() when shuffleTurnOrder != null
 return shuffleTurnOrder(_that);case ConfirmOrder() when confirmOrder != null:
 return confirmOrder(_that);case StartGame() when startGame != null:
 return startGame(_that);case AdjustStats() when adjustStats != null:
-return adjustStats(_that);case EndTurn() when endTurn != null:
+return adjustStats(_that);case AdjustPlayerLevel() when adjustPlayerLevel != null:
+return adjustPlayerLevel(_that);case EndTurn() when endTurn != null:
 return endTurn(_that);case StartBattle() when startBattle != null:
 return startBattle(_that);case DeclareVictory() when declareVictory != null:
 return declareVictory(_that);case Intervene() when intervene != null:
@@ -279,7 +296,11 @@ return startEscape(_that);case ResolveEscape() when resolveEscape != null:
 return resolveEscape(_that);case RaiseLevel() when raiseLevel != null:
 return raiseLevel(_that);case FinishBattle() when finishBattle != null:
 return finishBattle(_that);case RollDice() when rollDice != null:
-return rollDice(_that);case RemovePlayer() when removePlayer != null:
+return rollDice(_that);case RecordPhysicalRoll() when recordPhysicalRoll != null:
+return recordPhysicalRoll(_that);case UseCheatDie() when useCheatDie != null:
+return useCheatDie(_that);case AppealCheatDie() when appealCheatDie != null:
+return appealCheatDie(_that);case ResolveDiceAppeal() when resolveDiceAppeal != null:
+return resolveDiceAppeal(_that);case RemovePlayer() when removePlayer != null:
 return removePlayer(_that);case LeaveRoom() when leaveRoom != null:
 return leaveRoom(_that);case EndGame() when endGame != null:
 return endGame(_that);case _:
@@ -299,11 +320,9 @@ return endGame(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String playerId,  String name,  bool isHost)?  joinPlayer,TResult Function( String playerId,  bool connected)?  setConnection,TResult Function( RoomSettings settings)?  updateSettings,TResult Function()?  closeLobby,TResult Function()?  reopenLobby,TResult Function( List<String> playerIds)?  setTurnOrder,TResult Function()?  shuffleTurnOrder,TResult Function()?  confirmOrder,TResult Function()?  startGame,TResult Function( int levelDelta,  int strengthDelta)?  adjustStats,TResult Function()?  endTurn,TResult Function()?  startBattle,TResult Function()?  declareVictory,TResult Function()?  intervene,TResult Function()?  requestHelp,TResult Function()?  resumeBattle,TResult Function()?  startEscape,TResult Function()?  resolveEscape,TResult Function()?  raiseLevel,TResult Function()?  finishBattle,TResult Function()?  rollDice,TResult Function( String playerId)?  removePlayer,TResult Function()?  leaveRoom,TResult Function()?  endGame,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( RoomSettings settings)?  updateSettings,TResult Function()?  closeLobby,TResult Function()?  reopenLobby,TResult Function( List<String> playerIds)?  setTurnOrder,TResult Function()?  shuffleTurnOrder,TResult Function()?  confirmOrder,TResult Function()?  startGame,TResult Function( int strengthDelta)?  adjustStats,TResult Function( String playerId,  int delta)?  adjustPlayerLevel,TResult Function()?  endTurn,TResult Function()?  startBattle,TResult Function()?  declareVictory,TResult Function()?  intervene,TResult Function()?  requestHelp,TResult Function()?  resumeBattle,TResult Function()?  startEscape,TResult Function()?  resolveEscape,TResult Function()?  raiseLevel,TResult Function()?  finishBattle,TResult Function()?  rollDice,TResult Function( int value)?  recordPhysicalRoll,TResult Function( int value)?  useCheatDie,TResult Function()?  appealCheatDie,TResult Function( bool accepted)?  resolveDiceAppeal,TResult Function( String playerId)?  removePlayer,TResult Function()?  leaveRoom,TResult Function()?  endGame,required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case JoinPlayer() when joinPlayer != null:
-return joinPlayer(_that.playerId,_that.name,_that.isHost);case SetConnection() when setConnection != null:
-return setConnection(_that.playerId,_that.connected);case UpdateSettings() when updateSettings != null:
+case UpdateSettings() when updateSettings != null:
 return updateSettings(_that.settings);case CloseLobby() when closeLobby != null:
 return closeLobby();case ReopenLobby() when reopenLobby != null:
 return reopenLobby();case SetTurnOrder() when setTurnOrder != null:
@@ -311,7 +330,8 @@ return setTurnOrder(_that.playerIds);case ShuffleTurnOrder() when shuffleTurnOrd
 return shuffleTurnOrder();case ConfirmOrder() when confirmOrder != null:
 return confirmOrder();case StartGame() when startGame != null:
 return startGame();case AdjustStats() when adjustStats != null:
-return adjustStats(_that.levelDelta,_that.strengthDelta);case EndTurn() when endTurn != null:
+return adjustStats(_that.strengthDelta);case AdjustPlayerLevel() when adjustPlayerLevel != null:
+return adjustPlayerLevel(_that.playerId,_that.delta);case EndTurn() when endTurn != null:
 return endTurn();case StartBattle() when startBattle != null:
 return startBattle();case DeclareVictory() when declareVictory != null:
 return declareVictory();case Intervene() when intervene != null:
@@ -322,7 +342,11 @@ return startEscape();case ResolveEscape() when resolveEscape != null:
 return resolveEscape();case RaiseLevel() when raiseLevel != null:
 return raiseLevel();case FinishBattle() when finishBattle != null:
 return finishBattle();case RollDice() when rollDice != null:
-return rollDice();case RemovePlayer() when removePlayer != null:
+return rollDice();case RecordPhysicalRoll() when recordPhysicalRoll != null:
+return recordPhysicalRoll(_that.value);case UseCheatDie() when useCheatDie != null:
+return useCheatDie(_that.value);case AppealCheatDie() when appealCheatDie != null:
+return appealCheatDie();case ResolveDiceAppeal() when resolveDiceAppeal != null:
+return resolveDiceAppeal(_that.accepted);case RemovePlayer() when removePlayer != null:
 return removePlayer(_that.playerId);case LeaveRoom() when leaveRoom != null:
 return leaveRoom();case EndGame() when endGame != null:
 return endGame();case _:
@@ -343,11 +367,9 @@ return endGame();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String playerId,  String name,  bool isHost)  joinPlayer,required TResult Function( String playerId,  bool connected)  setConnection,required TResult Function( RoomSettings settings)  updateSettings,required TResult Function()  closeLobby,required TResult Function()  reopenLobby,required TResult Function( List<String> playerIds)  setTurnOrder,required TResult Function()  shuffleTurnOrder,required TResult Function()  confirmOrder,required TResult Function()  startGame,required TResult Function( int levelDelta,  int strengthDelta)  adjustStats,required TResult Function()  endTurn,required TResult Function()  startBattle,required TResult Function()  declareVictory,required TResult Function()  intervene,required TResult Function()  requestHelp,required TResult Function()  resumeBattle,required TResult Function()  startEscape,required TResult Function()  resolveEscape,required TResult Function()  raiseLevel,required TResult Function()  finishBattle,required TResult Function()  rollDice,required TResult Function( String playerId)  removePlayer,required TResult Function()  leaveRoom,required TResult Function()  endGame,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( RoomSettings settings)  updateSettings,required TResult Function()  closeLobby,required TResult Function()  reopenLobby,required TResult Function( List<String> playerIds)  setTurnOrder,required TResult Function()  shuffleTurnOrder,required TResult Function()  confirmOrder,required TResult Function()  startGame,required TResult Function( int strengthDelta)  adjustStats,required TResult Function( String playerId,  int delta)  adjustPlayerLevel,required TResult Function()  endTurn,required TResult Function()  startBattle,required TResult Function()  declareVictory,required TResult Function()  intervene,required TResult Function()  requestHelp,required TResult Function()  resumeBattle,required TResult Function()  startEscape,required TResult Function()  resolveEscape,required TResult Function()  raiseLevel,required TResult Function()  finishBattle,required TResult Function()  rollDice,required TResult Function( int value)  recordPhysicalRoll,required TResult Function( int value)  useCheatDie,required TResult Function()  appealCheatDie,required TResult Function( bool accepted)  resolveDiceAppeal,required TResult Function( String playerId)  removePlayer,required TResult Function()  leaveRoom,required TResult Function()  endGame,}) {final _that = this;
 switch (_that) {
-case JoinPlayer():
-return joinPlayer(_that.playerId,_that.name,_that.isHost);case SetConnection():
-return setConnection(_that.playerId,_that.connected);case UpdateSettings():
+case UpdateSettings():
 return updateSettings(_that.settings);case CloseLobby():
 return closeLobby();case ReopenLobby():
 return reopenLobby();case SetTurnOrder():
@@ -355,7 +377,8 @@ return setTurnOrder(_that.playerIds);case ShuffleTurnOrder():
 return shuffleTurnOrder();case ConfirmOrder():
 return confirmOrder();case StartGame():
 return startGame();case AdjustStats():
-return adjustStats(_that.levelDelta,_that.strengthDelta);case EndTurn():
+return adjustStats(_that.strengthDelta);case AdjustPlayerLevel():
+return adjustPlayerLevel(_that.playerId,_that.delta);case EndTurn():
 return endTurn();case StartBattle():
 return startBattle();case DeclareVictory():
 return declareVictory();case Intervene():
@@ -366,7 +389,11 @@ return startEscape();case ResolveEscape():
 return resolveEscape();case RaiseLevel():
 return raiseLevel();case FinishBattle():
 return finishBattle();case RollDice():
-return rollDice();case RemovePlayer():
+return rollDice();case RecordPhysicalRoll():
+return recordPhysicalRoll(_that.value);case UseCheatDie():
+return useCheatDie(_that.value);case AppealCheatDie():
+return appealCheatDie();case ResolveDiceAppeal():
+return resolveDiceAppeal(_that.accepted);case RemovePlayer():
 return removePlayer(_that.playerId);case LeaveRoom():
 return leaveRoom();case EndGame():
 return endGame();}
@@ -383,11 +410,9 @@ return endGame();}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String playerId,  String name,  bool isHost)?  joinPlayer,TResult? Function( String playerId,  bool connected)?  setConnection,TResult? Function( RoomSettings settings)?  updateSettings,TResult? Function()?  closeLobby,TResult? Function()?  reopenLobby,TResult? Function( List<String> playerIds)?  setTurnOrder,TResult? Function()?  shuffleTurnOrder,TResult? Function()?  confirmOrder,TResult? Function()?  startGame,TResult? Function( int levelDelta,  int strengthDelta)?  adjustStats,TResult? Function()?  endTurn,TResult? Function()?  startBattle,TResult? Function()?  declareVictory,TResult? Function()?  intervene,TResult? Function()?  requestHelp,TResult? Function()?  resumeBattle,TResult? Function()?  startEscape,TResult? Function()?  resolveEscape,TResult? Function()?  raiseLevel,TResult? Function()?  finishBattle,TResult? Function()?  rollDice,TResult? Function( String playerId)?  removePlayer,TResult? Function()?  leaveRoom,TResult? Function()?  endGame,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( RoomSettings settings)?  updateSettings,TResult? Function()?  closeLobby,TResult? Function()?  reopenLobby,TResult? Function( List<String> playerIds)?  setTurnOrder,TResult? Function()?  shuffleTurnOrder,TResult? Function()?  confirmOrder,TResult? Function()?  startGame,TResult? Function( int strengthDelta)?  adjustStats,TResult? Function( String playerId,  int delta)?  adjustPlayerLevel,TResult? Function()?  endTurn,TResult? Function()?  startBattle,TResult? Function()?  declareVictory,TResult? Function()?  intervene,TResult? Function()?  requestHelp,TResult? Function()?  resumeBattle,TResult? Function()?  startEscape,TResult? Function()?  resolveEscape,TResult? Function()?  raiseLevel,TResult? Function()?  finishBattle,TResult? Function()?  rollDice,TResult? Function( int value)?  recordPhysicalRoll,TResult? Function( int value)?  useCheatDie,TResult? Function()?  appealCheatDie,TResult? Function( bool accepted)?  resolveDiceAppeal,TResult? Function( String playerId)?  removePlayer,TResult? Function()?  leaveRoom,TResult? Function()?  endGame,}) {final _that = this;
 switch (_that) {
-case JoinPlayer() when joinPlayer != null:
-return joinPlayer(_that.playerId,_that.name,_that.isHost);case SetConnection() when setConnection != null:
-return setConnection(_that.playerId,_that.connected);case UpdateSettings() when updateSettings != null:
+case UpdateSettings() when updateSettings != null:
 return updateSettings(_that.settings);case CloseLobby() when closeLobby != null:
 return closeLobby();case ReopenLobby() when reopenLobby != null:
 return reopenLobby();case SetTurnOrder() when setTurnOrder != null:
@@ -395,7 +420,8 @@ return setTurnOrder(_that.playerIds);case ShuffleTurnOrder() when shuffleTurnOrd
 return shuffleTurnOrder();case ConfirmOrder() when confirmOrder != null:
 return confirmOrder();case StartGame() when startGame != null:
 return startGame();case AdjustStats() when adjustStats != null:
-return adjustStats(_that.levelDelta,_that.strengthDelta);case EndTurn() when endTurn != null:
+return adjustStats(_that.strengthDelta);case AdjustPlayerLevel() when adjustPlayerLevel != null:
+return adjustPlayerLevel(_that.playerId,_that.delta);case EndTurn() when endTurn != null:
 return endTurn();case StartBattle() when startBattle != null:
 return startBattle();case DeclareVictory() when declareVictory != null:
 return declareVictory();case Intervene() when intervene != null:
@@ -406,7 +432,11 @@ return startEscape();case ResolveEscape() when resolveEscape != null:
 return resolveEscape();case RaiseLevel() when raiseLevel != null:
 return raiseLevel();case FinishBattle() when finishBattle != null:
 return finishBattle();case RollDice() when rollDice != null:
-return rollDice();case RemovePlayer() when removePlayer != null:
+return rollDice();case RecordPhysicalRoll() when recordPhysicalRoll != null:
+return recordPhysicalRoll(_that.value);case UseCheatDie() when useCheatDie != null:
+return useCheatDie(_that.value);case AppealCheatDie() when appealCheatDie != null:
+return appealCheatDie();case ResolveDiceAppeal() when resolveDiceAppeal != null:
+return resolveDiceAppeal(_that.accepted);case RemovePlayer() when removePlayer != null:
 return removePlayer(_that.playerId);case LeaveRoom() when leaveRoom != null:
 return leaveRoom();case EndGame() when endGame != null:
 return endGame();case _:
@@ -414,158 +444,6 @@ return endGame();case _:
 
 }
 }
-
-}
-
-/// @nodoc
-@JsonSerializable()
-
-class JoinPlayer implements GameCommand {
-  const JoinPlayer({required this.playerId, required this.name, this.isHost = false, final  String? $type}): $type = $type ?? 'JoinPlayer';
-  factory JoinPlayer.fromJson(Map<String, dynamic> json) => _$JoinPlayerFromJson(json);
-
- final  String playerId;
- final  String name;
-@JsonKey() final  bool isHost;
-
-@JsonKey(name: 'type')
-final String $type;
-
-
-/// Create a copy of GameCommand
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$JoinPlayerCopyWith<JoinPlayer> get copyWith => _$JoinPlayerCopyWithImpl<JoinPlayer>(this, _$identity);
-
-@override
-Map<String, dynamic> toJson() {
-  return _$JoinPlayerToJson(this, );
-}
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is JoinPlayer&&(identical(other.playerId, playerId) || other.playerId == playerId)&&(identical(other.name, name) || other.name == name)&&(identical(other.isHost, isHost) || other.isHost == isHost));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hash(runtimeType,playerId,name,isHost);
-
-@override
-String toString() {
-  return 'GameCommand.joinPlayer(playerId: $playerId, name: $name, isHost: $isHost)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $JoinPlayerCopyWith<$Res> implements $GameCommandCopyWith<$Res> {
-  factory $JoinPlayerCopyWith(JoinPlayer value, $Res Function(JoinPlayer) _then) = _$JoinPlayerCopyWithImpl;
-@useResult
-$Res call({
- String playerId, String name, bool isHost
-});
-
-
-
-
-}
-/// @nodoc
-class _$JoinPlayerCopyWithImpl<$Res>
-    implements $JoinPlayerCopyWith<$Res> {
-  _$JoinPlayerCopyWithImpl(this._self, this._then);
-
-  final JoinPlayer _self;
-  final $Res Function(JoinPlayer) _then;
-
-/// Create a copy of GameCommand
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? playerId = null,Object? name = null,Object? isHost = null,}) {
-  return _then(JoinPlayer(
-playerId: null == playerId ? _self.playerId : playerId // ignore: cast_nullable_to_non_nullable
-as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,isHost: null == isHost ? _self.isHost : isHost // ignore: cast_nullable_to_non_nullable
-as bool,
-  ));
-}
-
-
-}
-
-/// @nodoc
-@JsonSerializable()
-
-class SetConnection implements GameCommand {
-  const SetConnection({required this.playerId, required this.connected, final  String? $type}): $type = $type ?? 'SetConnection';
-  factory SetConnection.fromJson(Map<String, dynamic> json) => _$SetConnectionFromJson(json);
-
- final  String playerId;
- final  bool connected;
-
-@JsonKey(name: 'type')
-final String $type;
-
-
-/// Create a copy of GameCommand
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$SetConnectionCopyWith<SetConnection> get copyWith => _$SetConnectionCopyWithImpl<SetConnection>(this, _$identity);
-
-@override
-Map<String, dynamic> toJson() {
-  return _$SetConnectionToJson(this, );
-}
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SetConnection&&(identical(other.playerId, playerId) || other.playerId == playerId)&&(identical(other.connected, connected) || other.connected == connected));
-}
-
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hash(runtimeType,playerId,connected);
-
-@override
-String toString() {
-  return 'GameCommand.setConnection(playerId: $playerId, connected: $connected)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $SetConnectionCopyWith<$Res> implements $GameCommandCopyWith<$Res> {
-  factory $SetConnectionCopyWith(SetConnection value, $Res Function(SetConnection) _then) = _$SetConnectionCopyWithImpl;
-@useResult
-$Res call({
- String playerId, bool connected
-});
-
-
-
-
-}
-/// @nodoc
-class _$SetConnectionCopyWithImpl<$Res>
-    implements $SetConnectionCopyWith<$Res> {
-  _$SetConnectionCopyWithImpl(this._self, this._then);
-
-  final SetConnection _self;
-  final $Res Function(SetConnection) _then;
-
-/// Create a copy of GameCommand
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? playerId = null,Object? connected = null,}) {
-  return _then(SetConnection(
-playerId: null == playerId ? _self.playerId : playerId // ignore: cast_nullable_to_non_nullable
-as String,connected: null == connected ? _self.connected : connected // ignore: cast_nullable_to_non_nullable
-as bool,
-  ));
-}
-
 
 }
 
@@ -929,10 +807,9 @@ String toString() {
 @JsonSerializable()
 
 class AdjustStats implements GameCommand {
-  const AdjustStats({this.levelDelta = 0, this.strengthDelta = 0, final  String? $type}): $type = $type ?? 'AdjustStats';
+  const AdjustStats({this.strengthDelta = 0, final  String? $type}): $type = $type ?? 'AdjustStats';
   factory AdjustStats.fromJson(Map<String, dynamic> json) => _$AdjustStatsFromJson(json);
 
-@JsonKey() final  int levelDelta;
 @JsonKey() final  int strengthDelta;
 
 @JsonKey(name: 'type')
@@ -952,16 +829,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AdjustStats&&(identical(other.levelDelta, levelDelta) || other.levelDelta == levelDelta)&&(identical(other.strengthDelta, strengthDelta) || other.strengthDelta == strengthDelta));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AdjustStats&&(identical(other.strengthDelta, strengthDelta) || other.strengthDelta == strengthDelta));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,levelDelta,strengthDelta);
+int get hashCode => Object.hash(runtimeType,strengthDelta);
 
 @override
 String toString() {
-  return 'GameCommand.adjustStats(levelDelta: $levelDelta, strengthDelta: $strengthDelta)';
+  return 'GameCommand.adjustStats(strengthDelta: $strengthDelta)';
 }
 
 
@@ -972,7 +849,7 @@ abstract mixin class $AdjustStatsCopyWith<$Res> implements $GameCommandCopyWith<
   factory $AdjustStatsCopyWith(AdjustStats value, $Res Function(AdjustStats) _then) = _$AdjustStatsCopyWithImpl;
 @useResult
 $Res call({
- int levelDelta, int strengthDelta
+ int strengthDelta
 });
 
 
@@ -989,10 +866,84 @@ class _$AdjustStatsCopyWithImpl<$Res>
 
 /// Create a copy of GameCommand
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? levelDelta = null,Object? strengthDelta = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? strengthDelta = null,}) {
   return _then(AdjustStats(
-levelDelta: null == levelDelta ? _self.levelDelta : levelDelta // ignore: cast_nullable_to_non_nullable
-as int,strengthDelta: null == strengthDelta ? _self.strengthDelta : strengthDelta // ignore: cast_nullable_to_non_nullable
+strengthDelta: null == strengthDelta ? _self.strengthDelta : strengthDelta // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class AdjustPlayerLevel implements GameCommand {
+  const AdjustPlayerLevel({required this.playerId, required this.delta, final  String? $type}): $type = $type ?? 'AdjustPlayerLevel';
+  factory AdjustPlayerLevel.fromJson(Map<String, dynamic> json) => _$AdjustPlayerLevelFromJson(json);
+
+ final  String playerId;
+ final  int delta;
+
+@JsonKey(name: 'type')
+final String $type;
+
+
+/// Create a copy of GameCommand
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$AdjustPlayerLevelCopyWith<AdjustPlayerLevel> get copyWith => _$AdjustPlayerLevelCopyWithImpl<AdjustPlayerLevel>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$AdjustPlayerLevelToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AdjustPlayerLevel&&(identical(other.playerId, playerId) || other.playerId == playerId)&&(identical(other.delta, delta) || other.delta == delta));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,playerId,delta);
+
+@override
+String toString() {
+  return 'GameCommand.adjustPlayerLevel(playerId: $playerId, delta: $delta)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $AdjustPlayerLevelCopyWith<$Res> implements $GameCommandCopyWith<$Res> {
+  factory $AdjustPlayerLevelCopyWith(AdjustPlayerLevel value, $Res Function(AdjustPlayerLevel) _then) = _$AdjustPlayerLevelCopyWithImpl;
+@useResult
+$Res call({
+ String playerId, int delta
+});
+
+
+
+
+}
+/// @nodoc
+class _$AdjustPlayerLevelCopyWithImpl<$Res>
+    implements $AdjustPlayerLevelCopyWith<$Res> {
+  _$AdjustPlayerLevelCopyWithImpl(this._self, this._then);
+
+  final AdjustPlayerLevel _self;
+  final $Res Function(AdjustPlayerLevel) _then;
+
+/// Create a copy of GameCommand
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? playerId = null,Object? delta = null,}) {
+  return _then(AdjustPlayerLevel(
+playerId: null == playerId ? _self.playerId : playerId // ignore: cast_nullable_to_non_nullable
+as String,delta: null == delta ? _self.delta : delta // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }
@@ -1428,6 +1379,264 @@ String toString() {
 
 
 
+
+/// @nodoc
+@JsonSerializable()
+
+class RecordPhysicalRoll implements GameCommand {
+  const RecordPhysicalRoll(this.value, {final  String? $type}): $type = $type ?? 'RecordPhysicalRoll';
+  factory RecordPhysicalRoll.fromJson(Map<String, dynamic> json) => _$RecordPhysicalRollFromJson(json);
+
+ final  int value;
+
+@JsonKey(name: 'type')
+final String $type;
+
+
+/// Create a copy of GameCommand
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$RecordPhysicalRollCopyWith<RecordPhysicalRoll> get copyWith => _$RecordPhysicalRollCopyWithImpl<RecordPhysicalRoll>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$RecordPhysicalRollToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RecordPhysicalRoll&&(identical(other.value, value) || other.value == value));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,value);
+
+@override
+String toString() {
+  return 'GameCommand.recordPhysicalRoll(value: $value)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $RecordPhysicalRollCopyWith<$Res> implements $GameCommandCopyWith<$Res> {
+  factory $RecordPhysicalRollCopyWith(RecordPhysicalRoll value, $Res Function(RecordPhysicalRoll) _then) = _$RecordPhysicalRollCopyWithImpl;
+@useResult
+$Res call({
+ int value
+});
+
+
+
+
+}
+/// @nodoc
+class _$RecordPhysicalRollCopyWithImpl<$Res>
+    implements $RecordPhysicalRollCopyWith<$Res> {
+  _$RecordPhysicalRollCopyWithImpl(this._self, this._then);
+
+  final RecordPhysicalRoll _self;
+  final $Res Function(RecordPhysicalRoll) _then;
+
+/// Create a copy of GameCommand
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? value = null,}) {
+  return _then(RecordPhysicalRoll(
+null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class UseCheatDie implements GameCommand {
+  const UseCheatDie(this.value, {final  String? $type}): $type = $type ?? 'UseCheatDie';
+  factory UseCheatDie.fromJson(Map<String, dynamic> json) => _$UseCheatDieFromJson(json);
+
+ final  int value;
+
+@JsonKey(name: 'type')
+final String $type;
+
+
+/// Create a copy of GameCommand
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$UseCheatDieCopyWith<UseCheatDie> get copyWith => _$UseCheatDieCopyWithImpl<UseCheatDie>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$UseCheatDieToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UseCheatDie&&(identical(other.value, value) || other.value == value));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,value);
+
+@override
+String toString() {
+  return 'GameCommand.useCheatDie(value: $value)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $UseCheatDieCopyWith<$Res> implements $GameCommandCopyWith<$Res> {
+  factory $UseCheatDieCopyWith(UseCheatDie value, $Res Function(UseCheatDie) _then) = _$UseCheatDieCopyWithImpl;
+@useResult
+$Res call({
+ int value
+});
+
+
+
+
+}
+/// @nodoc
+class _$UseCheatDieCopyWithImpl<$Res>
+    implements $UseCheatDieCopyWith<$Res> {
+  _$UseCheatDieCopyWithImpl(this._self, this._then);
+
+  final UseCheatDie _self;
+  final $Res Function(UseCheatDie) _then;
+
+/// Create a copy of GameCommand
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? value = null,}) {
+  return _then(UseCheatDie(
+null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class AppealCheatDie implements GameCommand {
+  const AppealCheatDie({final  String? $type}): $type = $type ?? 'AppealCheatDie';
+  factory AppealCheatDie.fromJson(Map<String, dynamic> json) => _$AppealCheatDieFromJson(json);
+
+
+
+@JsonKey(name: 'type')
+final String $type;
+
+
+
+@override
+Map<String, dynamic> toJson() {
+  return _$AppealCheatDieToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppealCheatDie);
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'GameCommand.appealCheatDie()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+@JsonSerializable()
+
+class ResolveDiceAppeal implements GameCommand {
+  const ResolveDiceAppeal(this.accepted, {final  String? $type}): $type = $type ?? 'ResolveDiceAppeal';
+  factory ResolveDiceAppeal.fromJson(Map<String, dynamic> json) => _$ResolveDiceAppealFromJson(json);
+
+ final  bool accepted;
+
+@JsonKey(name: 'type')
+final String $type;
+
+
+/// Create a copy of GameCommand
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ResolveDiceAppealCopyWith<ResolveDiceAppeal> get copyWith => _$ResolveDiceAppealCopyWithImpl<ResolveDiceAppeal>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$ResolveDiceAppealToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ResolveDiceAppeal&&(identical(other.accepted, accepted) || other.accepted == accepted));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,accepted);
+
+@override
+String toString() {
+  return 'GameCommand.resolveDiceAppeal(accepted: $accepted)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ResolveDiceAppealCopyWith<$Res> implements $GameCommandCopyWith<$Res> {
+  factory $ResolveDiceAppealCopyWith(ResolveDiceAppeal value, $Res Function(ResolveDiceAppeal) _then) = _$ResolveDiceAppealCopyWithImpl;
+@useResult
+$Res call({
+ bool accepted
+});
+
+
+
+
+}
+/// @nodoc
+class _$ResolveDiceAppealCopyWithImpl<$Res>
+    implements $ResolveDiceAppealCopyWith<$Res> {
+  _$ResolveDiceAppealCopyWithImpl(this._self, this._then);
+
+  final ResolveDiceAppeal _self;
+  final $Res Function(ResolveDiceAppeal) _then;
+
+/// Create a copy of GameCommand
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? accepted = null,}) {
+  return _then(ResolveDiceAppeal(
+null == accepted ? _self.accepted : accepted // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
 
 /// @nodoc
 @JsonSerializable()

@@ -69,6 +69,7 @@ _BattleState _$BattleStateFromJson(Map<String, dynamic> json) => _BattleState(
       ? null
       : DateTime.parse(json['endsAt'] as String),
   intervenedBy: json['intervenedBy'] as String?,
+  levelRewardClaimed: json['levelRewardClaimed'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$BattleStateToJson(_BattleState instance) =>
@@ -77,6 +78,7 @@ Map<String, dynamic> _$BattleStateToJson(_BattleState instance) =>
       'status': _$BattleStatusEnumMap[instance.status]!,
       'endsAt': instance.endsAt?.toIso8601String(),
       'intervenedBy': instance.intervenedBy,
+      'levelRewardClaimed': instance.levelRewardClaimed,
     };
 
 const _$BattleStatusEnumMap = {
@@ -93,7 +95,11 @@ _DiceRoll _$DiceRollFromJson(Map<String, dynamic> json) => _DiceRoll(
   id: json['id'] as String,
   playerId: json['playerId'] as String,
   value: (json['value'] as num).toInt(),
+  originalValue: (json['originalValue'] as num).toInt(),
   sides: (json['sides'] as num?)?.toInt() ?? 6,
+  source: $enumDecode(_$DiceRollSourceEnumMap, json['source']),
+  cheatedBy: json['cheatedBy'] as String?,
+  finalized: json['finalized'] as bool? ?? false,
   rolledAt: DateTime.parse(json['rolledAt'] as String),
 );
 
@@ -101,8 +107,40 @@ Map<String, dynamic> _$DiceRollToJson(_DiceRoll instance) => <String, dynamic>{
   'id': instance.id,
   'playerId': instance.playerId,
   'value': instance.value,
+  'originalValue': instance.originalValue,
   'sides': instance.sides,
+  'source': _$DiceRollSourceEnumMap[instance.source]!,
+  'cheatedBy': instance.cheatedBy,
+  'finalized': instance.finalized,
   'rolledAt': instance.rolledAt.toIso8601String(),
+};
+
+const _$DiceRollSourceEnumMap = {
+  DiceRollSource.virtual: 'virtual',
+  DiceRollSource.physical: 'physical',
+};
+
+_DiceAppeal _$DiceAppealFromJson(Map<String, dynamic> json) => _DiceAppeal(
+  rollId: json['rollId'] as String,
+  requestedBy: json['requestedBy'] as String,
+  status:
+      $enumDecodeNullable(_$DiceAppealStatusEnumMap, json['status']) ??
+      DiceAppealStatus.pending,
+  resolvedBy: json['resolvedBy'] as String?,
+);
+
+Map<String, dynamic> _$DiceAppealToJson(_DiceAppeal instance) =>
+    <String, dynamic>{
+      'rollId': instance.rollId,
+      'requestedBy': instance.requestedBy,
+      'status': _$DiceAppealStatusEnumMap[instance.status]!,
+      'resolvedBy': instance.resolvedBy,
+    };
+
+const _$DiceAppealStatusEnumMap = {
+  DiceAppealStatus.pending: 'pending',
+  DiceAppealStatus.accepted: 'accepted',
+  DiceAppealStatus.rejected: 'rejected',
 };
 
 _GameState _$GameStateFromJson(Map<String, dynamic> json) => _GameState(
@@ -127,6 +165,9 @@ _GameState _$GameStateFromJson(Map<String, dynamic> json) => _GameState(
   lastDiceRoll: json['lastDiceRoll'] == null
       ? null
       : DiceRoll.fromJson(json['lastDiceRoll'] as Map<String, dynamic>),
+  diceAppeal: json['diceAppeal'] == null
+      ? null
+      : DiceAppeal.fromJson(json['diceAppeal'] as Map<String, dynamic>),
   createdAt: DateTime.parse(json['createdAt'] as String),
   updatedAt: DateTime.parse(json['updatedAt'] as String),
 );
@@ -143,6 +184,7 @@ Map<String, dynamic> _$GameStateToJson(_GameState instance) =>
       'activePlayerId': instance.activePlayerId,
       'battle': instance.battle,
       'lastDiceRoll': instance.lastDiceRoll,
+      'diceAppeal': instance.diceAppeal,
       'createdAt': instance.createdAt.toIso8601String(),
       'updatedAt': instance.updatedAt.toIso8601String(),
     };

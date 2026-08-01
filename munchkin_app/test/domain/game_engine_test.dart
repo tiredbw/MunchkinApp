@@ -28,6 +28,13 @@ void main() {
     return state;
   }
 
+  GameState addPlayer(String id, String name) {
+    final result = engine.addPlayer(state, playerId: id, name: name);
+    expect(result, isA<GameAccepted>());
+    state = (result as GameAccepted).state;
+    return state;
+  }
+
   test('creates a room with a host and computed total power', () {
     expect(state.phase, RoomPhase.lobby);
     expect(state.players.single.isHost, isTrue);
@@ -36,25 +43,15 @@ void main() {
   });
 
   test('normalizes names and rejects duplicates case-insensitively', () {
-    accept(
-      const GameCommand.joinPlayer(playerId: 'p2', name: '  Alice  '),
-      'system',
-    );
-    final result = engine.apply(
-      state,
-      const GameCommand.joinPlayer(playerId: 'p3', name: 'alice'),
-      actorId: 'system',
-    );
+    addPlayer('p2', '  Alice  ');
+    final result = engine.addPlayer(state, playerId: 'p3', name: 'alice');
     expect(state.playerById('p2')?.name, 'Alice');
     expect(result, isA<GameRejected>());
     expect((result as GameRejected).code, GameErrorCode.duplicateName);
   });
 
   test('only host can prepare and start a game', () {
-    accept(
-      const GameCommand.joinPlayer(playerId: 'p2', name: 'Alice'),
-      'system',
-    );
+    addPlayer('p2', 'Alice');
     final forbidden = engine.apply(
       state,
       const GameCommand.closeLobby(),
@@ -69,28 +66,27 @@ void main() {
     expect(state.phase, RoomPhase.playing);
   });
 
-  test('players can only adjust their own values within configured limits', () {
-    accept(
-      const GameCommand.joinPlayer(playerId: 'p2', name: 'Alice'),
-      'system',
-    );
+  test('players adjust strength but only host adjusts levels', () {
+    addPlayer('p2', 'Alice');
     accept(const GameCommand.adjustStats(strengthDelta: 5), 'p2');
     expect(state.playerById('p2')?.strength, 5);
     expect(state.playerById('host')?.strength, 0);
 
     final rejected = engine.apply(
       state,
-      const GameCommand.adjustStats(levelDelta: -1),
+      const GameCommand.adjustPlayerLevel(playerId: 'p2', delta: 1),
       actorId: 'p2',
     );
     expect(rejected, isA<GameRejected>());
+    accept(
+      const GameCommand.adjustPlayerLevel(playerId: 'p2', delta: 1),
+      'host',
+    );
+    expect(state.playerById('p2')?.level, 2);
   });
 
   test('turns cycle and only the active player can end a turn', () {
-    accept(
-      const GameCommand.joinPlayer(playerId: 'p2', name: 'Alice'),
-      'system',
-    );
+    addPlayer('p2', 'Alice');
     accept(const GameCommand.closeLobby(), 'host');
     accept(const GameCommand.confirmOrder(), 'host');
     accept(const GameCommand.startGame(), 'host');
@@ -105,10 +101,7 @@ void main() {
   });
 
   test('first intervention stops the countdown and late one is rejected', () {
-    accept(
-      const GameCommand.joinPlayer(playerId: 'p2', name: 'Alice'),
-      'system',
-    );
+    addPlayer('p2', 'Alice');
     accept(const GameCommand.closeLobby(), 'host');
     accept(const GameCommand.confirmOrder(), 'host');
     accept(const GameCommand.startGame(), 'host');
@@ -135,10 +128,7 @@ void main() {
   });
 
   test('virtual die is host generated and restricted to active player', () {
-    accept(
-      const GameCommand.joinPlayer(playerId: 'p2', name: 'Alice'),
-      'system',
-    );
+    addPlayer('p2', 'Alice');
     accept(const GameCommand.closeLobby(), 'host');
     accept(const GameCommand.confirmOrder(), 'host');
     accept(const GameCommand.startGame(), 'host');
@@ -151,11 +141,8 @@ void main() {
   });
 
   test('removing the active player cancels battle and advances turn', () {
-    accept(
-      const GameCommand.joinPlayer(playerId: 'p2', name: 'Alice'),
-      'system',
-    );
-    accept(const GameCommand.joinPlayer(playerId: 'p3', name: 'Bob'), 'system');
+    addPlayer('p2', 'Alice');
+    addPlayer('p3', 'Bob');
     accept(const GameCommand.closeLobby(), 'host');
     accept(const GameCommand.confirmOrder(), 'host');
     accept(const GameCommand.startGame(), 'host');
@@ -169,19 +156,90 @@ void main() {
   test(
     'explicit leave removes a client but a disconnect only marks it offline',
     () {
-      accept(
-        const GameCommand.joinPlayer(playerId: 'p2', name: 'Alice'),
-        'system',
+      addPlayer('p2', 'Alice');
+      final disconnected = engine.setPlayerConnection(
+        state,
+        playerId: 'p2',
+        connected: false,
       );
-      accept(
-        const GameCommand.setConnection(playerId: 'p2', connected: false),
-        'system',
-      );
+      expect(disconnected, isA<GameAccepted>());
+      state = (disconnected as GameAccepted).state;
       expect(state.playerById('p2')?.isConnected, isFalse);
       accept(const GameCommand.leaveRoom(), 'p2');
       expect(state.playerById('p2'), isNull);
     },
   );
+
+  test('victory level can only be claimed once', () {
+    accept(const GameCommand.closeLobby(), 'host');
+    accept(const GameCommand.confirmOrder(), 'host');
+    accept(const GameCommand.startGame(), 'host');
+    accept(const GameCommand.startBattle(), 'host');
+    accept(const GameCommand.declareVictory(), 'host');
+    clock.advance(const Duration(seconds: 5));
+    state = engine.resolveExpiredTimers(state);
+    accept(const GameCommand.raiseLevel(), 'host');
+    expect(state.playerById('host')?.level, 2);
+    expect(state.battle?.levelRewardClaimed, isTrue);
+    expect(
+      engine.apply(state, const GameCommand.raiseLevel(), actorId: 'host'),
+      isA<GameRejected>(),
+    );
+  });
+
+  test('cheat die can be appealed and restored by host', () {
+    addPlayer('p2', 'Alice');
+    accept(const GameCommand.closeLobby(), 'host');
+    accept(const GameCommand.confirmOrder(), 'host');
+    accept(const GameCommand.startGame(), 'host');
+    accept(const GameCommand.rollDice(), 'host');
+    accept(const GameCommand.useCheatDie(6), 'host');
+    accept(const GameCommand.appealCheatDie(), 'p2');
+    expect(state.diceAppeal?.status, DiceAppealStatus.pending);
+    expect(
+      engine.apply(
+        state,
+        const GameCommand.resolveDiceAppeal(true),
+        actorId: 'p2',
+      ),
+      isA<GameRejected>(),
+    );
+    accept(const GameCommand.resolveDiceAppeal(true), 'host');
+    expect(state.lastDiceRoll?.value, 1);
+    expect(state.diceAppeal?.status, DiceAppealStatus.accepted);
+  });
+
+  test('escape allows one roll and blocks resolution during an appeal', () {
+    addPlayer('p2', 'Alice');
+    accept(const GameCommand.closeLobby(), 'host');
+    accept(const GameCommand.confirmOrder(), 'host');
+    accept(const GameCommand.startGame(), 'host');
+    accept(const GameCommand.startBattle(), 'host');
+    accept(const GameCommand.startEscape(), 'host');
+    accept(const GameCommand.rollDice(), 'host');
+    expect(
+      engine.apply(state, const GameCommand.rollDice(), actorId: 'host'),
+      isA<GameRejected>(),
+    );
+    accept(const GameCommand.useCheatDie(6), 'host');
+    accept(const GameCommand.appealCheatDie(), 'p2');
+    expect(
+      engine.apply(state, const GameCommand.resolveEscape(), actorId: 'host'),
+      isA<GameRejected>(),
+    );
+  });
+
+  test('commands are rejected after the game ends', () {
+    accept(const GameCommand.endGame(), 'host');
+    expect(
+      engine.apply(
+        state,
+        const GameCommand.adjustStats(strengthDelta: 1),
+        actorId: 'host',
+      ),
+      isA<GameRejected>(),
+    );
+  });
 }
 
 class FakeClock implements Clock {

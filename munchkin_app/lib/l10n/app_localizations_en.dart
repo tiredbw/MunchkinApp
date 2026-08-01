@@ -223,4 +223,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get connectionError => 'Could not connect to the host';
+
+  @override
+  String get levelRewardClaimed => 'Victory level received';
+
+  @override
+  String get recordPhysicalRoll => 'Record physical roll';
+
+  @override
+  String get useCheatDie => 'Use Cheat Die';
+
+  @override
+  String get appealCheatDie => 'Appeal Cheat Die';
+
+  @override
+  String get diceAppealPending =>
+      'Waiting for the host to resolve the dice appeal';
+
+  @override
+  String get restoreOriginalRoll => 'Restore original';
+
+  @override
+  String get keepCheatRoll => 'Keep result';
+
+  @override
+  String get originalRoll => 'Original roll';
+
+  @override
+  String get cheatDieApplied => 'Cheat Die applied';
 }

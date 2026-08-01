@@ -73,4 +73,13 @@
   "resumeBattle": "Продолжить бой",
   "hostMustStayOpen": "Приложение ведущего должно оставаться открытым",
   "connectionError": "Не удалось подключиться к ведущему"
+  ,"levelRewardClaimed": "Уровень за победу получен"
+  ,"recordPhysicalRoll": "Записать реальный бросок"
+  ,"useCheatDie": "Читерский кубик"
+  ,"appealCheatDie": "Оспорить читерский кубик"
+  ,"diceAppealPending": "Ожидание решения ведущего по апелляции"
+  ,"restoreOriginalRoll": "Вернуть исходный"
+  ,"keepCheatRoll": "Оставить результат"
+  ,"originalRoll": "Исходный бросок"
+  ,"cheatDieApplied": "применён читерский кубик"
 }

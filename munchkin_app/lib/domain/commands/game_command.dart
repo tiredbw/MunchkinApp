@@ -7,17 +7,6 @@ part 'game_command.g.dart';
 
 @Freezed(unionKey: 'type', unionValueCase: FreezedUnionCase.pascal)
 sealed class GameCommand with _$GameCommand {
-  const factory GameCommand.joinPlayer({
-    required String playerId,
-    required String name,
-    @Default(false) bool isHost,
-  }) = JoinPlayer;
-
-  const factory GameCommand.setConnection({
-    required String playerId,
-    required bool connected,
-  }) = SetConnection;
-
   const factory GameCommand.updateSettings(RoomSettings settings) =
       UpdateSettings;
   const factory GameCommand.closeLobby() = CloseLobby;
@@ -26,10 +15,12 @@ sealed class GameCommand with _$GameCommand {
   const factory GameCommand.shuffleTurnOrder() = ShuffleTurnOrder;
   const factory GameCommand.confirmOrder() = ConfirmOrder;
   const factory GameCommand.startGame() = StartGame;
-  const factory GameCommand.adjustStats({
-    @Default(0) int levelDelta,
-    @Default(0) int strengthDelta,
-  }) = AdjustStats;
+  const factory GameCommand.adjustStats({@Default(0) int strengthDelta}) =
+      AdjustStats;
+  const factory GameCommand.adjustPlayerLevel({
+    required String playerId,
+    required int delta,
+  }) = AdjustPlayerLevel;
   const factory GameCommand.endTurn() = EndTurn;
   const factory GameCommand.startBattle() = StartBattle;
   const factory GameCommand.declareVictory() = DeclareVictory;
@@ -41,6 +32,11 @@ sealed class GameCommand with _$GameCommand {
   const factory GameCommand.raiseLevel() = RaiseLevel;
   const factory GameCommand.finishBattle() = FinishBattle;
   const factory GameCommand.rollDice() = RollDice;
+  const factory GameCommand.recordPhysicalRoll(int value) = RecordPhysicalRoll;
+  const factory GameCommand.useCheatDie(int value) = UseCheatDie;
+  const factory GameCommand.appealCheatDie() = AppealCheatDie;
+  const factory GameCommand.resolveDiceAppeal(bool accepted) =
+      ResolveDiceAppeal;
   const factory GameCommand.removePlayer(String playerId) = RemovePlayer;
   const factory GameCommand.leaveRoom() = LeaveRoom;
   const factory GameCommand.endGame() = EndGame;

@@ -73,4 +73,13 @@
   "resumeBattle": "Resume battle",
   "hostMustStayOpen": "The host app must remain open",
   "connectionError": "Could not connect to the host"
+  ,"levelRewardClaimed": "Victory level received"
+  ,"recordPhysicalRoll": "Record physical roll"
+  ,"useCheatDie": "Use Cheat Die"
+  ,"appealCheatDie": "Appeal Cheat Die"
+  ,"diceAppealPending": "Waiting for the host to resolve the dice appeal"
+  ,"restoreOriginalRoll": "Restore original"
+  ,"keepCheatRoll": "Keep result"
+  ,"originalRoll": "Original roll"
+  ,"cheatDieApplied": "Cheat Die applied"
 }
