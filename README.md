@@ -6,7 +6,7 @@ A cross-platform companion app for tabletop card games with Munchkin-style mecha
 
 [English](#english) · [Русский](#русский)
 
-> **Project status:** design and early development. The first release will work entirely over a local Wi-Fi network; online play is planned for a later stage.
+> **Project status:** a functional local-first MVP is implemented. The current development targets Android and iOS/iPadOS; real-device and mixed-network validation is the next milestone.
 
 ---
 
@@ -28,7 +28,7 @@ Physical cards, monster strength, modifiers, rewards, and table agreements remai
 - Run one authoritative countdown before a battle victory is confirmed.
 - Roll a synchronized virtual D6 or use a physical die.
 - Restore the current game state after a temporary disconnect.
-- Target Android, iOS, iPadOS, and macOS from one Flutter codebase.
+- Target Android and iOS/iPadOS from one Flutter codebase.
 
 ### Local-first architecture
 
@@ -39,7 +39,6 @@ flowchart LR
     H["Host device<br/>Flutter + WebSocket server<br/>Authoritative game state"]
     H <-->|"Local Wi-Fi"| A["Android / iPhone"]
     H <-->|"Local Wi-Fi"| B["iPad"]
-    H <-->|"Local Wi-Fi"| C["Mac"]
 ```
 
 The game logic is separated from the transport layer. A common connection interface will allow a future online backend to be added without rebuilding the core UI and rules.
@@ -59,15 +58,16 @@ The game logic is separated from the transport layer. A common connection interf
 
 ### Roadmap
 
-- [ ] Flutter project foundation and shared design system
-- [ ] Game domain models, commands, events, and state machine
-- [ ] Local host and client connections over WebSocket
-- [ ] Room creation, QR joining, and player lobby
-- [ ] Turn order, player stats, and active-player controls
-- [ ] Battle flow, shared timer, intervention, help, and escape
-- [ ] Synchronized dice rolls, reconnection, and recovery
+- [x] Flutter project foundation, Material 3 UI, navigation, Riverpod, and EN/RU localization
+- [x] Game domain models, commands, permissions, validation, and state machine
+- [x] Authoritative local host and client connections over WebSocket
+- [x] Room creation, QR/manual joining, settings, and player lobby
+- [x] Turn order, player stats, active-player controls, and synchronized turns
+- [x] Battle flow, shared timer, intervention, help, escape, and guarded level rewards
+- [x] Virtual/physical dice, host-reviewed dice appeals, reconnection, and snapshot recovery
 - [ ] Testing on real devices and mixed-platform local networks
-- [ ] Optional online rooms and persistent player profiles
+- [ ] MVP stabilization: permission failures, host backgrounding, IP changes, and hotspot scenarios
+- [ ] Optional post-MVP online rooms and persistent player profiles
 
 ### Product principle
 
@@ -93,7 +93,7 @@ Tabletop Companion — кроссплатформенный помощник д�
 - Единый достоверный таймер перед подтверждением победы.
 - Синхронный виртуальный D6 или напоминание о физическом кубике.
 - Восстановление состояния партии после краткого отключения.
-- Поддержка Android, iOS, iPadOS и macOS из общей кодовой базы Flutter.
+- Поддержка Android и iOS/iPadOS из общей кодовой базы Flutter.
 
 ### Локальная архитектура
 
@@ -104,7 +104,6 @@ flowchart LR
     H["Устройство-хост<br/>Flutter + WebSocket-сервер<br/>Главное состояние партии"]
     H <-->|"Локальная сеть Wi-Fi"| A["Android / iPhone"]
     H <-->|"Локальная сеть Wi-Fi"| B["iPad"]
-    H <-->|"Локальная сеть Wi-Fi"| C["Mac"]
 ```
 
 Игровая логика отделена от сетевого транспорта. Благодаря общему интерфейсу подключения онлайн-бэкенд можно будет добавить позже, не переписывая основные экраны и правила.
@@ -124,15 +123,16 @@ flowchart LR
 
 ### План разработки
 
-- [ ] Основа Flutter-проекта и единая дизайн-система
-- [ ] Доменные модели, команды, события и машина состояний
-- [ ] Локальные подключения хоста и клиентов по WebSocket
-- [ ] Создание комнаты, вход по QR-коду и лобби игроков
-- [ ] Очерёдность ходов, показатели и действия активного игрока
-- [ ] Бой, общий таймер, вмешательство, помощь и побег
-- [ ] Синхронный кубик, переподключение и восстановление партии
+- [x] Основа Flutter-проекта, Material 3, навигация, Riverpod и локализация EN/RU
+- [x] Доменные модели, команды, права, проверки и машина состояний
+- [x] Авторитетный локальный хост и подключения клиентов по WebSocket
+- [x] Создание комнаты, вход по QR-коду/вручную, настройки и лобби игроков
+- [x] Очерёдность, показатели, права активного игрока и синхронная передача хода
+- [x] Бой, общий таймер, вмешательство, помощь, побег и защищённая выдача уровней
+- [x] Виртуальный/физический кубик, апелляции ведущему, переподключение и восстановление партии
 - [ ] Тестирование на реальных устройствах и смешанных локальных сетях
-- [ ] Онлайн-комнаты и постоянные профили игроков
+- [ ] Стабилизация MVP: отказы разрешений, фон хоста, смена IP и работа через hotspot
+- [ ] Онлайн-комнаты и постоянные профили игроков после MVP
 
 ### Принцип продукта
 
