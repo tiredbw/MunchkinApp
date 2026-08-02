@@ -28,7 +28,11 @@ class PlayersView extends ConsumerWidget {
             title: Row(
               children: <Widget>[
                 Expanded(child: Text(player.name)),
-                if (!player.isConnected) const Icon(Icons.cloud_off, size: 18),
+                if (!player.isConnected)
+                  Tooltip(
+                    message: l10n.offline,
+                    child: const Icon(Icons.cloud_off, size: 18),
+                  ),
               ],
             ),
             subtitle: Text(
@@ -41,6 +45,7 @@ class PlayersView extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
                         IconButton(
+                          tooltip: l10n.decreaseLevel,
                           onPressed:
                               session.busy ||
                                   player.level <= game.settings.minLevel
@@ -58,6 +63,7 @@ class PlayersView extends ConsumerWidget {
                           style: Theme.of(context).textTheme.titleLarge,
                         ),
                         IconButton(
+                          tooltip: l10n.increaseLevel,
                           onPressed:
                               session.busy ||
                                   player.level >= game.settings.maxLevel

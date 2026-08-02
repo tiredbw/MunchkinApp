@@ -251,4 +251,13 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get cheatDieApplied => 'применён читерский кубик';
+
+  @override
+  String get increaseLevel => 'Повысить уровень';
+
+  @override
+  String get decreaseLevel => 'Понизить уровень';
+
+  @override
+  String get showInvite => 'Показать приглашение';
 }

@@ -197,6 +197,10 @@ void main() {
     accept(const GameCommand.appealCheatDie(), 'p2');
     expect(state.diceAppeal?.status, DiceAppealStatus.pending);
     expect(
+      engine.apply(state, const GameCommand.startBattle(), actorId: 'host'),
+      isA<GameRejected>(),
+    );
+    expect(
       engine.apply(
         state,
         const GameCommand.resolveDiceAppeal(true),
@@ -225,6 +229,10 @@ void main() {
     accept(const GameCommand.appealCheatDie(), 'p2');
     expect(
       engine.apply(state, const GameCommand.resolveEscape(), actorId: 'host'),
+      isA<GameRejected>(),
+    );
+    expect(
+      engine.apply(state, const GameCommand.resumeBattle(), actorId: 'host'),
       isA<GameRejected>(),
     );
   });

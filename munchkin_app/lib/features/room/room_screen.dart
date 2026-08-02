@@ -379,6 +379,14 @@ class _GameMenu extends ConsumerWidget {
     final controller = ref.read(sessionControllerProvider.notifier);
     return PopupMenuButton<String>(
       onSelected: (value) async {
+        if (value == 'invite') {
+          await showDialog<void>(
+            context: context,
+            builder: (context) => const Dialog(
+              child: SingleChildScrollView(child: _InviteCard()),
+            ),
+          );
+        }
         if (value == 'end') await controller.send(const GameCommand.endGame());
         if (value == 'leave') {
           await controller.leave();
@@ -386,6 +394,8 @@ class _GameMenu extends ConsumerWidget {
         }
       },
       itemBuilder: (context) => <PopupMenuEntry<String>>[
+        if (controller.isHost)
+          PopupMenuItem(value: 'invite', child: Text(l10n.showInvite)),
         if (controller.isHost)
           PopupMenuItem(value: 'end', child: Text(l10n.endGame)),
         PopupMenuItem(value: 'leave', child: Text(l10n.leave)),

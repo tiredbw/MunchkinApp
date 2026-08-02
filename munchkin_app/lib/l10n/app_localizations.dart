@@ -571,6 +571,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cheat Die applied'**
   String get cheatDieApplied;
+
+  /// No description provided for @increaseLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Increase level'**
+  String get increaseLevel;
+
+  /// No description provided for @decreaseLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Decrease level'**
+  String get decreaseLevel;
+
+  /// No description provided for @showInvite.
+  ///
+  /// In en, this message translates to:
+  /// **'Show room invite'**
+  String get showInvite;
 }
 
 class _AppLocalizationsDelegate

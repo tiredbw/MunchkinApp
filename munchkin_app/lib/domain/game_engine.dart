@@ -400,6 +400,7 @@ class GameEngine {
 
   GameState _startBattle(GameState state, String actorId) {
     _requireActive(state, actorId);
+    _requireNoPendingDiceAppeal(state);
     _require(
       state.phase == RoomPhase.playing && state.battle == null,
       GameErrorCode.invalidState,
@@ -473,6 +474,7 @@ class GameEngine {
 
   GameState _resumeBattle(GameState state, String actorId) {
     _requireActive(state, actorId);
+    _requireNoPendingDiceAppeal(state);
     final battle = _requireBattle(state);
     _require(
       const {

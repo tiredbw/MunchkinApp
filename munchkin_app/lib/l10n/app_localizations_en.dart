@@ -251,4 +251,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cheatDieApplied => 'Cheat Die applied';
+
+  @override
+  String get increaseLevel => 'Increase level';
+
+  @override
+  String get decreaseLevel => 'Decrease level';
+
+  @override
+  String get showInvite => 'Show room invite';
 }

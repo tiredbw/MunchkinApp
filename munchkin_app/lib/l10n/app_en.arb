@@ -82,4 +82,7 @@
   ,"keepCheatRoll": "Keep result"
   ,"originalRoll": "Original roll"
   ,"cheatDieApplied": "Cheat Die applied"
+  ,"increaseLevel": "Increase level"
+  ,"decreaseLevel": "Decrease level"
+  ,"showInvite": "Show room invite"
 }

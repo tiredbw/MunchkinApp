@@ -208,13 +208,14 @@ class _BattlePanel extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final controller = ref.read(sessionControllerProvider.notifier);
     final battle = game.battle;
+    final blocked = busy || game.diceAppeal?.status == DiceAppealStatus.pending;
     if (battle == null) {
       if (!isActive) return Center(child: Text(l10n.waitingForHost));
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           FilledButton.icon(
-            onPressed: busy
+            onPressed: blocked
                 ? null
                 : () => controller.send(const GameCommand.startBattle()),
             icon: const Icon(Icons.shield),
@@ -222,7 +223,7 @@ class _BattlePanel extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           OutlinedButton(
-            onPressed: busy
+            onPressed: blocked
                 ? null
                 : () => controller.send(const GameCommand.endTurn()),
             child: Text(l10n.endTurn),
@@ -238,15 +239,14 @@ class _BattlePanel extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             FilledButton(
-              onPressed:
-                  busy || game.diceAppeal?.status == DiceAppealStatus.pending
+              onPressed: blocked
                   ? null
                   : () => controller.send(const GameCommand.declareVictory()),
               child: Text(l10n.canWin),
             ),
             const SizedBox(height: 8),
             OutlinedButton(
-              onPressed: busy
+              onPressed: blocked
                   ? null
                   : () => _showCannotWin(context, controller),
               child: Text(l10n.cannotWin),
@@ -275,13 +275,13 @@ class _BattlePanel extends ConsumerWidget {
         return _ResumePanel(
           message: l10n.interventionReceived,
           active: isActive,
-          busy: busy,
+          busy: blocked,
         );
       case BattleStatus.helpRequested:
         return _ResumePanel(
           message: l10n.helpRequested,
           active: isActive,
-          busy: busy,
+          busy: blocked,
           allowEscape: true,
         );
       case BattleStatus.escaping:
@@ -297,7 +297,7 @@ class _BattlePanel extends ConsumerWidget {
             ),
             const SizedBox(height: 12),
             OutlinedButton.icon(
-              onPressed: busy || game.lastDiceRoll != null
+              onPressed: blocked || game.lastDiceRoll != null
                   ? null
                   : game.settings.diceMode == DiceMode.virtual
                   ? () => controller.send(const GameCommand.rollDice())
@@ -310,14 +310,13 @@ class _BattlePanel extends ConsumerWidget {
               ),
             ),
             FilledButton(
-              onPressed:
-                  busy || game.diceAppeal?.status == DiceAppealStatus.pending
+              onPressed: blocked
                   ? null
                   : () => controller.send(const GameCommand.resolveEscape()),
               child: Text(l10n.finishEscape),
             ),
             TextButton(
-              onPressed: busy
+              onPressed: blocked
                   ? null
                   : () => controller.send(const GameCommand.resumeBattle()),
               child: Text(l10n.resumeBattle),
@@ -337,7 +336,7 @@ class _BattlePanel extends ConsumerWidget {
             const SizedBox(height: 12),
             if (!battle.levelRewardClaimed)
               OutlinedButton.icon(
-                onPressed: busy
+                onPressed: blocked
                     ? null
                     : () => controller.send(const GameCommand.raiseLevel()),
                 icon: const Icon(Icons.arrow_upward),
@@ -346,7 +345,7 @@ class _BattlePanel extends ConsumerWidget {
             else
               Text(l10n.levelRewardClaimed, textAlign: TextAlign.center),
             FilledButton(
-              onPressed: busy
+              onPressed: blocked
                   ? null
                   : () => controller.send(const GameCommand.finishBattle()),
               child: Text(l10n.finishBattle),
@@ -356,7 +355,7 @@ class _BattlePanel extends ConsumerWidget {
       case BattleStatus.endedWithoutVictory:
         if (!isActive) return Center(child: Text(l10n.escapingNow));
         return FilledButton(
-          onPressed: busy || game.diceAppeal?.status == DiceAppealStatus.pending
+          onPressed: blocked
               ? null
               : () => controller.send(const GameCommand.finishBattle()),
           child: Text(l10n.finishBattle),

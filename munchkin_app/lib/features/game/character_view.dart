@@ -27,6 +27,7 @@ class CharacterView extends ConsumerWidget {
           actions: controller.isHost
               ? <Widget>[
                   IconButton.filledTonal(
+                    tooltip: l10n.decreaseLevel,
                     onPressed:
                         session.busy || player.level <= game.settings.minLevel
                         ? null
@@ -39,6 +40,7 @@ class CharacterView extends ConsumerWidget {
                     icon: const Icon(Icons.remove),
                   ),
                   IconButton.filled(
+                    tooltip: l10n.increaseLevel,
                     onPressed:
                         session.busy || player.level >= game.settings.maxLevel
                         ? null
