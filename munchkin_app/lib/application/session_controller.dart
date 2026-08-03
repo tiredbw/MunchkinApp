@@ -68,7 +68,7 @@ class SessionController extends Notifier<SessionState> {
   GameConnection? _connection;
   StreamSubscription<GameState>? _stateSubscription;
   StreamSubscription<ConnectionStatus>? _statusSubscription;
-  String? _localProfileId;
+  final Map<String, String> _localRoomProfileIds = <String, String>{};
 
   @override
   SessionState build() {
@@ -91,20 +91,40 @@ class SessionController extends Notifier<SessionState> {
   Future<void> createRoom({
     required String hostName,
     required RoomSettings settings,
+    List<String> localPlayerNames = const <String>[],
   }) async {
     state = state.copyWith(busy: true, clearError: true);
     try {
       final profile = await ref
           .read(statisticsControllerProvider.notifier)
           .ensureProfile(hostName);
-      _localProfileId = profile.id;
+      final profileIdsByName = <String, String>{
+        hostName.trim().toLowerCase(): profile.id,
+      };
+      for (final name in localPlayerNames) {
+        final localProfile = await ref
+            .read(statisticsControllerProvider.notifier)
+            .ensureProfile(name);
+        profileIdsByName[name.trim().toLowerCase()] = localProfile.id;
+      }
       final server = await LocalGameServer.create(
         roomId: _uuid.v4(),
         hostPlayerId: _uuid.v4(),
         hostName: hostName,
         settings: settings,
         snapshotStore: _snapshotStore,
+        localPlayerNames: localPlayerNames,
       );
+      _localRoomProfileIds
+        ..clear()
+        ..addEntries(
+          server.state.players.map(
+            (player) => MapEntry(
+              player.id,
+              profileIdsByName[player.name.trim().toLowerCase()]!,
+            ),
+          ),
+        );
       final addresses = await localIpv4Addresses();
       final invite = server.inviteFor(addresses.firstOrNull ?? '127.0.0.1');
       await _attach(LocalHostConnection(server), invite: invite);
@@ -119,6 +139,7 @@ class SessionController extends Notifier<SessionState> {
     required RoomInvite invite,
     required String playerName,
     String? preferredProfileId,
+    List<SavedLocalProfile> savedLocalProfiles = const <SavedLocalProfile>[],
   }) async {
     state = state.copyWith(busy: true, clearError: true);
     final client = LocalGameClient(invite: invite, name: playerName);
@@ -132,12 +153,23 @@ class SessionController extends Notifier<SessionState> {
             actualName ?? playerName,
             preferredId: preferredProfileId,
           );
-      _localProfileId = profile.id;
+      _localRoomProfileIds
+        ..clear()
+        ..[client.playerId!] = profile.id;
+      for (final local in savedLocalProfiles) {
+        final player = client.currentState?.playerById(local.playerId);
+        if (player?.localControllerPlayerId != client.playerId) continue;
+        final localProfile = await ref
+            .read(statisticsControllerProvider.notifier)
+            .ensureProfile(local.name, preferredId: local.profileId);
+        _localRoomProfileIds[local.playerId] = localProfile.id;
+      }
       await _clientSessionStore.save(
         SavedClientSession(
           invite: invite,
           playerName: actualName ?? playerName,
           profileId: profile.id,
+          localProfiles: savedLocalProfiles,
         ),
       );
       state = state.copyWith(busy: false, hasClientSession: true);
@@ -161,7 +193,46 @@ class SessionController extends Notifier<SessionState> {
       invite: saved.invite,
       playerName: saved.playerName,
       preferredProfileId: saved.profileId,
+      savedLocalProfiles: saved.localProfiles,
     );
+  }
+
+  Future<CommandReply> addLocalPlayer(String name) async {
+    final primary = primaryPlayerId;
+    if (primary == null) {
+      return const CommandRejected(
+        GameErrorCode.invalidState,
+        'No active connection.',
+      );
+    }
+    final playerId = _uuid.v4();
+    final profile = await ref
+        .read(statisticsControllerProvider.notifier)
+        .ensureProfile(name);
+    final reply = await send(
+      GameCommand.addLocalPlayer(playerId: playerId, name: name.trim()),
+    );
+    if (reply is! CommandAccepted) return reply;
+    _localRoomProfileIds[playerId] = profile.id;
+    final saved = await _clientSessionStore.load();
+    if (saved != null) {
+      await _clientSessionStore.save(
+        SavedClientSession(
+          invite: saved.invite,
+          playerName: saved.playerName,
+          profileId: saved.profileId,
+          localProfiles: <SavedLocalProfile>[
+            ...saved.localProfiles,
+            SavedLocalProfile(
+              playerId: playerId,
+              name: name.trim(),
+              profileId: profile.id,
+            ),
+          ],
+        ),
+      );
+    }
+    return reply;
   }
 
   Future<void> restoreRoom() async {
@@ -182,13 +253,15 @@ class SessionController extends Notifier<SessionState> {
         LocalHostConnection(server),
         invite: server.inviteFor(addresses.firstOrNull ?? '127.0.0.1'),
       );
-      final host = server.state.playerById(
-        server.state.players.firstWhere((player) => player.isHost).id,
-      )!;
-      final profile = await ref
-          .read(statisticsControllerProvider.notifier)
-          .ensureProfile(host.name);
-      _localProfileId = profile.id;
+      _localRoomProfileIds.clear();
+      for (final player in server.state.players.where(
+        (player) => player.isHost || player.isLocalToHost,
+      )) {
+        final profile = await ref
+            .read(statisticsControllerProvider.notifier)
+            .ensureProfile(player.name);
+        _localRoomProfileIds[player.id] = profile.id;
+      }
       state = state.copyWith(busy: false, hasRecovery: true);
     } on Object catch (error) {
       state = state.copyWith(busy: false, error: '$error');
@@ -233,6 +306,7 @@ class SessionController extends Notifier<SessionState> {
     await _statusSubscription?.cancel();
     await connection?.disconnect();
     _connection = null;
+    _localRoomProfileIds.clear();
     state = SessionState(hasRecovery: await _snapshotStore.load() != null);
   }
 
@@ -267,18 +341,7 @@ class SessionController extends Notifier<SessionState> {
           : primary;
       state = state.copyWith(game: game, selectedPlayerId: selected);
       if (game.phase == RoomPhase.ended) {
-        final profileId = _localProfileId;
-        if (profileId != null && primary != null) {
-          unawaited(
-            ref
-                .read(statisticsControllerProvider.notifier)
-                .recordCompletedGame(
-                  game: game,
-                  profileId: profileId,
-                  localPlayerId: primary,
-                ),
-          );
-        }
+        unawaited(_recordLocalStatistics(game));
         unawaited(_clientSessionStore.clear());
         if (connection is LocalGameClient) {
           unawaited(connection.clearIdentity());
@@ -310,6 +373,18 @@ class SessionController extends Notifier<SessionState> {
     );
   }
 
+  Future<void> _recordLocalStatistics(GameState game) async {
+    final statistics = ref.read(statisticsControllerProvider.notifier);
+    for (final entry in _localRoomProfileIds.entries) {
+      if (game.playerById(entry.key) == null) continue;
+      await statistics.recordCompletedGame(
+        game: game,
+        profileId: entry.value,
+        localPlayerId: entry.key,
+      );
+    }
+  }
+
   bool _requiresPrimaryActor(GameCommand command) =>
       command is UpdateSettings ||
       command is CloseLobby ||
@@ -323,6 +398,7 @@ class SessionController extends Notifier<SessionState> {
       command is OfferControl ||
       command is RespondControl ||
       command is RevokeControl ||
+      command is AddLocalPlayer ||
       command is RemovePlayer ||
       command is LeaveRoom ||
       command is EndGame;

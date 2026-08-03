@@ -769,6 +769,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'A battle has already been played this turn. End the turn to start another one.'**
   String get battleAlreadyPlayed;
+
+  /// No description provided for @localPlayers.
+  ///
+  /// In en, this message translates to:
+  /// **'Players on this device'**
+  String get localPlayers;
+
+  /// No description provided for @localPlayersHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add players who will take turns using the host device. They do not need phones.'**
+  String get localPlayersHint;
+
+  /// No description provided for @addLocalPlayer.
+  ///
+  /// In en, this message translates to:
+  /// **'Add player'**
+  String get addLocalPlayer;
+
+  /// No description provided for @duplicatePlayerName.
+  ///
+  /// In en, this message translates to:
+  /// **'Player names must be unique.'**
+  String get duplicatePlayerName;
 }
 
 class _AppLocalizationsDelegate

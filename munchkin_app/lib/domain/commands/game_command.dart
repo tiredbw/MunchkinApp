@@ -46,6 +46,10 @@ sealed class GameCommand with _$GameCommand {
     required bool accepted,
   }) = RespondControl;
   const factory GameCommand.revokeControl(String playerId) = RevokeControl;
+  const factory GameCommand.addLocalPlayer({
+    required String playerId,
+    required String name,
+  }) = AddLocalPlayer;
   const factory GameCommand.removePlayer(String playerId) = RemovePlayer;
   const factory GameCommand.leaveRoom() = LeaveRoom;
   const factory GameCommand.endGame() = EndGame;

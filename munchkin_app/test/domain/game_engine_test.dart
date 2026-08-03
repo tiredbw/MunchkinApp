@@ -43,6 +43,39 @@ void main() {
     expect(state.revision, 0);
   });
 
+  test('host controls players created on the host device', () {
+    final result = engine.addPlayer(
+      state,
+      playerId: 'local',
+      name: 'Alice',
+      isLocalToHost: true,
+    );
+    expect(result, isA<GameAccepted>());
+    state = (result as GameAccepted).state;
+
+    final local = state.playerById('local')!;
+    expect(local.isLocalToHost, isTrue);
+    expect(local.isConnected, isFalse);
+    expect(state.controlledPlayerIds('host'), contains('local'));
+  });
+
+  test('a connected client can add and control its local player', () {
+    addPlayer('p2', 'Alice');
+    final result = engine.apply(
+      state,
+      const GameCommand.addLocalPlayer(playerId: 'local', name: 'Bob'),
+      actorId: 'p2',
+    );
+    expect(result, isA<GameAccepted>());
+    state = (result as GameAccepted).state;
+
+    final local = state.playerById('local')!;
+    expect(local.localControllerPlayerId, 'p2');
+    expect(local.isConnected, isFalse);
+    expect(state.controlledPlayerIds('p2'), contains('local'));
+    expect(state.controlledPlayerIds('host'), isNot(contains('local')));
+  });
+
   test('normalizes names and rejects duplicates case-insensitively', () {
     addPlayer('p2', '  Alice  ');
     final result = engine.addPlayer(state, playerId: 'p3', name: 'alice');

@@ -299,7 +299,7 @@ as int,
 /// @nodoc
 mixin _$Player {
 
- String get id; String get name; bool get isHost; int get level; int get peakLevel; int get strength; bool get isConnected; DateTime? get lastSeenAt;
+ String get id; String get name; bool get isHost; int get level; int get peakLevel; int get strength; bool get isLocalToHost; String? get localControllerPlayerId; bool get isConnected; DateTime? get lastSeenAt;
 /// Create a copy of Player
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -312,16 +312,16 @@ $PlayerCopyWith<Player> get copyWith => _$PlayerCopyWithImpl<Player>(this as Pla
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Player&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.isHost, isHost) || other.isHost == isHost)&&(identical(other.level, level) || other.level == level)&&(identical(other.peakLevel, peakLevel) || other.peakLevel == peakLevel)&&(identical(other.strength, strength) || other.strength == strength)&&(identical(other.isConnected, isConnected) || other.isConnected == isConnected)&&(identical(other.lastSeenAt, lastSeenAt) || other.lastSeenAt == lastSeenAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Player&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.isHost, isHost) || other.isHost == isHost)&&(identical(other.level, level) || other.level == level)&&(identical(other.peakLevel, peakLevel) || other.peakLevel == peakLevel)&&(identical(other.strength, strength) || other.strength == strength)&&(identical(other.isLocalToHost, isLocalToHost) || other.isLocalToHost == isLocalToHost)&&(identical(other.localControllerPlayerId, localControllerPlayerId) || other.localControllerPlayerId == localControllerPlayerId)&&(identical(other.isConnected, isConnected) || other.isConnected == isConnected)&&(identical(other.lastSeenAt, lastSeenAt) || other.lastSeenAt == lastSeenAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,isHost,level,peakLevel,strength,isConnected,lastSeenAt);
+int get hashCode => Object.hash(runtimeType,id,name,isHost,level,peakLevel,strength,isLocalToHost,localControllerPlayerId,isConnected,lastSeenAt);
 
 @override
 String toString() {
-  return 'Player(id: $id, name: $name, isHost: $isHost, level: $level, peakLevel: $peakLevel, strength: $strength, isConnected: $isConnected, lastSeenAt: $lastSeenAt)';
+  return 'Player(id: $id, name: $name, isHost: $isHost, level: $level, peakLevel: $peakLevel, strength: $strength, isLocalToHost: $isLocalToHost, localControllerPlayerId: $localControllerPlayerId, isConnected: $isConnected, lastSeenAt: $lastSeenAt)';
 }
 
 
@@ -332,7 +332,7 @@ abstract mixin class $PlayerCopyWith<$Res>  {
   factory $PlayerCopyWith(Player value, $Res Function(Player) _then) = _$PlayerCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, bool isHost, int level, int peakLevel, int strength, bool isConnected, DateTime? lastSeenAt
+ String id, String name, bool isHost, int level, int peakLevel, int strength, bool isLocalToHost, String? localControllerPlayerId, bool isConnected, DateTime? lastSeenAt
 });
 
 
@@ -349,7 +349,7 @@ class _$PlayerCopyWithImpl<$Res>
 
 /// Create a copy of Player
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? isHost = null,Object? level = null,Object? peakLevel = null,Object? strength = null,Object? isConnected = null,Object? lastSeenAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? isHost = null,Object? level = null,Object? peakLevel = null,Object? strength = null,Object? isLocalToHost = null,Object? localControllerPlayerId = freezed,Object? isConnected = null,Object? lastSeenAt = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -357,7 +357,9 @@ as String,isHost: null == isHost ? _self.isHost : isHost // ignore: cast_nullabl
 as bool,level: null == level ? _self.level : level // ignore: cast_nullable_to_non_nullable
 as int,peakLevel: null == peakLevel ? _self.peakLevel : peakLevel // ignore: cast_nullable_to_non_nullable
 as int,strength: null == strength ? _self.strength : strength // ignore: cast_nullable_to_non_nullable
-as int,isConnected: null == isConnected ? _self.isConnected : isConnected // ignore: cast_nullable_to_non_nullable
+as int,isLocalToHost: null == isLocalToHost ? _self.isLocalToHost : isLocalToHost // ignore: cast_nullable_to_non_nullable
+as bool,localControllerPlayerId: freezed == localControllerPlayerId ? _self.localControllerPlayerId : localControllerPlayerId // ignore: cast_nullable_to_non_nullable
+as String?,isConnected: null == isConnected ? _self.isConnected : isConnected // ignore: cast_nullable_to_non_nullable
 as bool,lastSeenAt: freezed == lastSeenAt ? _self.lastSeenAt : lastSeenAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));
@@ -444,10 +446,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  bool isHost,  int level,  int peakLevel,  int strength,  bool isConnected,  DateTime? lastSeenAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  bool isHost,  int level,  int peakLevel,  int strength,  bool isLocalToHost,  String? localControllerPlayerId,  bool isConnected,  DateTime? lastSeenAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Player() when $default != null:
-return $default(_that.id,_that.name,_that.isHost,_that.level,_that.peakLevel,_that.strength,_that.isConnected,_that.lastSeenAt);case _:
+return $default(_that.id,_that.name,_that.isHost,_that.level,_that.peakLevel,_that.strength,_that.isLocalToHost,_that.localControllerPlayerId,_that.isConnected,_that.lastSeenAt);case _:
   return orElse();
 
 }
@@ -465,10 +467,10 @@ return $default(_that.id,_that.name,_that.isHost,_that.level,_that.peakLevel,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  bool isHost,  int level,  int peakLevel,  int strength,  bool isConnected,  DateTime? lastSeenAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  bool isHost,  int level,  int peakLevel,  int strength,  bool isLocalToHost,  String? localControllerPlayerId,  bool isConnected,  DateTime? lastSeenAt)  $default,) {final _that = this;
 switch (_that) {
 case _Player():
-return $default(_that.id,_that.name,_that.isHost,_that.level,_that.peakLevel,_that.strength,_that.isConnected,_that.lastSeenAt);case _:
+return $default(_that.id,_that.name,_that.isHost,_that.level,_that.peakLevel,_that.strength,_that.isLocalToHost,_that.localControllerPlayerId,_that.isConnected,_that.lastSeenAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -485,10 +487,10 @@ return $default(_that.id,_that.name,_that.isHost,_that.level,_that.peakLevel,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  bool isHost,  int level,  int peakLevel,  int strength,  bool isConnected,  DateTime? lastSeenAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  bool isHost,  int level,  int peakLevel,  int strength,  bool isLocalToHost,  String? localControllerPlayerId,  bool isConnected,  DateTime? lastSeenAt)?  $default,) {final _that = this;
 switch (_that) {
 case _Player() when $default != null:
-return $default(_that.id,_that.name,_that.isHost,_that.level,_that.peakLevel,_that.strength,_that.isConnected,_that.lastSeenAt);case _:
+return $default(_that.id,_that.name,_that.isHost,_that.level,_that.peakLevel,_that.strength,_that.isLocalToHost,_that.localControllerPlayerId,_that.isConnected,_that.lastSeenAt);case _:
   return null;
 
 }
@@ -500,7 +502,7 @@ return $default(_that.id,_that.name,_that.isHost,_that.level,_that.peakLevel,_th
 @JsonSerializable()
 
 class _Player extends Player {
-  const _Player({required this.id, required this.name, required this.isHost, required this.level, required this.peakLevel, required this.strength, this.isConnected = true, this.lastSeenAt}): super._();
+  const _Player({required this.id, required this.name, required this.isHost, required this.level, required this.peakLevel, required this.strength, this.isLocalToHost = false, this.localControllerPlayerId, this.isConnected = true, this.lastSeenAt}): super._();
   factory _Player.fromJson(Map<String, dynamic> json) => _$PlayerFromJson(json);
 
 @override final  String id;
@@ -509,6 +511,8 @@ class _Player extends Player {
 @override final  int level;
 @override final  int peakLevel;
 @override final  int strength;
+@override@JsonKey() final  bool isLocalToHost;
+@override final  String? localControllerPlayerId;
 @override@JsonKey() final  bool isConnected;
 @override final  DateTime? lastSeenAt;
 
@@ -525,16 +529,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Player&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.isHost, isHost) || other.isHost == isHost)&&(identical(other.level, level) || other.level == level)&&(identical(other.peakLevel, peakLevel) || other.peakLevel == peakLevel)&&(identical(other.strength, strength) || other.strength == strength)&&(identical(other.isConnected, isConnected) || other.isConnected == isConnected)&&(identical(other.lastSeenAt, lastSeenAt) || other.lastSeenAt == lastSeenAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Player&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.isHost, isHost) || other.isHost == isHost)&&(identical(other.level, level) || other.level == level)&&(identical(other.peakLevel, peakLevel) || other.peakLevel == peakLevel)&&(identical(other.strength, strength) || other.strength == strength)&&(identical(other.isLocalToHost, isLocalToHost) || other.isLocalToHost == isLocalToHost)&&(identical(other.localControllerPlayerId, localControllerPlayerId) || other.localControllerPlayerId == localControllerPlayerId)&&(identical(other.isConnected, isConnected) || other.isConnected == isConnected)&&(identical(other.lastSeenAt, lastSeenAt) || other.lastSeenAt == lastSeenAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,isHost,level,peakLevel,strength,isConnected,lastSeenAt);
+int get hashCode => Object.hash(runtimeType,id,name,isHost,level,peakLevel,strength,isLocalToHost,localControllerPlayerId,isConnected,lastSeenAt);
 
 @override
 String toString() {
-  return 'Player(id: $id, name: $name, isHost: $isHost, level: $level, peakLevel: $peakLevel, strength: $strength, isConnected: $isConnected, lastSeenAt: $lastSeenAt)';
+  return 'Player(id: $id, name: $name, isHost: $isHost, level: $level, peakLevel: $peakLevel, strength: $strength, isLocalToHost: $isLocalToHost, localControllerPlayerId: $localControllerPlayerId, isConnected: $isConnected, lastSeenAt: $lastSeenAt)';
 }
 
 
@@ -545,7 +549,7 @@ abstract mixin class _$PlayerCopyWith<$Res> implements $PlayerCopyWith<$Res> {
   factory _$PlayerCopyWith(_Player value, $Res Function(_Player) _then) = __$PlayerCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, bool isHost, int level, int peakLevel, int strength, bool isConnected, DateTime? lastSeenAt
+ String id, String name, bool isHost, int level, int peakLevel, int strength, bool isLocalToHost, String? localControllerPlayerId, bool isConnected, DateTime? lastSeenAt
 });
 
 
@@ -562,7 +566,7 @@ class __$PlayerCopyWithImpl<$Res>
 
 /// Create a copy of Player
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? isHost = null,Object? level = null,Object? peakLevel = null,Object? strength = null,Object? isConnected = null,Object? lastSeenAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? isHost = null,Object? level = null,Object? peakLevel = null,Object? strength = null,Object? isLocalToHost = null,Object? localControllerPlayerId = freezed,Object? isConnected = null,Object? lastSeenAt = freezed,}) {
   return _then(_Player(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -570,7 +574,9 @@ as String,isHost: null == isHost ? _self.isHost : isHost // ignore: cast_nullabl
 as bool,level: null == level ? _self.level : level // ignore: cast_nullable_to_non_nullable
 as int,peakLevel: null == peakLevel ? _self.peakLevel : peakLevel // ignore: cast_nullable_to_non_nullable
 as int,strength: null == strength ? _self.strength : strength // ignore: cast_nullable_to_non_nullable
-as int,isConnected: null == isConnected ? _self.isConnected : isConnected // ignore: cast_nullable_to_non_nullable
+as int,isLocalToHost: null == isLocalToHost ? _self.isLocalToHost : isLocalToHost // ignore: cast_nullable_to_non_nullable
+as bool,localControllerPlayerId: freezed == localControllerPlayerId ? _self.localControllerPlayerId : localControllerPlayerId // ignore: cast_nullable_to_non_nullable
+as String?,isConnected: null == isConnected ? _self.isConnected : isConnected // ignore: cast_nullable_to_non_nullable
 as bool,lastSeenAt: freezed == lastSeenAt ? _self.lastSeenAt : lastSeenAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));
@@ -1941,7 +1947,7 @@ return $default(_that.schemaVersion,_that.roomId,_that.revision,_that.settings,_
 @JsonSerializable()
 
 class _GameState extends GameState {
-  const _GameState({this.schemaVersion = 4, required this.roomId, this.revision = 0, required this.settings, this.phase = RoomPhase.lobby, final  List<Player> players = const <Player>[], final  List<String> turnOrder = const <String>[], final  List<ControlAssignment> controlAssignments = const <ControlAssignment>[], this.activePlayerId, this.battleStartedThisTurn = false, this.battle, this.lastDiceRoll, this.diceAppeal, this.startedAt, this.endedAt, required this.createdAt, required this.updatedAt}): _players = players,_turnOrder = turnOrder,_controlAssignments = controlAssignments,super._();
+  const _GameState({this.schemaVersion = 6, required this.roomId, this.revision = 0, required this.settings, this.phase = RoomPhase.lobby, final  List<Player> players = const <Player>[], final  List<String> turnOrder = const <String>[], final  List<ControlAssignment> controlAssignments = const <ControlAssignment>[], this.activePlayerId, this.battleStartedThisTurn = false, this.battle, this.lastDiceRoll, this.diceAppeal, this.startedAt, this.endedAt, required this.createdAt, required this.updatedAt}): _players = players,_turnOrder = turnOrder,_controlAssignments = controlAssignments,super._();
   factory _GameState.fromJson(Map<String, dynamic> json) => _$GameStateFromJson(json);
 
 @override@JsonKey() final  int schemaVersion;

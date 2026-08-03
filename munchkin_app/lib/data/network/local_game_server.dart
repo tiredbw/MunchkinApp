@@ -71,18 +71,32 @@ class LocalGameServer {
     required String hostPlayerId,
     required String hostName,
     required GameSnapshotStore snapshotStore,
+    List<String> localPlayerNames = const <String>[],
     RoomSettings settings = const RoomSettings(),
     Clock clock = const SystemClock(),
     RandomSource? random,
   }) async {
     final randomSource = random ?? SecureRandomSource();
     final engine = GameEngine(clock: clock, random: randomSource);
-    final state = engine.createRoom(
+    var state = engine.createRoom(
       roomId: roomId,
       hostPlayerId: hostPlayerId,
       hostName: hostName,
       settings: settings,
     );
+    for (final name in localPlayerNames) {
+      final result = engine.addPlayer(
+        state,
+        playerId: const Uuid().v4(),
+        name: name,
+        isLocalToHost: true,
+        localControllerPlayerId: hostPlayerId,
+      );
+      if (result is GameRejected) {
+        throw StateError(result.message);
+      }
+      state = (result as GameAccepted).state;
+    }
     final server = LocalGameServer._(
       engine: engine,
       snapshotStore: snapshotStore,
@@ -457,9 +471,20 @@ class LocalGameServer {
   bool _canControl(String controllerPlayerId, String actorId) {
     if (controllerPlayerId == actorId) return true;
     final assignment = _state.assignmentFor(actorId);
-    return assignment?.controllerPlayerId == controllerPlayerId &&
+    final delegated =
+        assignment?.controllerPlayerId == controllerPlayerId &&
         assignment?.status == ControlAssignmentStatus.active &&
         _state.playerById(actorId)?.isConnected == false;
+    if (delegated) return true;
+    final controller = _state.playerById(controllerPlayerId);
+    final actor = _state.playerById(actorId);
+    final ownsActor = actor?.localControllerPlayerId == controllerPlayerId;
+    final ownsLegacyHostActor =
+        controller?.isHost == true &&
+        actor?.localControllerPlayerId == null &&
+        actor?.isLocalToHost == true;
+    return (ownsActor || ownsLegacyHostActor) &&
+        assignment?.status != ControlAssignmentStatus.active;
   }
 
   Future<GameResult> _enqueueSystemMutation(GameResult Function() operation) {

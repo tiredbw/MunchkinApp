@@ -121,4 +121,8 @@
   ,"durationHoursMinutes": "{hours} ч {minutes} мин"
   ,"@durationHoursMinutes": {"placeholders": {"hours": {"type": "int"}, "minutes": {"type": "int"}}}
   ,"battleAlreadyPlayed": "В этом ходу уже был бой. Завершите ход, чтобы начать следующий."
+  ,"localPlayers": "Игроки на этом устройстве"
+  ,"localPlayersHint": "Добавьте игроков, которые будут по очереди играть на устройстве ведущего. Телефоны им не нужны."
+  ,"addLocalPlayer": "Добавить игрока"
+  ,"duplicatePlayerName": "Имена игроков не должны повторяться."
 }

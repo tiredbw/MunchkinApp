@@ -32,6 +32,13 @@ class PlayersView extends ConsumerWidget {
             ? l10n.pendingAssignment
             : assignment?.status == ControlAssignmentStatus.active
             ? l10n.controlledOnDevice(controllerPlayer?.name ?? '')
+            : player.localControllerPlayerId != null || player.isLocalToHost
+            ? l10n.controlledOnDevice(
+                game.playerById(player.localControllerPlayerId)?.name ??
+                    game.players
+                        .firstWhere((candidate) => candidate.isHost)
+                        .name,
+              )
             : l10n.offline;
         return Card(
           color: active ? Theme.of(context).colorScheme.primaryContainer : null,

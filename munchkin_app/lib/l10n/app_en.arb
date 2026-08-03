@@ -121,4 +121,8 @@
   ,"durationHoursMinutes": "{hours} h {minutes} min"
   ,"@durationHoursMinutes": {"placeholders": {"hours": {"type": "int"}, "minutes": {"type": "int"}}}
   ,"battleAlreadyPlayed": "A battle has already been played this turn. End the turn to start another one."
+  ,"localPlayers": "Players on this device"
+  ,"localPlayersHint": "Add players who will take turns using the host device. They do not need phones."
+  ,"addLocalPlayer": "Add player"
+  ,"duplicatePlayerName": "Player names must be unique."
 }

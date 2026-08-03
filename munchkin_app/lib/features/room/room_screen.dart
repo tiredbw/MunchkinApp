@@ -101,15 +101,37 @@ class _LobbyView extends ConsumerWidget {
                     ...game.players.map(
                       (player) => ListTile(
                         leading: Icon(
-                          player.isConnected ? Icons.person : Icons.person_off,
+                          player.isConnected ||
+                                  player.localControllerPlayerId != null ||
+                                  player.isLocalToHost
+                              ? Icons.person
+                              : Icons.person_off,
                         ),
                         title: Text(player.name),
                         subtitle: Text(
-                          player.isConnected ? l10n.connected : l10n.offline,
+                          player.isConnected
+                              ? l10n.connected
+                              : player.localControllerPlayerId != null ||
+                                    player.isLocalToHost
+                              ? l10n.controlledOnDevice(
+                                  game
+                                          .playerById(
+                                            player.localControllerPlayerId,
+                                          )
+                                          ?.name ??
+                                      game.players
+                                          .firstWhere(
+                                            (candidate) => candidate.isHost,
+                                          )
+                                          .name,
+                                )
+                              : l10n.offline,
                         ),
                         trailing: player.isHost
                             ? const Icon(Icons.admin_panel_settings_outlined)
-                            : isHost
+                            : isHost ||
+                                  player.localControllerPlayerId ==
+                                      controller.primaryPlayerId
                             ? IconButton(
                                 tooltip: l10n.removePlayer,
                                 onPressed: session.busy
@@ -122,6 +144,16 @@ class _LobbyView extends ConsumerWidget {
                             : null,
                       ),
                     ),
+                  if (game.phase == RoomPhase.lobby) ...<Widget>[
+                    const SizedBox(height: 8),
+                    OutlinedButton.icon(
+                      onPressed: session.busy || game.players.length >= 12
+                          ? null
+                          : () => _addLocalPlayer(context, controller, game),
+                      icon: const Icon(Icons.person_add_alt_1),
+                      label: Text(l10n.addLocalPlayer),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -143,6 +175,49 @@ class _LobbyView extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _addLocalPlayer(
+    BuildContext context,
+    SessionController controller,
+    GameState game,
+  ) async {
+    final l10n = AppLocalizations.of(context);
+    final textController = TextEditingController();
+    final name = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.addLocalPlayer),
+        content: TextField(
+          controller: textController,
+          autofocus: true,
+          maxLength: 24,
+          decoration: InputDecoration(labelText: l10n.yourName),
+          onSubmitted: (value) => Navigator.pop(dialogContext, value),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, textController.text),
+            child: Text(l10n.addLocalPlayer),
+          ),
+        ],
+      ),
+    );
+    textController.dispose();
+    if (name == null || name.trim().isEmpty || !context.mounted) return;
+    if (game.players.any(
+      (player) => player.name.toLowerCase() == name.trim().toLowerCase(),
+    )) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.duplicatePlayerName)));
+      return;
+    }
+    await controller.addLocalPlayer(name);
   }
 
   List<Widget> _hostActions(

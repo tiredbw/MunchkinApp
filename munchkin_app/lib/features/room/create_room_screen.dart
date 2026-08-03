@@ -24,6 +24,8 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
   final _minStrength = TextEditingController(text: '-99');
   final _maxStrength = TextEditingController(text: '99');
   final _initialStrength = TextEditingController(text: '0');
+  final List<TextEditingController> _localPlayerNames =
+      <TextEditingController>[];
   var _diceMode = DiceMode.virtual;
   var _countdown = 5.0;
 
@@ -37,6 +39,7 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
       _minStrength,
       _maxStrength,
       _initialStrength,
+      ..._localPlayerNames,
     ]) {
       controller.dispose();
     }
@@ -98,6 +101,44 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
               validator: _validateName,
             ),
             const SizedBox(height: 12),
+            Text(
+              l10n.localPlayers,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 4),
+            Text(l10n.localPlayersHint),
+            const SizedBox(height: 8),
+            for (var index = 0; index < _localPlayerNames.length; index++)
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Expanded(
+                    child: TextFormField(
+                      key: ValueKey(_localPlayerNames[index]),
+                      controller: _localPlayerNames[index],
+                      maxLength: 24,
+                      decoration: InputDecoration(labelText: l10n.yourName),
+                      validator: (value) => _validateLocalName(value, index),
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: l10n.removePlayer,
+                    onPressed: () => _removeLocalPlayer(index),
+                    icon: const Icon(Icons.remove_circle_outline),
+                  ),
+                ],
+              ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: OutlinedButton.icon(
+                onPressed: _localPlayerNames.length >= 11
+                    ? null
+                    : _addLocalPlayer,
+                icon: const Icon(Icons.person_add_alt_1),
+                label: Text(l10n.addLocalPlayer),
+              ),
+            ),
+            const SizedBox(height: 20),
             Text(l10n.settings, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 12),
             SegmentedButton<DiceMode>(
@@ -173,7 +214,36 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
 
   String? _validateName(String? value) {
     final normalized = value?.trim() ?? '';
-    return normalized.isEmpty || normalized.length > 24 ? '1–24' : null;
+    if (normalized.isEmpty || normalized.length > 24) return '1–24';
+    final duplicate = _localPlayerNames.any(
+      (controller) =>
+          controller.text.trim().toLowerCase() == normalized.toLowerCase(),
+    );
+    return duplicate ? AppLocalizations.of(context).duplicatePlayerName : null;
+  }
+
+  String? _validateLocalName(String? value, int index) {
+    final normalized = value?.trim() ?? '';
+    if (normalized.isEmpty || normalized.length > 24) return '1–24';
+    final key = normalized.toLowerCase();
+    if (_name.text.trim().toLowerCase() == key ||
+        _localPlayerNames.indexed.any(
+          (entry) =>
+              entry.$1 != index && entry.$2.text.trim().toLowerCase() == key,
+        )) {
+      return AppLocalizations.of(context).duplicatePlayerName;
+    }
+    return null;
+  }
+
+  void _addLocalPlayer() {
+    setState(() => _localPlayerNames.add(TextEditingController()));
+  }
+
+  void _removeLocalPlayer(int index) {
+    late final TextEditingController controller;
+    setState(() => controller = _localPlayerNames.removeAt(index));
+    controller.dispose();
   }
 
   Future<void> _submit() async {
@@ -204,7 +274,13 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
     try {
       await ref
           .read(sessionControllerProvider.notifier)
-          .createRoom(hostName: _name.text, settings: settings);
+          .createRoom(
+            hostName: _name.text.trim(),
+            settings: settings,
+            localPlayerNames: _localPlayerNames
+                .map((controller) => controller.text.trim())
+                .toList(growable: false),
+          );
       if (mounted) context.go('/room');
     } on Object {
       if (mounted) {

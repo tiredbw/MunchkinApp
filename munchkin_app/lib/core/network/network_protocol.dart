@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-const int currentProtocolVersion = 3;
+const int currentProtocolVersion = 4;
 const int maxNetworkMessageBytes = 64 * 1024;
 
 class NetworkEnvelope {

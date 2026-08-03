@@ -118,6 +118,12 @@ class GameEngine {
             _respondControl(state, actorId, value.playerId, value.accepted),
         revokeControl: (value) =>
             _revokeControl(state, actorId, value.playerId),
+        addLocalPlayer: (value) => _addLocalPlayer(
+          state,
+          actorId,
+          playerId: value.playerId,
+          name: value.name,
+        ),
         removePlayer: (value) => _removePlayer(state, actorId, value.playerId),
         leaveRoom: (_) => _leaveRoom(state, actorId),
         endGame: (_) => _endGame(state, actorId),
@@ -132,10 +138,20 @@ class GameEngine {
     GameState state, {
     required String playerId,
     required String name,
+    bool isLocalToHost = false,
+    String? localControllerPlayerId,
   }) {
     try {
       return GameAccepted(
-        _commit(_join(state, playerId: playerId, name: name)),
+        _commit(
+          _join(
+            state,
+            playerId: playerId,
+            name: name,
+            isLocalToHost: isLocalToHost,
+            localControllerPlayerId: localControllerPlayerId,
+          ),
+        ),
       );
     } on _RuleViolation catch (error) {
       return GameRejected(error.code, error.message);
@@ -180,6 +196,8 @@ class GameEngine {
     GameState state, {
     required String playerId,
     required String name,
+    bool isLocalToHost = false,
+    String? localControllerPlayerId,
   }) {
     _require(
       state.phase == RoomPhase.lobby,
@@ -207,6 +225,9 @@ class GameEngine {
       level: state.settings.initialLevel,
       peakLevel: state.settings.initialLevel,
       strength: state.settings.initialStrength,
+      isLocalToHost: isLocalToHost,
+      localControllerPlayerId: localControllerPlayerId,
+      isConnected: localControllerPlayerId == null && !isLocalToHost,
       lastSeenAt: _clock.now(),
     );
     return state.copyWith(players: <Player>[...state.players, player]);
@@ -227,6 +248,11 @@ class GameEngine {
     final assignments = state.controlAssignments
         .where((assignment) {
           if (connected && assignment.playerId == playerId) return false;
+          if (connected &&
+              state.playerById(assignment.playerId)?.localControllerPlayerId ==
+                  playerId) {
+            return false;
+          }
           if (!connected &&
               assignment.controllerPlayerId == playerId &&
               assignment.status == ControlAssignmentStatus.pending) {
@@ -746,8 +772,40 @@ class GameEngine {
   }
 
   GameState _removePlayer(GameState state, String actorId, String playerId) {
-    _requireHost(state, actorId);
-    return _removePlayerCore(state, playerId);
+    final actor = _requirePlayer(state, actorId);
+    final removed = _requirePlayer(state, playerId);
+    _require(
+      actor.isHost || removed.localControllerPlayerId == actorId,
+      GameErrorCode.forbidden,
+      'Only the host or the owning device can remove this player.',
+    );
+    return _removePlayerAndOwned(state, playerId);
+  }
+
+  GameState _addLocalPlayer(
+    GameState state,
+    String actorId, {
+    required String playerId,
+    required String name,
+  }) {
+    final controller = _requirePlayer(state, actorId);
+    _require(
+      controller.isConnected,
+      GameErrorCode.forbidden,
+      'Only a connected primary player can add a local player.',
+    );
+    _require(
+      state.playerById(playerId) == null,
+      GameErrorCode.invalidValue,
+      'Player ID is already in use.',
+    );
+    return _join(
+      state,
+      playerId: playerId,
+      name: name,
+      isLocalToHost: controller.isHost,
+      localControllerPlayerId: actorId,
+    );
   }
 
   GameState _offerControl(
@@ -764,10 +822,13 @@ class GameEngine {
     );
     final player = _requirePlayer(state, playerId);
     final controller = _requirePlayer(state, controllerPlayerId);
+    final originalController = state.playerById(player.localControllerPlayerId);
     _require(
-      !player.isHost && !player.isConnected,
+      !player.isHost &&
+          !player.isConnected &&
+          originalController?.isConnected != true,
       GameErrorCode.invalidState,
-      'Only an offline non-host player can be assigned.',
+      'Only a player whose original device is offline can be assigned.',
     );
     _require(
       controller.isConnected && controllerPlayerId != playerId,
@@ -854,7 +915,19 @@ class GameEngine {
       GameErrorCode.forbidden,
       'The host must end the game instead of leaving.',
     );
-    return _removePlayerCore(state, actorId);
+    return _removePlayerAndOwned(state, actorId);
+  }
+
+  GameState _removePlayerAndOwned(GameState state, String playerId) {
+    var next = state;
+    final ownedIds = state.players
+        .where((player) => player.localControllerPlayerId == playerId)
+        .map((player) => player.id)
+        .toList(growable: false);
+    for (final ownedId in ownedIds) {
+      next = _removePlayerCore(next, ownedId);
+    }
+    return _removePlayerCore(next, playerId);
   }
 
   GameState _removePlayerCore(GameState state, String playerId) {

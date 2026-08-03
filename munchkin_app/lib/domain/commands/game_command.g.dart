@@ -208,6 +208,20 @@ RevokeControl _$RevokeControlFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$RevokeControlToJson(RevokeControl instance) =>
     <String, dynamic>{'playerId': instance.playerId, 'type': instance.$type};
 
+AddLocalPlayer _$AddLocalPlayerFromJson(Map<String, dynamic> json) =>
+    AddLocalPlayer(
+      playerId: json['playerId'] as String,
+      name: json['name'] as String,
+      $type: json['type'] as String?,
+    );
+
+Map<String, dynamic> _$AddLocalPlayerToJson(AddLocalPlayer instance) =>
+    <String, dynamic>{
+      'playerId': instance.playerId,
+      'name': instance.name,
+      'type': instance.$type,
+    };
+
 RemovePlayer _$RemovePlayerFromJson(Map<String, dynamic> json) =>
     RemovePlayer(json['playerId'] as String, $type: json['type'] as String?);
 

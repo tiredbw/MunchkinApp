@@ -366,4 +366,17 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get battleAlreadyPlayed =>
       'В этом ходу уже был бой. Завершите ход, чтобы начать следующий.';
+
+  @override
+  String get localPlayers => 'Игроки на этом устройстве';
+
+  @override
+  String get localPlayersHint =>
+      'Добавьте игроков, которые будут по очереди играть на устройстве ведущего. Телефоны им не нужны.';
+
+  @override
+  String get addLocalPlayer => 'Добавить игрока';
+
+  @override
+  String get duplicatePlayerName => 'Имена игроков не должны повторяться.';
 }

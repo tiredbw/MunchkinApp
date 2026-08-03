@@ -365,4 +365,17 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get battleAlreadyPlayed =>
       'A battle has already been played this turn. End the turn to start another one.';
+
+  @override
+  String get localPlayers => 'Players on this device';
+
+  @override
+  String get localPlayersHint =>
+      'Add players who will take turns using the host device. They do not need phones.';
+
+  @override
+  String get addLocalPlayer => 'Add player';
+
+  @override
+  String get duplicatePlayerName => 'Player names must be unique.';
 }

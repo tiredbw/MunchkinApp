@@ -9,6 +9,32 @@ import 'package:munchkin_app/data/storage/game_snapshot_store.dart';
 import 'package:munchkin_app/domain/commands/game_command.dart';
 
 void main() {
+  test('room can start with players sharing the host device', () async {
+    final store = MemoryGameSnapshotStore();
+    final server = await LocalGameServer.create(
+      roomId: 'local-room',
+      hostPlayerId: 'host',
+      hostName: 'Host',
+      localPlayerNames: const <String>['Alice', 'Bob'],
+      snapshotStore: store,
+    );
+    addTearDown(server.stop);
+
+    final alice = server.state.players.firstWhere(
+      (player) => player.name == 'Alice',
+    );
+    expect(server.state.players, hasLength(3));
+    expect(alice.isLocalToHost, isTrue);
+    expect(
+      await server.sendAsHost(
+        const GameCommand.adjustStats(strengthDelta: 1),
+        actorId: alice.id,
+      ),
+      isA<CommandAccepted>(),
+    );
+    expect(server.state.playerById(alice.id)?.strength, 1);
+  });
+
   test(
     'client joins, receives snapshots and sends an authoritative command',
     () async {
@@ -118,6 +144,53 @@ void main() {
     expect(reply.type, 'error');
     expect(server.state.players.length, 2);
     expect(server.state.playerById('fake-host'), isNull);
+  });
+
+  test('network client can add and act as its own local player', () async {
+    final store = MemoryGameSnapshotStore();
+    final server = await LocalGameServer.create(
+      roomId: 'room',
+      hostPlayerId: 'host',
+      hostName: 'Host',
+      snapshotStore: store,
+    );
+    addTearDown(server.stop);
+    final client = await _TestClient.connect(
+      server.inviteFor('127.0.0.1'),
+      'Alice',
+    );
+    addTearDown(client.close);
+
+    expect(
+      (await client.send(
+        const GameCommand.addLocalPlayer(playerId: 'alice-local', name: 'Bob'),
+        revision: server.state.revision,
+      )).type,
+      'accepted',
+    );
+    expect(
+      (await client.send(
+        const GameCommand.adjustStats(strengthDelta: 1),
+        revision: server.state.revision,
+        actorId: 'alice-local',
+      )).type,
+      'accepted',
+    );
+    expect(server.state.playerById('alice-local')?.strength, 1);
+
+    final other = await _TestClient.connect(
+      server.inviteFor('127.0.0.1'),
+      'Carol',
+    );
+    addTearDown(other.close);
+    expect(
+      (await other.send(
+        const GameCommand.adjustStats(strengthDelta: 1),
+        revision: server.state.revision,
+        actorId: 'alice-local',
+      )).type,
+      'rejected',
+    );
   });
 
   test(

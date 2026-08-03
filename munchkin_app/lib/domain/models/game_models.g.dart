@@ -45,6 +45,8 @@ _Player _$PlayerFromJson(Map<String, dynamic> json) => _Player(
   level: (json['level'] as num).toInt(),
   peakLevel: (json['peakLevel'] as num).toInt(),
   strength: (json['strength'] as num).toInt(),
+  isLocalToHost: json['isLocalToHost'] as bool? ?? false,
+  localControllerPlayerId: json['localControllerPlayerId'] as String?,
   isConnected: json['isConnected'] as bool? ?? true,
   lastSeenAt: json['lastSeenAt'] == null
       ? null
@@ -58,6 +60,8 @@ Map<String, dynamic> _$PlayerToJson(_Player instance) => <String, dynamic>{
   'level': instance.level,
   'peakLevel': instance.peakLevel,
   'strength': instance.strength,
+  'isLocalToHost': instance.isLocalToHost,
+  'localControllerPlayerId': instance.localControllerPlayerId,
   'isConnected': instance.isConnected,
   'lastSeenAt': instance.lastSeenAt?.toIso8601String(),
 };
@@ -170,7 +174,7 @@ const _$DiceAppealStatusEnumMap = {
 };
 
 _GameState _$GameStateFromJson(Map<String, dynamic> json) => _GameState(
-  schemaVersion: (json['schemaVersion'] as num?)?.toInt() ?? 4,
+  schemaVersion: (json['schemaVersion'] as num?)?.toInt() ?? 6,
   roomId: json['roomId'] as String,
   revision: (json['revision'] as num?)?.toInt() ?? 0,
   settings: RoomSettings.fromJson(json['settings'] as Map<String, dynamic>),

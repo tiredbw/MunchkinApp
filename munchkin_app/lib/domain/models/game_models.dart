@@ -12,7 +12,7 @@ Map<String, Object?> _migrateDiceRollJson(Map<String, Object?> json) {
 
 Map<String, Object?> _migrateGameStateJson(Map<String, Object?> json) {
   final migrated = <String, Object?>{...json};
-  migrated['schemaVersion'] = 4;
+  migrated['schemaVersion'] = 6;
   migrated['controlAssignments'] ??= <Object?>[];
   return migrated;
 }
@@ -71,6 +71,8 @@ abstract class Player with _$Player {
     required int level,
     required int peakLevel,
     required int strength,
+    @Default(false) bool isLocalToHost,
+    String? localControllerPlayerId,
     @Default(true) bool isConnected,
     DateTime? lastSeenAt,
   }) = _Player;
@@ -143,7 +145,7 @@ abstract class GameState with _$GameState {
   const GameState._();
 
   const factory GameState({
-    @Default(4) int schemaVersion,
+    @Default(6) int schemaVersion,
     required String roomId,
     @Default(0) int revision,
     required RoomSettings settings,
@@ -185,13 +187,29 @@ abstract class GameState with _$GameState {
 
   List<String> controlledPlayerIds(String? controllerPlayerId) {
     if (controllerPlayerId == null) return const <String>[];
-    return controlAssignments
+    final controlled = controlAssignments
         .where(
           (assignment) =>
               assignment.controllerPlayerId == controllerPlayerId &&
               assignment.status == ControlAssignmentStatus.active,
         )
         .map((assignment) => assignment.playerId)
-        .toList(growable: false);
+        .toSet();
+    final controller = playerById(controllerPlayerId);
+    controlled.addAll(
+      players
+          .where((player) {
+            final owned = player.localControllerPlayerId == controllerPlayerId;
+            final legacyHostOwned =
+                player.localControllerPlayerId == null &&
+                player.isLocalToHost &&
+                controller?.isHost == true;
+            return (owned || legacyHostOwned) &&
+                assignmentFor(player.id)?.status !=
+                    ControlAssignmentStatus.active;
+          })
+          .map((player) => player.id),
+    );
+    return controlled.toList(growable: false);
   }
 }

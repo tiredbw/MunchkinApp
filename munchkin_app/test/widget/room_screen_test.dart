@@ -98,6 +98,42 @@ void main() {
     expect(find.byIcon(Icons.switch_account), findsOneWidget);
   });
 
+  testWidgets('host device exposes the local-player profile switcher', (
+    tester,
+  ) async {
+    final game = _playingGame().copyWith(
+      players: _playingGame().players
+          .map(
+            (player) => player.id == 'alice'
+                ? player.copyWith(isLocalToHost: true, isConnected: false)
+                : player,
+          )
+          .toList(growable: false),
+    );
+    await _pumpRoom(tester, game: game);
+
+    expect(find.byIcon(Icons.switch_account), findsOneWidget);
+  });
+
+  testWidgets('network player can add a local player in the lobby', (
+    tester,
+  ) async {
+    await _pumpRoomAsPlayer(
+      tester,
+      game: _playingGame().copyWith(
+        phase: RoomPhase.lobby,
+        activePlayerId: null,
+        startedAt: null,
+      ),
+      playerId: 'alice',
+    );
+
+    expect(find.text('Add player'), findsOneWidget);
+    await tester.tap(find.text('Add player'));
+    await tester.pumpAndSettle();
+    expect(find.byType(AlertDialog), findsOneWidget);
+  });
+
   testWidgets('second battle is unavailable until the turn ends', (
     tester,
   ) async {

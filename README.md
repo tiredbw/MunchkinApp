@@ -21,6 +21,8 @@ Physical cards, monster strength, modifiers, rewards, and table agreements remai
 ### Core features
 
 - Create a room on one device and join from others via QR code.
+- Add players without their own phones during room creation and switch between them on the host device.
+- Let joined players add and switch between local players on their own device while the lobby is open.
 - Play locally over Wi-Fi without accounts, cloud services, or internet access.
 - Track each player's level, strength, and total power.
 - Keep a synchronized turn order and clearly show the active player.
@@ -89,6 +91,8 @@ Tabletop Companion — кроссплатформенный помощник д�
 ### Основные возможности
 
 - Создание комнаты на одном устройстве и подключение остальных по QR-коду.
+- Возможность сразу добавить игроков без собственных телефонов и по очереди управлять ими с устройства ведущего.
+- Подключившиеся участники также могут добавить игроков на своё устройство в открытом лобби.
 - Локальная игра по Wi-Fi без аккаунтов, облачного сервера и интернета.
 - Учёт уровня, силы и общей мощи каждого участника.
 - Синхронная очерёдность ходов и наглядное отображение активного игрока.

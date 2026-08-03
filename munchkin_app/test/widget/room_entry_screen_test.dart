@@ -18,6 +18,19 @@ void main() {
     await _pump(tester, const CreateRoomScreen());
     expect(find.byIcon(Icons.arrow_back), findsOneWidget);
   });
+
+  testWidgets('create room can add players sharing the host device', (
+    tester,
+  ) async {
+    await _pump(tester, const CreateRoomScreen());
+
+    expect(find.text('Players on this device'), findsOneWidget);
+    await tester.tap(find.text('Add player'));
+    await tester.pump();
+
+    expect(find.byIcon(Icons.remove_circle_outline), findsOneWidget);
+    expect(find.widgetWithText(TextFormField, 'Your name'), findsNWidgets(2));
+  });
 }
 
 Future<void> _pump(WidgetTester tester, Widget home) async {
