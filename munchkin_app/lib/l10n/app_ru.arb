@@ -38,6 +38,7 @@
   "roomInvite": "Приглашение в комнату",
   "waitingForPlayers": "Ожидание игроков",
   "waitingForHost": "Ожидание ведущего",
+  "waitingForActivePlayer": "Ожидание активного игрока",
   "victoryCountdown": "Победа через {seconds} с",
   "@victoryCountdown": {"placeholders": {"seconds": {"type": "int"}}},
   "diceResult": "{name}: выпало {value}",
@@ -85,4 +86,39 @@
   ,"increaseLevel": "Повысить уровень"
   ,"decreaseLevel": "Понизить уровень"
   ,"showInvite": "Показать приглашение"
+  ,"continueGame": "Продолжить партию"
+  ,"continueGameFailed": "Ведущий недоступен. Повторите попытку или отсканируйте новый QR-код."
+  ,"statsLockedDuringBattle": "Во время боя нельзя менять уровень и силу."
+  ,"controlProfile": "Переключить игрока"
+  ,"playingAs": "Вы играете за: {name}"
+  ,"@playingAs": {"placeholders": {"name": {"type": "String"}}}
+  ,"controlRequested": "Ведущий предлагает управлять игроком {name} с этого устройства."
+  ,"@controlRequested": {"placeholders": {"name": {"type": "String"}}}
+  ,"accept": "Принять"
+  ,"decline": "Отклонить"
+  ,"assignDevice": "Передать на устройство"
+  ,"revokeAssignment": "Отозвать передачу"
+  ,"pendingAssignment": "Ожидает подтверждения"
+  ,"controlledOnDevice": "На устройстве игрока {name}"
+  ,"@controlledOnDevice": {"placeholders": {"name": {"type": "String"}}}
+  ,"chooseDevice": "Выберите устройство"
+  ,"statistics": "Статистика"
+  ,"gameHistory": "История партий"
+  ,"gamesPlayed": "Сыграно партий"
+  ,"wins": "Победы"
+  ,"maxLevelReached": "Максимальный уровень"
+  ,"averageDuration": "Средняя длительность"
+  ,"personalProfiles": "Персональные профили"
+  ,"addProfile": "Добавить профиль"
+  ,"profileName": "Имя профиля"
+  ,"noProfiles": "Профилей пока нет. Добавьте профиль или начните игру."
+  ,"noGameHistory": "У этого профиля пока нет завершённых партий."
+  ,"noWinner": "Победителя нет"
+  ,"winnerNames": "Победитель: {names}"
+  ,"@winnerNames": {"placeholders": {"names": {"type": "String"}}}
+  ,"durationMinutes": "{minutes} мин"
+  ,"@durationMinutes": {"placeholders": {"minutes": {"type": "int"}}}
+  ,"durationHoursMinutes": "{hours} ч {minutes} мин"
+  ,"@durationHoursMinutes": {"placeholders": {"hours": {"type": "int"}, "minutes": {"type": "int"}}}
+  ,"battleAlreadyPlayed": "В этом ходу уже был бой. Завершите ход, чтобы начать следующий."
 }

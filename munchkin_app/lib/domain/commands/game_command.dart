@@ -37,6 +37,15 @@ sealed class GameCommand with _$GameCommand {
   const factory GameCommand.appealCheatDie() = AppealCheatDie;
   const factory GameCommand.resolveDiceAppeal(bool accepted) =
       ResolveDiceAppeal;
+  const factory GameCommand.offerControl({
+    required String playerId,
+    required String controllerPlayerId,
+  }) = OfferControl;
+  const factory GameCommand.respondControl({
+    required String playerId,
+    required bool accepted,
+  }) = RespondControl;
+  const factory GameCommand.revokeControl(String playerId) = RevokeControl;
   const factory GameCommand.removePlayer(String playerId) = RemovePlayer;
   const factory GameCommand.leaveRoom() = LeaveRoom;
   const factory GameCommand.endGame() = EndGame;

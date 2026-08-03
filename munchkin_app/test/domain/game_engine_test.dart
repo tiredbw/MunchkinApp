@@ -39,6 +39,7 @@ void main() {
     expect(state.phase, RoomPhase.lobby);
     expect(state.players.single.isHost, isTrue);
     expect(state.players.single.totalPower, 1);
+    expect(state.players.single.peakLevel, 1);
     expect(state.revision, 0);
   });
 
@@ -85,6 +86,73 @@ void main() {
     expect(state.playerById('p2')?.level, 2);
   });
 
+  test('manual stat changes are rejected throughout a battle', () {
+    addPlayer('p2', 'Alice');
+    accept(const GameCommand.closeLobby(), 'host');
+    accept(const GameCommand.confirmOrder(), 'host');
+    accept(const GameCommand.startGame(), 'host');
+    accept(const GameCommand.startBattle(), 'host');
+
+    expect(
+      engine.apply(
+        state,
+        const GameCommand.adjustStats(strengthDelta: 1),
+        actorId: 'host',
+      ),
+      isA<GameRejected>(),
+    );
+    expect(
+      engine.apply(
+        state,
+        const GameCommand.adjustPlayerLevel(playerId: 'p2', delta: 1),
+        actorId: 'host',
+      ),
+      isA<GameRejected>(),
+    );
+
+    accept(const GameCommand.startEscape(), 'host');
+    accept(const GameCommand.resolveEscape(), 'host');
+    expect(
+      engine.apply(
+        state,
+        const GameCommand.adjustStats(strengthDelta: 1),
+        actorId: 'host',
+      ),
+      isA<GameRejected>(),
+    );
+    accept(const GameCommand.finishBattle(), 'host');
+    accept(const GameCommand.adjustStats(strengthDelta: 1), 'host');
+  });
+
+  test('host assigns an offline profile and owner reclaims it on return', () {
+    addPlayer('p2', 'Alice');
+    addPlayer('p3', 'Bob');
+    accept(const GameCommand.closeLobby(), 'host');
+    accept(const GameCommand.confirmOrder(), 'host');
+    accept(const GameCommand.startGame(), 'host');
+    var result = engine.setPlayerConnection(
+      state,
+      playerId: 'p2',
+      connected: false,
+    );
+    state = (result as GameAccepted).state;
+
+    accept(
+      const GameCommand.offerControl(playerId: 'p2', controllerPlayerId: 'p3'),
+      'host',
+    );
+    expect(state.assignmentFor('p2')?.status, ControlAssignmentStatus.pending);
+    accept(
+      const GameCommand.respondControl(playerId: 'p2', accepted: true),
+      'p3',
+    );
+    expect(state.controlledPlayerIds('p3'), contains('p2'));
+
+    result = engine.setPlayerConnection(state, playerId: 'p2', connected: true);
+    state = (result as GameAccepted).state;
+    expect(state.assignmentFor('p2'), isNull);
+  });
+
   test('turns cycle and only the active player can end a turn', () {
     addPlayer('p2', 'Alice');
     accept(const GameCommand.closeLobby(), 'host');
@@ -98,6 +166,25 @@ void main() {
     expect(state.activePlayerId, 'p2');
     accept(const GameCommand.endTurn(), 'p2');
     expect(state.activePlayerId, 'host');
+  });
+
+  test('allows only one battle per turn and resets after ending turn', () {
+    addPlayer('p2', 'Alice');
+    accept(const GameCommand.closeLobby(), 'host');
+    accept(const GameCommand.confirmOrder(), 'host');
+    accept(const GameCommand.startGame(), 'host');
+    accept(const GameCommand.startBattle(), 'host');
+    accept(const GameCommand.startEscape(), 'host');
+    accept(const GameCommand.resolveEscape(), 'host');
+    accept(const GameCommand.finishBattle(), 'host');
+
+    expect(
+      engine.apply(state, const GameCommand.startBattle(), actorId: 'host'),
+      isA<GameRejected>(),
+    );
+    accept(const GameCommand.endTurn(), 'host');
+    accept(const GameCommand.startBattle(), 'p2');
+    expect(state.battle?.playerId, 'p2');
   });
 
   test('first intervention stops the countdown and late one is rejected', () {
@@ -246,6 +333,33 @@ void main() {
         actorId: 'host',
       ),
       isA<GameRejected>(),
+    );
+  });
+
+  test('tracks peak level and actual game duration boundaries', () {
+    accept(const GameCommand.updateSettings(RoomSettings(maxLevel: 2)), 'host');
+    accept(const GameCommand.closeLobby(), 'host');
+    accept(const GameCommand.confirmOrder(), 'host');
+    accept(const GameCommand.startGame(), 'host');
+    expect(state.startedAt, clock.now());
+
+    accept(
+      const GameCommand.adjustPlayerLevel(playerId: 'host', delta: 1),
+      'host',
+    );
+    accept(
+      const GameCommand.adjustPlayerLevel(playerId: 'host', delta: -1),
+      'host',
+    );
+    expect(state.playerById('host')?.level, 1);
+    expect(state.playerById('host')?.peakLevel, 2);
+
+    clock.advance(const Duration(minutes: 42));
+    accept(const GameCommand.endGame(), 'host');
+    expect(state.endedAt, clock.now());
+    expect(
+      state.endedAt!.difference(state.startedAt!),
+      const Duration(minutes: 42),
     );
   });
 }

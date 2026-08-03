@@ -108,6 +108,7 @@ class LocalGameServer {
       players: snapshot.state.players
           .map((player) => player.copyWith(isConnected: false))
           .toList(growable: false),
+      controlAssignments: const <ControlAssignment>[],
     );
     final battle = state.battle;
     if (battle?.status == BattleStatus.countdown) {
@@ -136,11 +137,20 @@ class LocalGameServer {
     pin: _pin,
   );
 
-  Future<CommandReply> sendAsHost(GameCommand command) {
+  Future<CommandReply> sendAsHost(GameCommand command, {String? actorId}) {
     final host = _state.players.firstWhere((player) => player.isHost);
+    final effectiveActorId = actorId ?? host.id;
+    if (!_canControl(host.id, effectiveActorId)) {
+      return Future<CommandReply>.value(
+        const CommandRejected(
+          GameErrorCode.forbidden,
+          'This device cannot control that player.',
+        ),
+      );
+    }
     return _enqueueCommand(
       messageId: _uuid.v4(),
-      actorId: host.id,
+      actorId: effectiveActorId,
       expectedRevision: _state.revision,
       command: command,
     );
@@ -222,8 +232,7 @@ class LocalGameServer {
             );
             return;
           }
-          if (envelope.type != 'command' ||
-              envelope.senderId != boundPlayerId) {
+          if (envelope.type != 'command') {
             throw const FormatException('Invalid command envelope.');
           }
           unawaited(_handleCommand(socket, envelope, boundPlayerId!));
@@ -300,13 +309,13 @@ class LocalGameServer {
     }
 
     final previous = _sockets[playerId];
+    _sockets[playerId] = socket;
     if (previous != null) {
       await previous.close(
         WebSocketStatus.normalClosure,
         'Reconnected elsewhere.',
       );
     }
-    _sockets[playerId] = socket;
     socket.add(
       NetworkEnvelope(
         messageId: _uuid.v4(),
@@ -326,8 +335,26 @@ class LocalGameServer {
   Future<void> _handleCommand(
     WebSocket socket,
     NetworkEnvelope envelope,
-    String actorId,
+    String controllerPlayerId,
   ) async {
+    final actorId = envelope.senderId ?? controllerPlayerId;
+    final claimedController = envelope.payload['controllerPlayerId'] as String?;
+    if (claimedController != controllerPlayerId ||
+        !_canControl(controllerPlayerId, actorId)) {
+      socket.add(
+        NetworkEnvelope(
+          messageId: envelope.messageId,
+          type: 'rejected',
+          roomId: _state.roomId,
+          payload: <String, Object?>{
+            'code': GameErrorCode.forbidden.name,
+            'message': 'This device cannot control that player.',
+            'state': _state.toJson(),
+          },
+        ).encode(),
+      );
+      return;
+    }
     final rawCommand = envelope.payload['command'];
     if (rawCommand is! Map<String, Object?>) {
       _sendError(socket, 'invalidCommand', 'Command payload is missing.');
@@ -425,6 +452,14 @@ class LocalGameServer {
         connected: connected,
       ),
     );
+  }
+
+  bool _canControl(String controllerPlayerId, String actorId) {
+    if (controllerPlayerId == actorId) return true;
+    final assignment = _state.assignmentFor(actorId);
+    return assignment?.controllerPlayerId == controllerPlayerId &&
+        assignment?.status == ControlAssignmentStatus.active &&
+        _state.playerById(actorId)?.isConnected == false;
   }
 
   Future<GameResult> _enqueueSystemMutation(GameResult Function() operation) {
@@ -549,7 +584,8 @@ class LocalHostConnection implements GameConnection {
   }
 
   @override
-  Future<CommandReply> send(GameCommand command) => server.sendAsHost(command);
+  Future<CommandReply> send(GameCommand command, {String? actorId}) =>
+      server.sendAsHost(command, actorId: actorId);
 
   @override
   Future<void> disconnect() async {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:munchkin_app/application/session_controller.dart';
 import 'package:munchkin_app/features/home/home_screen.dart';
 import 'package:munchkin_app/l10n/app_localizations.dart';
 
@@ -21,6 +22,29 @@ void main() {
     expect(find.text('Создать комнату'), findsOneWidget);
     expect(find.text('Войти в комнату'), findsOneWidget);
   });
+
+  testWidgets('home screen offers a saved client session', (tester) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          sessionControllerProvider.overrideWith(_SavedSessionController.new),
+        ],
+        child: MaterialApp(
+          locale: const Locale('en'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const HomeScreen(),
+        ),
+      ),
+    );
+    await tester.pump();
+    expect(find.text('Continue game'), findsOneWidget);
+  });
+}
+
+class _SavedSessionController extends SessionController {
+  @override
+  SessionState build() => const SessionState(hasClientSession: true);
 }
 
 Widget _testApp(Locale locale) => ProviderScope(

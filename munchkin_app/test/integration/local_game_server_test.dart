@@ -121,6 +121,90 @@ void main() {
   });
 
   test(
+    'delegated profile is authorized and spoofed profile is rejected',
+    () async {
+      final store = MemoryGameSnapshotStore();
+      final server = await LocalGameServer.create(
+        roomId: 'room',
+        hostPlayerId: 'host',
+        hostName: 'Host',
+        snapshotStore: store,
+      );
+      addTearDown(server.stop);
+      final alice = await _TestClient.connect(
+        server.inviteFor('127.0.0.1'),
+        'Alice',
+      );
+      final aliceId = alice.playerId;
+      final aliceSecret = alice.resumeSecret;
+      final bob = await _TestClient.connect(
+        server.inviteFor('127.0.0.1'),
+        'Bob',
+      );
+      addTearDown(bob.close);
+
+      expect(
+        await server.sendAsHost(const GameCommand.closeLobby()),
+        isA<CommandAccepted>(),
+      );
+      expect(
+        await server.sendAsHost(const GameCommand.confirmOrder()),
+        isA<CommandAccepted>(),
+      );
+      expect(
+        await server.sendAsHost(const GameCommand.startGame()),
+        isA<CommandAccepted>(),
+      );
+
+      await alice.close();
+      await Future<void>.delayed(const Duration(milliseconds: 30));
+      expect(
+        await server.sendAsHost(
+          GameCommand.offerControl(
+            playerId: aliceId,
+            controllerPlayerId: bob.playerId,
+          ),
+        ),
+        isA<CommandAccepted>(),
+      );
+      expect(
+        (await bob.send(
+          GameCommand.respondControl(playerId: aliceId, accepted: true),
+          revision: server.state.revision,
+        )).type,
+        'accepted',
+      );
+      expect(
+        (await bob.send(
+          const GameCommand.adjustStats(strengthDelta: 5),
+          revision: server.state.revision,
+          actorId: aliceId,
+        )).type,
+        'accepted',
+      );
+      expect(server.state.playerById(aliceId)?.strength, 5);
+      expect(
+        (await bob.send(
+          const GameCommand.adjustStats(strengthDelta: 1),
+          revision: server.state.revision,
+          actorId: 'host',
+        )).type,
+        'rejected',
+      );
+
+      final resumed = await _TestClient.connect(
+        server.inviteFor('127.0.0.1'),
+        'Alice',
+        playerId: aliceId,
+        resumeSecret: aliceSecret,
+      );
+      addTearDown(resumed.close);
+      expect(server.state.assignmentFor(aliceId), isNull);
+      expect(server.state.playerById(aliceId)?.strength, 5);
+    },
+  );
+
+  test(
     'disconnect after end game does not recreate recovery snapshot',
     () async {
       final store = MemoryGameSnapshotStore();
@@ -200,6 +284,7 @@ class _TestClient {
   Future<NetworkEnvelope> send(
     GameCommand command, {
     required int revision,
+    String? actorId,
   }) async {
     final messageId = 'command-${DateTime.now().microsecondsSinceEpoch}';
     socket.add(
@@ -207,9 +292,12 @@ class _TestClient {
         messageId: messageId,
         type: 'command',
         roomId: 'room',
-        senderId: playerId,
+        senderId: actorId ?? playerId,
         expectedRevision: revision,
-        payload: <String, Object?>{'command': command.toJson()},
+        payload: <String, Object?>{
+          'controllerPlayerId': playerId,
+          'command': command.toJson(),
+        },
       ).encode(),
     );
     return (_externalMessages ?? _messages)
@@ -231,7 +319,10 @@ class _TestClient {
         type: 'command',
         roomId: 'room',
         senderId: playerId,
-        payload: <String, Object?>{'command': command},
+        payload: <String, Object?>{
+          'controllerPlayerId': playerId,
+          'command': command,
+        },
       ).encode(),
     );
     return response;

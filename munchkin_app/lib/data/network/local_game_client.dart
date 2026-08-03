@@ -180,7 +180,7 @@ class LocalGameClient implements GameConnection {
   }
 
   @override
-  Future<CommandReply> send(GameCommand command) async {
+  Future<CommandReply> send(GameCommand command, {String? actorId}) async {
     final socket = _socket;
     final state = _state;
     final sender = _playerId;
@@ -198,9 +198,12 @@ class LocalGameClient implements GameConnection {
         messageId: messageId,
         type: 'command',
         roomId: invite.roomId,
-        senderId: sender,
+        senderId: actorId ?? sender,
         expectedRevision: state.revision,
-        payload: <String, Object?>{'command': command.toJson()},
+        payload: <String, Object?>{
+          'controllerPlayerId': sender,
+          'command': command.toJson(),
+        },
       ).encode(),
     );
     return completer.future.timeout(
@@ -248,5 +251,10 @@ class LocalGameClient implements GameConnection {
     _pending.clear();
     await _snapshots.close();
     await _statuses.close();
+  }
+
+  Future<void> clearIdentity() async {
+    await _secureStorage.delete(key: '${invite.roomId}.playerId');
+    await _secureStorage.delete(key: '${invite.roomId}.resumeSecret');
   }
 }

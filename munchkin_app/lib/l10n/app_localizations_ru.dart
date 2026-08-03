@@ -122,6 +122,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get waitingForHost => 'Ожидание ведущего';
 
   @override
+  String get waitingForActivePlayer => 'Ожидание активного игрока';
+
+  @override
   String victoryCountdown(int seconds) {
     return 'Победа через $seconds с';
   }
@@ -260,4 +263,107 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get showInvite => 'Показать приглашение';
+
+  @override
+  String get continueGame => 'Продолжить партию';
+
+  @override
+  String get continueGameFailed =>
+      'Ведущий недоступен. Повторите попытку или отсканируйте новый QR-код.';
+
+  @override
+  String get statsLockedDuringBattle =>
+      'Во время боя нельзя менять уровень и силу.';
+
+  @override
+  String get controlProfile => 'Переключить игрока';
+
+  @override
+  String playingAs(String name) {
+    return 'Вы играете за: $name';
+  }
+
+  @override
+  String controlRequested(String name) {
+    return 'Ведущий предлагает управлять игроком $name с этого устройства.';
+  }
+
+  @override
+  String get accept => 'Принять';
+
+  @override
+  String get decline => 'Отклонить';
+
+  @override
+  String get assignDevice => 'Передать на устройство';
+
+  @override
+  String get revokeAssignment => 'Отозвать передачу';
+
+  @override
+  String get pendingAssignment => 'Ожидает подтверждения';
+
+  @override
+  String controlledOnDevice(String name) {
+    return 'На устройстве игрока $name';
+  }
+
+  @override
+  String get chooseDevice => 'Выберите устройство';
+
+  @override
+  String get statistics => 'Статистика';
+
+  @override
+  String get gameHistory => 'История партий';
+
+  @override
+  String get gamesPlayed => 'Сыграно партий';
+
+  @override
+  String get wins => 'Победы';
+
+  @override
+  String get maxLevelReached => 'Максимальный уровень';
+
+  @override
+  String get averageDuration => 'Средняя длительность';
+
+  @override
+  String get personalProfiles => 'Персональные профили';
+
+  @override
+  String get addProfile => 'Добавить профиль';
+
+  @override
+  String get profileName => 'Имя профиля';
+
+  @override
+  String get noProfiles =>
+      'Профилей пока нет. Добавьте профиль или начните игру.';
+
+  @override
+  String get noGameHistory => 'У этого профиля пока нет завершённых партий.';
+
+  @override
+  String get noWinner => 'Победителя нет';
+
+  @override
+  String winnerNames(String names) {
+    return 'Победитель: $names';
+  }
+
+  @override
+  String durationMinutes(int minutes) {
+    return '$minutes мин';
+  }
+
+  @override
+  String durationHoursMinutes(int hours, int minutes) {
+    return '$hours ч $minutes мин';
+  }
+
+  @override
+  String get battleAlreadyPlayed =>
+      'В этом ходу уже был бой. Завершите ход, чтобы начать следующий.';
 }

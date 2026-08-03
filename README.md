@@ -28,6 +28,9 @@ Physical cards, monster strength, modifiers, rewards, and table agreements remai
 - Run one authoritative countdown before a battle victory is confirmed.
 - Roll a synchronized virtual D6 or use a physical die.
 - Restore the current game state after a temporary disconnect.
+- Continue the same player profile after reopening the app, or temporarily control an offline player's profile from another device with host approval and recipient confirmation.
+- Lock manual level and strength edits while a battle is active.
+- Keep local personal profiles with the 10 latest completed games, wins, games played, peak level, and average game duration.
 - Target Android and iOS/iPadOS from one Flutter codebase.
 
 ### Local-first architecture
@@ -93,6 +96,9 @@ Tabletop Companion — кроссплатформенный помощник д�
 - Единый достоверный таймер перед подтверждением победы.
 - Синхронный виртуальный D6 или напоминание о физическом кубике.
 - Восстановление состояния партии после краткого отключения.
+- Возврат в прежний профиль после перезапуска приложения и подтверждаемая передача отключённого игрока на другое устройство.
+- Блокировка ручного изменения уровня и силы на время боя.
+- Локальные персональные профили с 10 последними партиями, победами, числом игр, максимальным уровнем и средней длительностью.
 - Поддержка Android и iOS/iPadOS из общей кодовой базы Flutter.
 
 ### Локальная архитектура

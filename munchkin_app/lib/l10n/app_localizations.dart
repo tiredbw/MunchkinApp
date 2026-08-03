@@ -320,6 +320,12 @@ abstract class AppLocalizations {
   /// **'Waiting for the host'**
   String get waitingForHost;
 
+  /// No description provided for @waitingForActivePlayer.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the active player'**
+  String get waitingForActivePlayer;
+
   /// No description provided for @victoryCountdown.
   ///
   /// In en, this message translates to:
@@ -589,6 +595,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show room invite'**
   String get showInvite;
+
+  /// No description provided for @continueGame.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue game'**
+  String get continueGame;
+
+  /// No description provided for @continueGameFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The host is unavailable. Try again or scan a new QR code.'**
+  String get continueGameFailed;
+
+  /// No description provided for @statsLockedDuringBattle.
+  ///
+  /// In en, this message translates to:
+  /// **'Level and strength cannot be changed during a battle.'**
+  String get statsLockedDuringBattle;
+
+  /// No description provided for @controlProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch player'**
+  String get controlProfile;
+
+  /// No description provided for @playingAs.
+  ///
+  /// In en, this message translates to:
+  /// **'Playing as {name}'**
+  String playingAs(String name);
+
+  /// No description provided for @controlRequested.
+  ///
+  /// In en, this message translates to:
+  /// **'The host wants this device to control {name}.'**
+  String controlRequested(String name);
+
+  /// No description provided for @accept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get accept;
+
+  /// No description provided for @decline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get decline;
+
+  /// No description provided for @assignDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign to a device'**
+  String get assignDevice;
+
+  /// No description provided for @revokeAssignment.
+  ///
+  /// In en, this message translates to:
+  /// **'Revoke assignment'**
+  String get revokeAssignment;
+
+  /// No description provided for @pendingAssignment.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for confirmation'**
+  String get pendingAssignment;
+
+  /// No description provided for @controlledOnDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'On {name}\'s device'**
+  String controlledOnDevice(String name);
+
+  /// No description provided for @chooseDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a device'**
+  String get chooseDevice;
+
+  /// No description provided for @statistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get statistics;
+
+  /// No description provided for @gameHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Game history'**
+  String get gameHistory;
+
+  /// No description provided for @gamesPlayed.
+  ///
+  /// In en, this message translates to:
+  /// **'Games played'**
+  String get gamesPlayed;
+
+  /// No description provided for @wins.
+  ///
+  /// In en, this message translates to:
+  /// **'Wins'**
+  String get wins;
+
+  /// No description provided for @maxLevelReached.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum level'**
+  String get maxLevelReached;
+
+  /// No description provided for @averageDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Average duration'**
+  String get averageDuration;
+
+  /// No description provided for @personalProfiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal profiles'**
+  String get personalProfiles;
+
+  /// No description provided for @addProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Add profile'**
+  String get addProfile;
+
+  /// No description provided for @profileName.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile name'**
+  String get profileName;
+
+  /// No description provided for @noProfiles.
+  ///
+  /// In en, this message translates to:
+  /// **'No profiles yet. Add one or start a game.'**
+  String get noProfiles;
+
+  /// No description provided for @noGameHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'No completed games for this profile.'**
+  String get noGameHistory;
+
+  /// No description provided for @noWinner.
+  ///
+  /// In en, this message translates to:
+  /// **'No winner'**
+  String get noWinner;
+
+  /// No description provided for @winnerNames.
+  ///
+  /// In en, this message translates to:
+  /// **'Winner: {names}'**
+  String winnerNames(String names);
+
+  /// No description provided for @durationMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String durationMinutes(int minutes);
+
+  /// No description provided for @durationHoursMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} h {minutes} min'**
+  String durationHoursMinutes(int hours, int minutes);
+
+  /// No description provided for @battleAlreadyPlayed.
+  ///
+  /// In en, this message translates to:
+  /// **'A battle has already been played this turn. End the turn to start another one.'**
+  String get battleAlreadyPlayed;
 }
 
 class _AppLocalizationsDelegate

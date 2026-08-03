@@ -175,6 +175,39 @@ ResolveDiceAppeal _$ResolveDiceAppealFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$ResolveDiceAppealToJson(ResolveDiceAppeal instance) =>
     <String, dynamic>{'accepted': instance.accepted, 'type': instance.$type};
 
+OfferControl _$OfferControlFromJson(Map<String, dynamic> json) => OfferControl(
+  playerId: json['playerId'] as String,
+  controllerPlayerId: json['controllerPlayerId'] as String,
+  $type: json['type'] as String?,
+);
+
+Map<String, dynamic> _$OfferControlToJson(OfferControl instance) =>
+    <String, dynamic>{
+      'playerId': instance.playerId,
+      'controllerPlayerId': instance.controllerPlayerId,
+      'type': instance.$type,
+    };
+
+RespondControl _$RespondControlFromJson(Map<String, dynamic> json) =>
+    RespondControl(
+      playerId: json['playerId'] as String,
+      accepted: json['accepted'] as bool,
+      $type: json['type'] as String?,
+    );
+
+Map<String, dynamic> _$RespondControlToJson(RespondControl instance) =>
+    <String, dynamic>{
+      'playerId': instance.playerId,
+      'accepted': instance.accepted,
+      'type': instance.$type,
+    };
+
+RevokeControl _$RevokeControlFromJson(Map<String, dynamic> json) =>
+    RevokeControl(json['playerId'] as String, $type: json['type'] as String?);
+
+Map<String, dynamic> _$RevokeControlToJson(RevokeControl instance) =>
+    <String, dynamic>{'playerId': instance.playerId, 'type': instance.$type};
+
 RemovePlayer _$RemovePlayerFromJson(Map<String, dynamic> json) =>
     RemovePlayer(json['playerId'] as String, $type: json['type'] as String?);
 

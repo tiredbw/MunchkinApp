@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-const int currentProtocolVersion = 2;
+const int currentProtocolVersion = 3;
 const int maxNetworkMessageBytes = 64 * 1024;
 
 class NetworkEnvelope {
@@ -73,6 +73,22 @@ class RoomInvite {
   final String roomId;
   final String token;
   final String pin;
+
+  Map<String, Object?> toJson() => <String, Object?>{
+    'host': host,
+    'port': port,
+    'roomId': roomId,
+    'token': token,
+    'pin': pin,
+  };
+
+  factory RoomInvite.fromJson(Map<String, Object?> json) => RoomInvite(
+    host: json['host'] as String? ?? '',
+    port: json['port'] as int? ?? 0,
+    roomId: json['roomId'] as String? ?? '',
+    token: json['token'] as String? ?? '',
+    pin: json['pin'] as String? ?? '',
+  );
 
   Uri toUri() => Uri(
     scheme: 'munchkin',

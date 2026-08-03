@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../application/session_controller.dart';
 import '../../domain/commands/game_command.dart';
+import '../../domain/models/game_models.dart';
 import '../../l10n/app_localizations.dart';
 
 class PlayersView extends ConsumerWidget {
@@ -21,80 +22,131 @@ class PlayersView extends ConsumerWidget {
       itemBuilder: (context, index) {
         final player = game.playerById(game.turnOrder[index])!;
         final active = player.id == game.activePlayerId;
+        final assignment = game.assignmentFor(player.id);
+        final controllerPlayer = game.playerById(
+          assignment?.controllerPlayerId,
+        );
+        final status = player.isConnected
+            ? l10n.connected
+            : assignment?.status == ControlAssignmentStatus.pending
+            ? l10n.pendingAssignment
+            : assignment?.status == ControlAssignmentStatus.active
+            ? l10n.controlledOnDevice(controllerPlayer?.name ?? '')
+            : l10n.offline;
         return Card(
           color: active ? Theme.of(context).colorScheme.primaryContainer : null,
-          child: ListTile(
-            leading: CircleAvatar(child: Text('${index + 1}')),
-            title: Row(
-              children: <Widget>[
-                Expanded(child: Text(player.name)),
-                if (!player.isConnected)
-                  Tooltip(
-                    message: l10n.offline,
-                    child: const Icon(Icons.cloud_off, size: 18),
-                  ),
-              ],
-            ),
-            subtitle: Text(
-              '${l10n.level}: ${player.level}  ·  ${l10n.strength}: ${player.strength}',
-            ),
-            trailing: isHost
-                ? SizedBox(
-                    width: 136,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        IconButton(
-                          tooltip: l10n.decreaseLevel,
-                          onPressed:
-                              session.busy ||
-                                  player.level <= game.settings.minLevel
-                              ? null
-                              : () => controller.send(
-                                  GameCommand.adjustPlayerLevel(
-                                    playerId: player.id,
-                                    delta: -1,
-                                  ),
-                                ),
-                          icon: const Icon(Icons.remove),
-                        ),
-                        Text(
-                          '${player.totalPower}',
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                        IconButton(
-                          tooltip: l10n.increaseLevel,
-                          onPressed:
-                              session.busy ||
-                                  player.level >= game.settings.maxLevel
-                              ? null
-                              : () => controller.send(
-                                  GameCommand.adjustPlayerLevel(
-                                    playerId: player.id,
-                                    delta: 1,
-                                  ),
-                                ),
-                          icon: const Icon(Icons.add),
-                        ),
-                      ],
-                    ),
-                  )
-                : Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+          child: Column(
+            children: <Widget>[
+              ListTile(
+                leading: CircleAvatar(child: Text('${index + 1}')),
+                title: Text(player.name),
+                subtitle: Text(
+                  '${l10n.level}: ${player.level} · ${l10n.strength}: ${player.strength}\n$status',
+                ),
+                isThreeLine: true,
+                trailing: Text(
+                  '${player.totalPower}',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ),
+              if (isHost)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
-                      Text(
-                        '${player.totalPower}',
-                        style: Theme.of(context).textTheme.titleLarge,
+                      IconButton(
+                        tooltip: l10n.decreaseLevel,
+                        onPressed:
+                            session.busy ||
+                                game.battle != null ||
+                                player.level <= game.settings.minLevel
+                            ? null
+                            : () => controller.send(
+                                GameCommand.adjustPlayerLevel(
+                                  playerId: player.id,
+                                  delta: -1,
+                                ),
+                              ),
+                        icon: const Icon(Icons.remove),
                       ),
-                      Text(
-                        l10n.totalPower,
-                        style: Theme.of(context).textTheme.labelSmall,
+                      IconButton(
+                        tooltip: l10n.increaseLevel,
+                        onPressed:
+                            session.busy ||
+                                game.battle != null ||
+                                player.level >= game.settings.maxLevel
+                            ? null
+                            : () => controller.send(
+                                GameCommand.adjustPlayerLevel(
+                                  playerId: player.id,
+                                  delta: 1,
+                                ),
+                              ),
+                        icon: const Icon(Icons.add),
                       ),
+                      if (!player.isHost && !player.isConnected)
+                        assignment == null
+                            ? IconButton(
+                                tooltip: l10n.assignDevice,
+                                onPressed: session.busy
+                                    ? null
+                                    : () => _assignPlayer(
+                                        context,
+                                        controller,
+                                        game,
+                                        player,
+                                      ),
+                                icon: const Icon(Icons.devices_other),
+                              )
+                            : IconButton(
+                                tooltip: l10n.revokeAssignment,
+                                onPressed: session.busy
+                                    ? null
+                                    : () => controller.send(
+                                        GameCommand.revokeControl(player.id),
+                                      ),
+                                icon: const Icon(Icons.link_off),
+                              ),
                     ],
                   ),
+                ),
+            ],
           ),
         );
       },
+    );
+  }
+
+  Future<void> _assignPlayer(
+    BuildContext context,
+    SessionController controller,
+    GameState game,
+    Player player,
+  ) async {
+    final candidates = game.players
+        .where((value) => value.isConnected && value.id != player.id)
+        .toList(growable: false);
+    final targetId = await showDialog<String>(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: Text(AppLocalizations.of(context).chooseDevice),
+        children: candidates
+            .map(
+              (candidate) => SimpleDialogOption(
+                onPressed: () => Navigator.pop(context, candidate.id),
+                child: Text(candidate.name),
+              ),
+            )
+            .toList(growable: false),
+      ),
+    );
+    if (targetId == null) return;
+    await controller.send(
+      GameCommand.offerControl(
+        playerId: player.id,
+        controllerPlayerId: targetId,
+      ),
     );
   }
 }

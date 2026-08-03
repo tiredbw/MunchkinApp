@@ -210,7 +210,22 @@ class _BattlePanel extends ConsumerWidget {
     final battle = game.battle;
     final blocked = busy || game.diceAppeal?.status == DiceAppealStatus.pending;
     if (battle == null) {
-      if (!isActive) return Center(child: Text(l10n.waitingForHost));
+      if (!isActive) return Center(child: Text(l10n.waitingForActivePlayer));
+      if (game.battleStartedThisTurn) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Text(l10n.battleAlreadyPlayed, textAlign: TextAlign.center),
+            const SizedBox(height: 8),
+            OutlinedButton(
+              onPressed: blocked
+                  ? null
+                  : () => controller.send(const GameCommand.endTurn()),
+              child: Text(l10n.endTurn),
+            ),
+          ],
+        );
+      }
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[

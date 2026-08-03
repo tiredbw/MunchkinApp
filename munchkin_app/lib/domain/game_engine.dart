@@ -57,6 +57,7 @@ class GameEngine {
           name: normalizedHostName,
           isHost: true,
           level: settings.initialLevel,
+          peakLevel: settings.initialLevel,
           strength: settings.initialStrength,
           lastSeenAt: now,
         ),
@@ -107,6 +108,16 @@ class GameEngine {
         appealCheatDie: (_) => _appealCheatDie(state, actorId),
         resolveDiceAppeal: (value) =>
             _resolveDiceAppeal(state, actorId, value.accepted),
+        offerControl: (value) => _offerControl(
+          state,
+          actorId,
+          value.playerId,
+          value.controllerPlayerId,
+        ),
+        respondControl: (value) =>
+            _respondControl(state, actorId, value.playerId, value.accepted),
+        revokeControl: (value) =>
+            _revokeControl(state, actorId, value.playerId),
         removePlayer: (value) => _removePlayer(state, actorId, value.playerId),
         leaveRoom: (_) => _leaveRoom(state, actorId),
         endGame: (_) => _endGame(state, actorId),
@@ -194,6 +205,7 @@ class GameEngine {
       name: normalizedName,
       isHost: false,
       level: state.settings.initialLevel,
+      peakLevel: state.settings.initialLevel,
       strength: state.settings.initialStrength,
       lastSeenAt: _clock.now(),
     );
@@ -212,7 +224,18 @@ class GameEngine {
       isConnected: connected,
       lastSeenAt: _clock.now(),
     );
-    return state.copyWith(players: players);
+    final assignments = state.controlAssignments
+        .where((assignment) {
+          if (connected && assignment.playerId == playerId) return false;
+          if (!connected &&
+              assignment.controllerPlayerId == playerId &&
+              assignment.status == ControlAssignmentStatus.pending) {
+            return false;
+          }
+          return true;
+        })
+        .toList(growable: false);
+    return state.copyWith(players: players, controlAssignments: assignments);
   }
 
   GameState _updateSettings(
@@ -231,6 +254,10 @@ class GameEngine {
         .map(
           (player) => player.copyWith(
             level: player.level.clamp(settings.minLevel, settings.maxLevel),
+            peakLevel: player.peakLevel.clamp(
+              settings.minLevel,
+              settings.maxLevel,
+            ),
             strength: player.strength.clamp(
               settings.minStrength,
               settings.maxStrength,
@@ -323,6 +350,7 @@ class GameEngine {
     return state.copyWith(
       phase: RoomPhase.playing,
       activePlayerId: state.turnOrder.first,
+      startedAt: _clock.now(),
     );
   }
 
@@ -331,6 +359,11 @@ class GameEngine {
     String actorId, {
     required int strengthDelta,
   }) {
+    _require(
+      state.battle == null,
+      GameErrorCode.invalidState,
+      'Character stats cannot be changed during a battle.',
+    );
     _require(
       const {-5, -1, 1, 5}.contains(strengthDelta),
       GameErrorCode.invalidValue,
@@ -359,6 +392,11 @@ class GameEngine {
   ) {
     _requireHost(state, actorId);
     _require(
+      state.battle == null,
+      GameErrorCode.invalidState,
+      'Character stats cannot be changed during a battle.',
+    );
+    _require(
       delta == -1 || delta == 1,
       GameErrorCode.invalidValue,
       'Unsupported level adjustment.',
@@ -373,7 +411,10 @@ class GameEngine {
       'Level is outside the room limits.',
     );
     final players = [...state.players];
-    players[index] = player.copyWith(level: level);
+    players[index] = player.copyWith(
+      level: level,
+      peakLevel: level > player.peakLevel ? level : player.peakLevel,
+    );
     return state.copyWith(players: players);
   }
 
@@ -393,6 +434,7 @@ class GameEngine {
     );
     return state.copyWith(
       activePlayerId: state.turnOrder[(current + 1) % state.turnOrder.length],
+      battleStartedThisTurn: false,
       lastDiceRoll: null,
       diceAppeal: null,
     );
@@ -406,7 +448,15 @@ class GameEngine {
       GameErrorCode.invalidState,
       'A battle is already active.',
     );
-    return state.copyWith(battle: BattleState(playerId: actorId));
+    _require(
+      !state.battleStartedThisTurn,
+      GameErrorCode.invalidState,
+      'Only one battle is allowed per turn.',
+    );
+    return state.copyWith(
+      battle: BattleState(playerId: actorId),
+      battleStartedThisTurn: true,
+    );
   }
 
   GameState _declareVictory(GameState state, String actorId) {
@@ -542,7 +592,11 @@ class GameEngine {
     final players = [...state.players];
     final player = players[index];
     if (player.level < state.settings.maxLevel) {
-      players[index] = player.copyWith(level: player.level + 1);
+      final level = player.level + 1;
+      players[index] = player.copyWith(
+        level: level,
+        peakLevel: level > player.peakLevel ? level : player.peakLevel,
+      );
     }
     return state.copyWith(
       players: players,
@@ -696,6 +750,103 @@ class GameEngine {
     return _removePlayerCore(state, playerId);
   }
 
+  GameState _offerControl(
+    GameState state,
+    String actorId,
+    String playerId,
+    String controllerPlayerId,
+  ) {
+    _requireHost(state, actorId);
+    _require(
+      state.phase == RoomPhase.playing,
+      GameErrorCode.invalidState,
+      'Player control can only be assigned during a game.',
+    );
+    final player = _requirePlayer(state, playerId);
+    final controller = _requirePlayer(state, controllerPlayerId);
+    _require(
+      !player.isHost && !player.isConnected,
+      GameErrorCode.invalidState,
+      'Only an offline non-host player can be assigned.',
+    );
+    _require(
+      controller.isConnected && controllerPlayerId != playerId,
+      GameErrorCode.invalidState,
+      'The destination device is not connected.',
+    );
+    _require(
+      state.assignmentFor(playerId) == null,
+      GameErrorCode.invalidState,
+      'This player already has a pending or active assignment.',
+    );
+    return state.copyWith(
+      controlAssignments: <ControlAssignment>[
+        ...state.controlAssignments,
+        ControlAssignment(
+          playerId: playerId,
+          controllerPlayerId: controllerPlayerId,
+        ),
+      ],
+    );
+  }
+
+  GameState _respondControl(
+    GameState state,
+    String actorId,
+    String playerId,
+    bool accepted,
+  ) {
+    final assignment = state.assignmentFor(playerId);
+    _require(
+      assignment != null &&
+          assignment.status == ControlAssignmentStatus.pending,
+      GameErrorCode.invalidState,
+      'There is no pending control request.',
+    );
+    _require(
+      assignment!.controllerPlayerId == actorId,
+      GameErrorCode.forbidden,
+      'Only the destination device can answer this request.',
+    );
+    if (!accepted) {
+      return state.copyWith(
+        controlAssignments: state.controlAssignments
+            .where((value) => value.playerId != playerId)
+            .toList(growable: false),
+      );
+    }
+    final player = _requirePlayer(state, playerId);
+    final controller = _requirePlayer(state, actorId);
+    _require(
+      !player.isConnected && controller.isConnected,
+      GameErrorCode.invalidState,
+      'The assignment is no longer available.',
+    );
+    return state.copyWith(
+      controlAssignments: state.controlAssignments
+          .map(
+            (value) => value.playerId == playerId
+                ? value.copyWith(status: ControlAssignmentStatus.active)
+                : value,
+          )
+          .toList(growable: false),
+    );
+  }
+
+  GameState _revokeControl(GameState state, String actorId, String playerId) {
+    _requireHost(state, actorId);
+    _require(
+      state.assignmentFor(playerId) != null,
+      GameErrorCode.invalidState,
+      'This player is not assigned.',
+    );
+    return state.copyWith(
+      controlAssignments: state.controlAssignments
+          .where((value) => value.playerId != playerId)
+          .toList(growable: false),
+    );
+  }
+
   GameState _leaveRoom(GameState state, String actorId) {
     final player = _requirePlayer(state, actorId);
     _require(
@@ -731,7 +882,17 @@ class GameEngine {
     return state.copyWith(
       players: players,
       turnOrder: order,
+      controlAssignments: state.controlAssignments
+          .where(
+            (assignment) =>
+                assignment.playerId != playerId &&
+                assignment.controllerPlayerId != playerId,
+          )
+          .toList(growable: false),
       activePlayerId: active,
+      battleStartedThisTurn: active == state.activePlayerId
+          ? state.battleStartedThisTurn
+          : false,
       battle: battle,
       lastDiceRoll: removed.id == state.activePlayerId
           ? null
@@ -748,6 +909,8 @@ class GameEngine {
       activePlayerId: null,
       lastDiceRoll: null,
       diceAppeal: null,
+      controlAssignments: const <ControlAssignment>[],
+      endedAt: _clock.now(),
     );
   }
 

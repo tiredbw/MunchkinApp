@@ -304,7 +304,9 @@ class _GameShell extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final game = ref.watch(sessionControllerProvider).game!;
+    final session = ref.watch(sessionControllerProvider);
+    final game = session.game!;
+    final controller = ref.read(sessionControllerProvider.notifier);
     final views = <Widget>[
       const PlayersView(),
       const CharacterView(),
@@ -330,12 +332,50 @@ class _GameShell extends ConsumerWidget {
         : l10n.activePlayer(game.activePlayer!.name);
     final appBar = AppBar(
       title: InkWell(onTap: () => onIndexChanged(2), child: Text(title)),
-      actions: <Widget>[const _GameMenu()],
+      actions: <Widget>[
+        if (controller.controllablePlayerIds.length > 1)
+          PopupMenuButton<String>(
+            tooltip: l10n.controlProfile,
+            icon: const Icon(Icons.switch_account),
+            initialValue: session.selectedPlayerId,
+            onSelected: controller.selectPlayer,
+            itemBuilder: (context) => controller.controllablePlayerIds
+                .map(
+                  (id) => PopupMenuItem<String>(
+                    value: id,
+                    child: Text(game.playerById(id)?.name ?? id),
+                  ),
+                )
+                .toList(growable: false),
+          ),
+        const _GameMenu(),
+      ],
+    );
+    final content = Column(
+      children: <Widget>[
+        const _PendingControlRequests(),
+        if (controller.controllablePlayerIds.length > 1)
+          Material(
+            color: Theme.of(context).colorScheme.secondaryContainer,
+            child: ListTile(
+              dense: true,
+              leading: const Icon(Icons.person_pin_circle_outlined),
+              title: Text(
+                l10n.playingAs(
+                  game.playerById(controller.playerId)?.name ?? '',
+                ),
+              ),
+            ),
+          ),
+        Expanded(
+          child: IndexedStack(index: index, children: views),
+        ),
+      ],
     );
     if (!wide) {
       return Scaffold(
         appBar: appBar,
-        body: IndexedStack(index: index, children: views),
+        body: content,
         bottomNavigationBar: NavigationBar(
           selectedIndex: index,
           onDestinationSelected: onIndexChanged,
@@ -361,10 +401,71 @@ class _GameShell extends ConsumerWidget {
                 .toList(growable: false),
           ),
           const VerticalDivider(width: 1),
-          Expanded(
-            child: IndexedStack(index: index, children: views),
-          ),
+          Expanded(child: content),
         ],
+      ),
+    );
+  }
+}
+
+class _PendingControlRequests extends ConsumerWidget {
+  const _PendingControlRequests();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final session = ref.watch(sessionControllerProvider);
+    final controller = ref.read(sessionControllerProvider.notifier);
+    final game = session.game!;
+    final requests = game.controlAssignments
+        .where(
+          (assignment) =>
+              assignment.controllerPlayerId == controller.primaryPlayerId &&
+              assignment.status == ControlAssignmentStatus.pending,
+        )
+        .toList(growable: false);
+    if (requests.isEmpty) return const SizedBox.shrink();
+    final assignment = requests.first;
+    final player = game.playerById(assignment.playerId);
+    final l10n = AppLocalizations.of(context);
+    return Material(
+      color: Theme.of(context).colorScheme.tertiaryContainer,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Text(l10n.controlRequested(player?.name ?? '')),
+            const SizedBox(height: 4),
+            Wrap(
+              alignment: WrapAlignment.end,
+              spacing: 8,
+              children: <Widget>[
+                TextButton(
+                  onPressed: session.busy
+                      ? null
+                      : () => controller.send(
+                          GameCommand.respondControl(
+                            playerId: assignment.playerId,
+                            accepted: false,
+                          ),
+                        ),
+                  child: Text(l10n.decline),
+                ),
+                FilledButton.tonal(
+                  onPressed: session.busy
+                      ? null
+                      : () => controller.send(
+                          GameCommand.respondControl(
+                            playerId: assignment.playerId,
+                            accepted: true,
+                          ),
+                        ),
+                  child: Text(l10n.accept),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
