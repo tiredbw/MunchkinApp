@@ -38,6 +38,7 @@
   "roomInvite": "Room invite",
   "waitingForPlayers": "Waiting for players",
   "waitingForHost": "Waiting for the host",
+  "waitingForActivePlayer": "Waiting for the active player",
   "victoryCountdown": "Victory in {seconds} s",
   "@victoryCountdown": {"placeholders": {"seconds": {"type": "int"}}},
   "diceResult": "{name} rolled {value}",
@@ -73,4 +74,51 @@
   "resumeBattle": "Resume battle",
   "hostMustStayOpen": "The host app must remain open",
   "connectionError": "Could not connect to the host"
+  ,"levelRewardClaimed": "Victory level received"
+  ,"recordPhysicalRoll": "Record physical roll"
+  ,"useCheatDie": "Use Cheat Die"
+  ,"appealCheatDie": "Appeal Cheat Die"
+  ,"diceAppealPending": "Waiting for the host to resolve the dice appeal"
+  ,"restoreOriginalRoll": "Restore original"
+  ,"keepCheatRoll": "Keep result"
+  ,"originalRoll": "Original roll"
+  ,"cheatDieApplied": "Cheat Die applied"
+  ,"increaseLevel": "Increase level"
+  ,"decreaseLevel": "Decrease level"
+  ,"showInvite": "Show room invite"
+  ,"continueGame": "Continue game"
+  ,"continueGameFailed": "The host is unavailable. Try again or scan a new QR code."
+  ,"statsLockedDuringBattle": "Level and strength cannot be changed during a battle."
+  ,"controlProfile": "Switch player"
+  ,"playingAs": "Playing as {name}"
+  ,"@playingAs": {"placeholders": {"name": {"type": "String"}}}
+  ,"controlRequested": "The host wants this device to control {name}."
+  ,"@controlRequested": {"placeholders": {"name": {"type": "String"}}}
+  ,"accept": "Accept"
+  ,"decline": "Decline"
+  ,"assignDevice": "Assign to a device"
+  ,"revokeAssignment": "Revoke assignment"
+  ,"pendingAssignment": "Waiting for confirmation"
+  ,"controlledOnDevice": "On {name}'s device"
+  ,"@controlledOnDevice": {"placeholders": {"name": {"type": "String"}}}
+  ,"chooseDevice": "Choose a device"
+  ,"statistics": "Statistics"
+  ,"gameHistory": "Game history"
+  ,"gamesPlayed": "Games played"
+  ,"wins": "Wins"
+  ,"maxLevelReached": "Maximum level"
+  ,"averageDuration": "Average duration"
+  ,"personalProfiles": "Personal profiles"
+  ,"addProfile": "Add profile"
+  ,"profileName": "Profile name"
+  ,"noProfiles": "No profiles yet. Add one or start a game."
+  ,"noGameHistory": "No completed games for this profile."
+  ,"noWinner": "No winner"
+  ,"winnerNames": "Winner: {names}"
+  ,"@winnerNames": {"placeholders": {"names": {"type": "String"}}}
+  ,"durationMinutes": "{minutes} min"
+  ,"@durationMinutes": {"placeholders": {"minutes": {"type": "int"}}}
+  ,"durationHoursMinutes": "{hours} h {minutes} min"
+  ,"@durationHoursMinutes": {"placeholders": {"hours": {"type": "int"}, "minutes": {"type": "int"}}}
+  ,"battleAlreadyPlayed": "A battle has already been played this turn. End the turn to start another one."
 }

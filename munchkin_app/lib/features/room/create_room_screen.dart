@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../application/session_controller.dart';
+import '../../application/statistics_controller.dart';
+import '../../data/storage/statistics_store.dart';
 import '../../domain/models/game_models.dart';
 import '../../l10n/app_localizations.dart';
 
@@ -47,13 +49,48 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
     final busy = ref.watch(
       sessionControllerProvider.select((value) => value.busy),
     );
+    final statistics = ref.watch(statisticsControllerProvider).value;
+    final profiles = statistics?.profiles ?? const <UserProfile>[];
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.createRoom)),
+      appBar: AppBar(
+        leading: IconButton(
+          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/');
+            }
+          },
+          icon: const Icon(Icons.arrow_back),
+        ),
+        title: Text(l10n.createRoom),
+      ),
       body: Form(
         key: _formKey,
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: <Widget>[
+            if (profiles.isNotEmpty) ...<Widget>[
+              Wrap(
+                spacing: 8,
+                children: profiles
+                    .map(
+                      (profile) => ChoiceChip(
+                        selected: profile.id == statistics?.activeProfileId,
+                        label: Text(profile.name),
+                        onSelected: (_) {
+                          _name.text = profile.name;
+                          ref
+                              .read(statisticsControllerProvider.notifier)
+                              .selectProfile(profile.id);
+                        },
+                      ),
+                    )
+                    .toList(growable: false),
+              ),
+              const SizedBox(height: 8),
+            ],
             TextFormField(
               controller: _name,
               maxLength: 24,

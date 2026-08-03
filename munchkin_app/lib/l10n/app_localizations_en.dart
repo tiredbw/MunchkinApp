@@ -122,6 +122,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get waitingForHost => 'Waiting for the host';
 
   @override
+  String get waitingForActivePlayer => 'Waiting for the active player';
+
+  @override
   String victoryCountdown(int seconds) {
     return 'Victory in $seconds s';
   }
@@ -223,4 +226,143 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get connectionError => 'Could not connect to the host';
+
+  @override
+  String get levelRewardClaimed => 'Victory level received';
+
+  @override
+  String get recordPhysicalRoll => 'Record physical roll';
+
+  @override
+  String get useCheatDie => 'Use Cheat Die';
+
+  @override
+  String get appealCheatDie => 'Appeal Cheat Die';
+
+  @override
+  String get diceAppealPending =>
+      'Waiting for the host to resolve the dice appeal';
+
+  @override
+  String get restoreOriginalRoll => 'Restore original';
+
+  @override
+  String get keepCheatRoll => 'Keep result';
+
+  @override
+  String get originalRoll => 'Original roll';
+
+  @override
+  String get cheatDieApplied => 'Cheat Die applied';
+
+  @override
+  String get increaseLevel => 'Increase level';
+
+  @override
+  String get decreaseLevel => 'Decrease level';
+
+  @override
+  String get showInvite => 'Show room invite';
+
+  @override
+  String get continueGame => 'Continue game';
+
+  @override
+  String get continueGameFailed =>
+      'The host is unavailable. Try again or scan a new QR code.';
+
+  @override
+  String get statsLockedDuringBattle =>
+      'Level and strength cannot be changed during a battle.';
+
+  @override
+  String get controlProfile => 'Switch player';
+
+  @override
+  String playingAs(String name) {
+    return 'Playing as $name';
+  }
+
+  @override
+  String controlRequested(String name) {
+    return 'The host wants this device to control $name.';
+  }
+
+  @override
+  String get accept => 'Accept';
+
+  @override
+  String get decline => 'Decline';
+
+  @override
+  String get assignDevice => 'Assign to a device';
+
+  @override
+  String get revokeAssignment => 'Revoke assignment';
+
+  @override
+  String get pendingAssignment => 'Waiting for confirmation';
+
+  @override
+  String controlledOnDevice(String name) {
+    return 'On $name\'s device';
+  }
+
+  @override
+  String get chooseDevice => 'Choose a device';
+
+  @override
+  String get statistics => 'Statistics';
+
+  @override
+  String get gameHistory => 'Game history';
+
+  @override
+  String get gamesPlayed => 'Games played';
+
+  @override
+  String get wins => 'Wins';
+
+  @override
+  String get maxLevelReached => 'Maximum level';
+
+  @override
+  String get averageDuration => 'Average duration';
+
+  @override
+  String get personalProfiles => 'Personal profiles';
+
+  @override
+  String get addProfile => 'Add profile';
+
+  @override
+  String get profileName => 'Profile name';
+
+  @override
+  String get noProfiles => 'No profiles yet. Add one or start a game.';
+
+  @override
+  String get noGameHistory => 'No completed games for this profile.';
+
+  @override
+  String get noWinner => 'No winner';
+
+  @override
+  String winnerNames(String names) {
+    return 'Winner: $names';
+  }
+
+  @override
+  String durationMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String durationHoursMinutes(int hours, int minutes) {
+    return '$hours h $minutes min';
+  }
+
+  @override
+  String get battleAlreadyPlayed =>
+      'A battle has already been played this turn. End the turn to start another one.';
 }

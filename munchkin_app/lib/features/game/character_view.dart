@@ -13,6 +13,8 @@ class CharacterView extends ConsumerWidget {
     final session = ref.watch(sessionControllerProvider);
     final controller = ref.read(sessionControllerProvider.notifier);
     final player = session.game!.playerById(controller.playerId);
+    final game = session.game!;
+    final statsLocked = game.battle != null;
     final l10n = AppLocalizations.of(context);
     if (player == null) return const Center(child: CircularProgressIndicator());
     return ListView(
@@ -23,24 +25,40 @@ class CharacterView extends ConsumerWidget {
         _StatCard(
           label: l10n.level,
           value: player.level,
-          actions: <Widget>[
-            IconButton.filledTonal(
-              onPressed: session.busy
-                  ? null
-                  : () => controller.send(
-                      const GameCommand.adjustStats(levelDelta: -1),
-                    ),
-              icon: const Icon(Icons.remove),
-            ),
-            IconButton.filled(
-              onPressed: session.busy
-                  ? null
-                  : () => controller.send(
-                      const GameCommand.adjustStats(levelDelta: 1),
-                    ),
-              icon: const Icon(Icons.add),
-            ),
-          ],
+          actions: controller.isHost
+              ? <Widget>[
+                  IconButton.filledTonal(
+                    tooltip: l10n.decreaseLevel,
+                    onPressed:
+                        session.busy ||
+                            statsLocked ||
+                            player.level <= game.settings.minLevel
+                        ? null
+                        : () => controller.send(
+                            GameCommand.adjustPlayerLevel(
+                              playerId: player.id,
+                              delta: -1,
+                            ),
+                          ),
+                    icon: const Icon(Icons.remove),
+                  ),
+                  IconButton.filled(
+                    tooltip: l10n.increaseLevel,
+                    onPressed:
+                        session.busy ||
+                            statsLocked ||
+                            player.level >= game.settings.maxLevel
+                        ? null
+                        : () => controller.send(
+                            GameCommand.adjustPlayerLevel(
+                              playerId: player.id,
+                              delta: 1,
+                            ),
+                          ),
+                    icon: const Icon(Icons.add),
+                  ),
+                ]
+              : const <Widget>[],
         ),
         const SizedBox(height: 12),
         _StatCard(
@@ -49,7 +67,11 @@ class CharacterView extends ConsumerWidget {
           actions: <Widget>[
             for (final delta in <int>[-5, -1, 1, 5])
               FilledButton.tonal(
-                onPressed: session.busy
+                onPressed:
+                    session.busy ||
+                        statsLocked ||
+                        player.strength + delta < game.settings.minStrength ||
+                        player.strength + delta > game.settings.maxStrength
                     ? null
                     : () => controller.send(
                         GameCommand.adjustStats(strengthDelta: delta),
@@ -59,6 +81,14 @@ class CharacterView extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: 20),
+        if (statsLocked) ...<Widget>[
+          Text(
+            l10n.statsLockedDuringBattle,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
+          const SizedBox(height: 12),
+        ],
         Card(
           child: Padding(
             padding: const EdgeInsets.all(24),

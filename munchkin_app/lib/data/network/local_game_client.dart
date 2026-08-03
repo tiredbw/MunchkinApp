@@ -71,7 +71,11 @@ class LocalGameClient implements GameConnection {
           if (data is! String) return;
           try {
             final envelope = NetworkEnvelope.decode(data);
-            _handleEnvelope(envelope, welcome);
+            unawaited(
+              _handleEnvelope(envelope, welcome).catchError((Object error) {
+                if (!welcome.isCompleted) welcome.completeError(error);
+              }),
+            );
           } on Object catch (error, stackTrace) {
             if (!welcome.isCompleted) welcome.completeError(error, stackTrace);
           }
@@ -110,7 +114,10 @@ class LocalGameClient implements GameConnection {
     }
   }
 
-  void _handleEnvelope(NetworkEnvelope envelope, Completer<void> welcome) {
+  Future<void> _handleEnvelope(
+    NetworkEnvelope envelope,
+    Completer<void> welcome,
+  ) async {
     if (envelope.protocolVersion != currentProtocolVersion ||
         envelope.roomId != invite.roomId) {
       throw const FormatException('Protocol or room mismatch.');
@@ -119,7 +126,7 @@ class LocalGameClient implements GameConnection {
       case 'welcome':
         _playerId = envelope.payload['playerId'] as String;
         _resumeSecret = envelope.payload['resumeSecret'] as String;
-        _storeIdentity();
+        await _storeIdentity();
         _readState(envelope.payload['state']);
         if (!welcome.isCompleted) welcome.complete();
       case 'snapshot':
@@ -173,7 +180,7 @@ class LocalGameClient implements GameConnection {
   }
 
   @override
-  Future<CommandReply> send(GameCommand command) async {
+  Future<CommandReply> send(GameCommand command, {String? actorId}) async {
     final socket = _socket;
     final state = _state;
     final sender = _playerId;
@@ -191,9 +198,12 @@ class LocalGameClient implements GameConnection {
         messageId: messageId,
         type: 'command',
         roomId: invite.roomId,
-        senderId: sender,
+        senderId: actorId ?? sender,
         expectedRevision: state.revision,
-        payload: <String, Object?>{'command': command.toJson()},
+        payload: <String, Object?>{
+          'controllerPlayerId': sender,
+          'command': command.toJson(),
+        },
       ).encode(),
     );
     return completer.future.timeout(
@@ -241,5 +251,10 @@ class LocalGameClient implements GameConnection {
     _pending.clear();
     await _snapshots.close();
     await _statuses.close();
+  }
+
+  Future<void> clearIdentity() async {
+    await _secureStorage.delete(key: '${invite.roomId}.playerId');
+    await _secureStorage.delete(key: '${invite.roomId}.resumeSecret');
   }
 }

@@ -33,6 +33,6 @@ abstract interface class GameConnection {
   GameState? get currentState;
   String? get playerId;
 
-  Future<CommandReply> send(GameCommand command);
+  Future<CommandReply> send(GameCommand command, {String? actorId});
   Future<void> disconnect();
 }

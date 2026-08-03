@@ -108,6 +108,7 @@ class LocalGameServer {
       players: snapshot.state.players
           .map((player) => player.copyWith(isConnected: false))
           .toList(growable: false),
+      controlAssignments: const <ControlAssignment>[],
     );
     final battle = state.battle;
     if (battle?.status == BattleStatus.countdown) {
@@ -136,14 +137,28 @@ class LocalGameServer {
     pin: _pin,
   );
 
-  Future<CommandReply> sendAsHost(GameCommand command) {
+  Future<CommandReply> sendAsHost(GameCommand command, {String? actorId}) {
     final host = _state.players.firstWhere((player) => player.isHost);
+    final effectiveActorId = actorId ?? host.id;
+    if (!_canControl(host.id, effectiveActorId)) {
+      return Future<CommandReply>.value(
+        const CommandRejected(
+          GameErrorCode.forbidden,
+          'This device cannot control that player.',
+        ),
+      );
+    }
     return _enqueueCommand(
       messageId: _uuid.v4(),
-      actorId: host.id,
+      actorId: effectiveActorId,
       expectedRevision: _state.revision,
       command: command,
     );
+  }
+
+  Future<void> connectHost() async {
+    final host = _state.players.firstWhere((player) => player.isHost);
+    await _markConnected(host.id, true);
   }
 
   Future<void> stop() async {
@@ -217,8 +232,7 @@ class LocalGameServer {
             );
             return;
           }
-          if (envelope.type != 'command' ||
-              envelope.senderId != boundPlayerId) {
+          if (envelope.type != 'command') {
             throw const FormatException('Invalid command envelope.');
           }
           unawaited(_handleCommand(socket, envelope, boundPlayerId!));
@@ -276,29 +290,32 @@ class LocalGameServer {
       final name = envelope.payload['name'] as String? ?? '';
       playerId = _uuid.v4();
       issuedSecret = _secureToken();
-      final result = _engine.apply(
-        _state,
-        GameCommand.joinPlayer(playerId: playerId, name: name),
-        actorId: 'system',
-      );
+      final result = await _enqueueSystemMutation(() {
+        final result = _engine.addPlayer(
+          _state,
+          playerId: playerId,
+          name: name,
+        );
+        if (result is GameAccepted) {
+          _resumeTokenHashes[playerId] = _hash(issuedSecret);
+        }
+        return result;
+      });
       if (result is GameRejected) {
         _sendError(socket, result.code.name, result.message);
         await socket.close(WebSocketStatus.policyViolation);
         return null;
       }
-      _state = (result as GameAccepted).state;
-      _resumeTokenHashes[playerId] = _hash(issuedSecret);
-      await _publish();
     }
 
     final previous = _sockets[playerId];
+    _sockets[playerId] = socket;
     if (previous != null) {
       await previous.close(
         WebSocketStatus.normalClosure,
         'Reconnected elsewhere.',
       );
     }
-    _sockets[playerId] = socket;
     socket.add(
       NetworkEnvelope(
         messageId: _uuid.v4(),
@@ -318,14 +335,38 @@ class LocalGameServer {
   Future<void> _handleCommand(
     WebSocket socket,
     NetworkEnvelope envelope,
-    String actorId,
+    String controllerPlayerId,
   ) async {
+    final actorId = envelope.senderId ?? controllerPlayerId;
+    final claimedController = envelope.payload['controllerPlayerId'] as String?;
+    if (claimedController != controllerPlayerId ||
+        !_canControl(controllerPlayerId, actorId)) {
+      socket.add(
+        NetworkEnvelope(
+          messageId: envelope.messageId,
+          type: 'rejected',
+          roomId: _state.roomId,
+          payload: <String, Object?>{
+            'code': GameErrorCode.forbidden.name,
+            'message': 'This device cannot control that player.',
+            'state': _state.toJson(),
+          },
+        ).encode(),
+      );
+      return;
+    }
     final rawCommand = envelope.payload['command'];
     if (rawCommand is! Map<String, Object?>) {
       _sendError(socket, 'invalidCommand', 'Command payload is missing.');
       return;
     }
-    final command = GameCommand.fromJson(rawCommand);
+    late final GameCommand command;
+    try {
+      command = GameCommand.fromJson(rawCommand);
+    } on Object catch (error) {
+      _sendError(socket, 'invalidCommand', '$error');
+      return;
+    }
     final reply = await _enqueueCommand(
       messageId: envelope.messageId,
       actorId: actorId,
@@ -404,15 +445,42 @@ class LocalGameServer {
   }
 
   Future<void> _markConnected(String playerId, bool connected) async {
-    final result = _engine.apply(
-      _state,
-      GameCommand.setConnection(playerId: playerId, connected: connected),
-      actorId: 'system',
+    await _enqueueSystemMutation(
+      () => _engine.setPlayerConnection(
+        _state,
+        playerId: playerId,
+        connected: connected,
+      ),
     );
-    if (result is GameAccepted) {
-      _state = result.state;
-      await _publish();
-    }
+  }
+
+  bool _canControl(String controllerPlayerId, String actorId) {
+    if (controllerPlayerId == actorId) return true;
+    final assignment = _state.assignmentFor(actorId);
+    return assignment?.controllerPlayerId == controllerPlayerId &&
+        assignment?.status == ControlAssignmentStatus.active &&
+        _state.playerById(actorId)?.isConnected == false;
+  }
+
+  Future<GameResult> _enqueueSystemMutation(GameResult Function() operation) {
+    final completer = Completer<GameResult>();
+    _queue = _queue
+        .then((_) async {
+          final result = operation();
+          if (result is GameAccepted) {
+            _state = result.state;
+            await _publish();
+          }
+          completer.complete(result);
+        })
+        .catchError((Object error, StackTrace stackTrace) {
+          if (!completer.isCompleted) {
+            completer.complete(
+              GameRejected(GameErrorCode.invalidState, '$error'),
+            );
+          }
+        });
+    return completer.future;
   }
 
   Future<void> _publish() async {
@@ -441,15 +509,22 @@ class LocalGameServer {
   void _scheduleBattleTimer() {
     _battleTimer?.cancel();
     final endsAt = _state.battle?.endsAt;
-    if (_state.battle?.status != BattleStatus.countdown || endsAt == null)
+    if (_state.battle?.status != BattleStatus.countdown || endsAt == null) {
       return;
+    }
     final delay = endsAt.difference(DateTime.now().toUtc());
     _battleTimer = Timer(delay.isNegative ? Duration.zero : delay, () {
-      final resolved = _engine.resolveExpiredTimers(_state);
-      if (resolved.revision != _state.revision) {
-        _state = resolved;
-        unawaited(_publish());
-      }
+      unawaited(
+        _enqueueSystemMutation(() {
+          final resolved = _engine.resolveExpiredTimers(_state);
+          return resolved.revision == _state.revision
+              ? const GameRejected(
+                  GameErrorCode.invalidState,
+                  'Timer is no longer active.',
+                )
+              : GameAccepted(resolved);
+        }),
+      );
     });
   }
 
@@ -509,7 +584,8 @@ class LocalHostConnection implements GameConnection {
   }
 
   @override
-  Future<CommandReply> send(GameCommand command) => server.sendAsHost(command);
+  Future<CommandReply> send(GameCommand command, {String? actorId}) =>
+      server.sendAsHost(command, actorId: actorId);
 
   @override
   Future<void> disconnect() async {
