@@ -54,6 +54,53 @@ void main() {
     },
   );
 
+  test(
+    'only the engine-recorded winner counts as a win, not every peak-level heuristic match',
+    () async {
+      final store = MemoryStatisticsStore();
+      final container = ProviderContainer(
+        overrides: [statisticsStoreProvider.overrideWithValue(store)],
+      );
+      addTearDown(container.dispose);
+      await container.read(statisticsControllerProvider.future);
+      final controller = container.read(statisticsControllerProvider.notifier);
+      final profile = await controller.ensureProfile('Alice');
+
+      final started = DateTime.utc(2026, 8, 3, 10);
+      // Alice's peak level reached the table max at some point (e.g. before
+      // a Bad Stuff death reset her), but the engine never actually
+      // recorded her as the winner - the host just ended the game.
+      final game = GameState(
+        roomId: 'room-heuristic',
+        settings: const RoomSettings(),
+        phase: RoomPhase.ended,
+        players: const <Player>[
+          Player(
+            id: 'alice',
+            name: 'Alice',
+            isHost: false,
+            level: 1,
+            peakLevel: 10,
+            strength: 5,
+          ),
+        ],
+        startedAt: started,
+        endedAt: started.add(const Duration(minutes: 20)),
+        createdAt: started.subtract(const Duration(minutes: 5)),
+        updatedAt: started.add(const Duration(minutes: 20)),
+      );
+
+      await controller.recordCompletedGame(
+        game: game,
+        profileId: profile.id,
+        localPlayerId: 'alice',
+      );
+
+      final stats = controller.statisticsFor(profile);
+      expect(stats.wins, 0);
+    },
+  );
+
   test('statistics JSON round trip preserves profiles and history', () {
     final data = StatisticsData(
       profiles: <UserProfile>[
@@ -134,6 +181,7 @@ GameState _completedGame({
   required int alicePeakLevel,
 }) {
   final started = DateTime.utc(2026, 8, 3, 10);
+  const maxLevel = 10;
   return GameState(
     roomId: roomId,
     settings: const RoomSettings(),
@@ -156,6 +204,10 @@ GameState _completedGame({
         strength: 3,
       ),
     ],
+    // Mirrors what the engine itself sets: winnerPlayerId is only assigned
+    // once a player actually reaches the table's max level, same as
+    // alicePeakLevel reaching it here.
+    winnerPlayerId: alicePeakLevel >= maxLevel ? 'alice' : null,
     startedAt: started,
     endedAt: started.add(duration),
     createdAt: started.subtract(const Duration(minutes: 5)),

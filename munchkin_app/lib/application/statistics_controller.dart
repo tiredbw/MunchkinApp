@@ -108,10 +108,14 @@ class StatisticsController extends AsyncNotifier<StatisticsData> {
           ),
         )
         .toList(growable: false);
-    final winners = game.players
-        .where((player) => player.peakLevel >= game.settings.maxLevel)
-        .map((player) => player.id)
-        .toList(growable: false);
+    // The engine's own winnerPlayerId is the first (and only) player to
+    // actually satisfy the win condition - max level reached via a battle
+    // victory. A peak-level heuristic here would over-count: a player can
+    // touch the table's max level and later drop below it (e.g. a Bad
+    // Stuff death) without ever having won.
+    final winners = game.winnerPlayerId != null
+        ? <String>[game.winnerPlayerId!]
+        : const <String>[];
     final record = GameHistoryRecord(
       id: id,
       roomId: game.roomId,
