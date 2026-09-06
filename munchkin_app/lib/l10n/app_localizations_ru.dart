@@ -469,4 +469,18 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get shareInvite => 'Поделиться приглашением';
+
+  @override
+  String get rewardHelper => 'Поделиться заслугой';
+
+  @override
+  String get rewardHelperHint =>
+      'Если в бою вам помог другой игрок, дайте ему уровень тоже.';
+
+  @override
+  String get rulesHelpingTitle => 'Помощь';
+
+  @override
+  String get rulesHelpingBody =>
+      'Игрока, который помог в бою, победитель обычно награждает — по традиции уровнем, иногда сокровищем. Решает победитель: кнопка «Поделиться заслугой» после победы передаёт уровень тому, кто помог.';
 }

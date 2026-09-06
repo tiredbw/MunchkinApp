@@ -285,6 +285,79 @@ void main() {
     expect(state.winnerPlayerId, isNull);
   });
 
+  test('the winner can reward a helper with a level after winning', () {
+    accept(
+      const GameCommand.joinPlayer(playerId: 'p2', name: 'Alice'),
+      'system',
+    );
+    accept(const GameCommand.closeLobby(), 'host');
+    accept(const GameCommand.confirmOrder(), 'host');
+    accept(const GameCommand.startGame(), 'host');
+    accept(const GameCommand.startBattle(), 'host');
+    accept(const GameCommand.declareVictory(), 'host');
+    clock.advance(const Duration(seconds: 5));
+    state = engine.resolveExpiredTimers(state);
+    accept(GameCommand.rewardHelper('p2'), 'host');
+    expect(state.playerById('p2')?.level, 2);
+    expect(state.playerById('host')?.level, 1);
+  });
+
+  test('a player cannot reward themself or reward before winning', () {
+    accept(
+      const GameCommand.joinPlayer(playerId: 'p2', name: 'Alice'),
+      'system',
+    );
+    accept(const GameCommand.closeLobby(), 'host');
+    accept(const GameCommand.confirmOrder(), 'host');
+    accept(const GameCommand.startGame(), 'host');
+
+    final tooEarly = engine.apply(
+      state,
+      GameCommand.rewardHelper('p2'),
+      actorId: 'host',
+    );
+    expect(tooEarly, isA<GameRejected>());
+
+    accept(const GameCommand.startBattle(), 'host');
+    accept(const GameCommand.declareVictory(), 'host');
+    clock.advance(const Duration(seconds: 5));
+    state = engine.resolveExpiredTimers(state);
+
+    final rewardSelf = engine.apply(
+      state,
+      const GameCommand.rewardHelper('host'),
+      actorId: 'host',
+    );
+    expect(rewardSelf, isA<GameRejected>());
+  });
+
+  test('rewarding a helper respects the room level cap', () {
+    state = engine.createRoom(
+      roomId: 'room4',
+      hostPlayerId: 'host',
+      hostName: 'Host',
+      settings: const RoomSettings(maxLevel: 1, initialLevel: 1),
+    );
+    accept(
+      const GameCommand.joinPlayer(playerId: 'p2', name: 'Alice'),
+      'system',
+    );
+    accept(const GameCommand.closeLobby(), 'host');
+    accept(const GameCommand.confirmOrder(), 'host');
+    accept(const GameCommand.startGame(), 'host');
+    accept(const GameCommand.startBattle(), 'host');
+    accept(const GameCommand.declareVictory(), 'host');
+    clock.advance(const Duration(seconds: 5));
+    state = engine.resolveExpiredTimers(state);
+
+    final result = engine.apply(
+      state,
+      GameCommand.rewardHelper('p2'),
+      actorId: 'host',
+    );
+    expect(result, isA<GameRejected>());
+  });
+
   test('virtual die is host generated and restricted to active player', () {
     accept(
       const GameCommand.joinPlayer(playerId: 'p2', name: 'Alice'),

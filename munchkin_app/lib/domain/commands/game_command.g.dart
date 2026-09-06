@@ -197,6 +197,12 @@ RaiseLevel _$RaiseLevelFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$RaiseLevelToJson(RaiseLevel instance) =>
     <String, dynamic>{'type': instance.$type};
 
+RewardHelper _$RewardHelperFromJson(Map<String, dynamic> json) =>
+    RewardHelper(json['playerId'] as String, $type: json['type'] as String?);
+
+Map<String, dynamic> _$RewardHelperToJson(RewardHelper instance) =>
+    <String, dynamic>{'playerId': instance.playerId, 'type': instance.$type};
+
 FinishBattle _$FinishBattleFromJson(Map<String, dynamic> json) =>
     FinishBattle($type: json['type'] as String?);
 

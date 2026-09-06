@@ -103,6 +103,8 @@ class GameEngine {
         startEscape: (_) => _startEscape(state, actorId),
         resolveEscape: (_) => _resolveEscape(state, actorId),
         raiseLevel: (_) => _raiseLevel(state, actorId),
+        rewardHelper: (value) =>
+            _rewardHelper(state, actorId, value.playerId),
         finishBattle: (_) => _finishBattle(state, actorId),
         dieInBattle: (_) => _dieInBattle(state, actorId),
         rollDice: (_) => _rollDice(state, actorId),
@@ -565,6 +567,39 @@ class GameEngine {
       return next.copyWith(winnerPlayerId: actorId);
     }
     return next;
+  }
+
+  /// A player who helped fight the monster is traditionally rewarded by
+  /// the winner with a level (or the winner may choose to keep it all);
+  /// this lets the winner share credit with whoever helped.
+  GameState _rewardHelper(GameState state, String actorId, String playerId) {
+    _requireActive(state, actorId);
+    final battle = _requireBattle(state);
+    _require(
+      battle.status == BattleStatus.won,
+      GameErrorCode.invalidState,
+      'The battle has not been won.',
+    );
+    _require(
+      playerId != actorId,
+      GameErrorCode.invalidValue,
+      'You cannot reward yourself.',
+    );
+    final index = state.players.indexWhere((player) => player.id == playerId);
+    _require(index >= 0, GameErrorCode.playerNotFound, 'Player was not found.');
+    final helper = state.players[index];
+    final level = helper.level + 1;
+    _require(
+      level <= state.settings.maxLevel,
+      GameErrorCode.invalidValue,
+      'Level is outside the room limits.',
+    );
+    final players = [...state.players];
+    players[index] = helper.copyWith(
+      level: level,
+      peakLevel: level > helper.peakLevel ? level : helper.peakLevel,
+    );
+    return state.copyWith(players: players);
   }
 
   GameState _finishBattle(GameState state, String actorId) {

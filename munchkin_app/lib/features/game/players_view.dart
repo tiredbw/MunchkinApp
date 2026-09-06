@@ -153,7 +153,7 @@ class PlayersView extends ConsumerWidget {
                                   color: scheme.onSurfaceVariant,
                                   outlined: true,
                                 ),
-                              if (!player.isConnected)
+                              if (!player.isLocal && !player.isConnected)
                                 Icon(
                                   Icons.cloud_off,
                                   size: 16,

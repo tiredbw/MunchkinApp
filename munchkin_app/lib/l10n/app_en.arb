@@ -152,5 +152,9 @@
   "upNextTag": "Up next",
   "decreaseLevel": "Decrease level",
   "increaseLevel": "Increase level",
-  "shareInvite": "Share invite"
+  "shareInvite": "Share invite",
+  "rewardHelper": "Share credit",
+  "rewardHelperHint": "If another player helped you fight the monster, give them a level too.",
+  "rulesHelpingTitle": "Helping",
+  "rulesHelpingBody": "A player who helps fight the monster is usually rewarded by the winner - traditionally a level, sometimes a treasure instead. It's the winner's call: use \"Share credit\" after a win to pass a level to whoever helped."
 }

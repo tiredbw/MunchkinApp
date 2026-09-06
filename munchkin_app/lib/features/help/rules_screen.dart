@@ -22,6 +22,11 @@ class RulesScreen extends StatelessWidget {
         body: l10n.rulesCombatBody,
       ),
       _RuleSection(
+        icon: Icons.volunteer_activism_outlined,
+        title: l10n.rulesHelpingTitle,
+        body: l10n.rulesHelpingBody,
+      ),
+      _RuleSection(
         icon: Icons.front_hand,
         title: l10n.rulesInterventionTitle,
         body: l10n.rulesInterventionBody,
