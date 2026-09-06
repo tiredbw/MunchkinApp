@@ -494,21 +494,6 @@ class _BattlePanel extends ConsumerWidget {
               icon: const Icon(Icons.arrow_upward),
               label: Text(l10n.raiseLevel),
             ),
-            if (game.players.length > 1) ...<Widget>[
-              const SizedBox(height: AppSpacing.sm),
-              OutlinedButton.icon(
-                onPressed: busy
-                    ? null
-                    : () => _showRewardHelperPicker(
-                        context,
-                        controller,
-                        game,
-                        actingPlayerId,
-                      ),
-                icon: const Icon(Icons.volunteer_activism_outlined),
-                label: Text(l10n.rewardHelper),
-              ),
-            ],
             const SizedBox(height: AppSpacing.sm),
             FilledButton(
               onPressed: busy
@@ -641,63 +626,6 @@ class _BattlePanel extends ConsumerWidget {
     );
   }
 
-  Future<void> _showRewardHelperPicker(
-    BuildContext context,
-    SessionController controller,
-    GameState game,
-    String? actingPlayerId,
-  ) async {
-    final l10n = AppLocalizations.of(context);
-    final others = game.players
-        .where((player) => player.id != actingPlayerId)
-        .toList(growable: false);
-    await showModalBottomSheet<void>(
-      context: context,
-      showDragHandle: true,
-      builder: (context) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.lg,
-            0,
-            AppSpacing.lg,
-            AppSpacing.lg,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Text(
-                l10n.rewardHelperHint,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              for (final player in others)
-                ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: avatarColorFor(player.id),
-                    child: Text(
-                      player.name.isEmpty
-                          ? '?'
-                          : player.name.substring(0, 1).toUpperCase(),
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  title: Text(player.name),
-                  onTap: () {
-                    Navigator.pop(context);
-                    HapticFeedback.selectionClick();
-                    controller.send(
-                      GameCommand.rewardHelper(player.id),
-                      actAsPlayerId: actingPlayerId,
-                    );
-                  },
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }
 
 class _CountdownRing extends StatelessWidget {

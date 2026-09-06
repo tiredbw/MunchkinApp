@@ -44,7 +44,6 @@ sealed class GameCommand with _$GameCommand {
   const factory GameCommand.startEscape() = StartEscape;
   const factory GameCommand.resolveEscape() = ResolveEscape;
   const factory GameCommand.raiseLevel() = RaiseLevel;
-  const factory GameCommand.rewardHelper(String playerId) = RewardHelper;
   const factory GameCommand.finishBattle() = FinishBattle;
   const factory GameCommand.dieInBattle() = DieInBattle;
   const factory GameCommand.rollDice() = RollDice;

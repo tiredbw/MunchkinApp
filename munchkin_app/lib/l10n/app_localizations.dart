@@ -955,30 +955,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Share invite'**
   String get shareInvite;
-
-  /// No description provided for @rewardHelper.
-  ///
-  /// In en, this message translates to:
-  /// **'Share credit'**
-  String get rewardHelper;
-
-  /// No description provided for @rewardHelperHint.
-  ///
-  /// In en, this message translates to:
-  /// **'If another player helped you fight the monster, give them a level too.'**
-  String get rewardHelperHint;
-
-  /// No description provided for @rulesHelpingTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Helping'**
-  String get rulesHelpingTitle;
-
-  /// No description provided for @rulesHelpingBody.
-  ///
-  /// In en, this message translates to:
-  /// **'A player who helps fight the monster is usually rewarded by the winner - traditionally a level, sometimes a treasure instead. It\'s the winner\'s call: use \"Share credit\" after a win to pass a level to whoever helped.'**
-  String get rulesHelpingBody;
 }
 
 class _AppLocalizationsDelegate
