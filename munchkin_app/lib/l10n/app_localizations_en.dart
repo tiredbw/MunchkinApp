@@ -284,4 +284,58 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adPrivacyOptions => 'Ad privacy options';
+
+  @override
+  String get statistics => 'Statistics';
+
+  @override
+  String get gameHistory => 'Game history';
+
+  @override
+  String get gamesPlayed => 'Games played';
+
+  @override
+  String get wins => 'Wins';
+
+  @override
+  String get maxLevelReached => 'Maximum level';
+
+  @override
+  String get averageDuration => 'Average duration';
+
+  @override
+  String get personalProfiles => 'Personal profiles';
+
+  @override
+  String get addProfile => 'Add profile';
+
+  @override
+  String get profileName => 'Profile name';
+
+  @override
+  String get noProfiles => 'No profiles yet. Add one or start a game.';
+
+  @override
+  String get noGameHistory => 'No completed games for this profile.';
+
+  @override
+  String get noWinner => 'No winner';
+
+  @override
+  String winnerNames(String names) {
+    return 'Winner: $names';
+  }
+
+  @override
+  String durationMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String durationHoursMinutes(int hours, int minutes) {
+    return '$hours h $minutes min';
+  }
+
+  @override
+  String get viewStatistics => 'Game history';
 }

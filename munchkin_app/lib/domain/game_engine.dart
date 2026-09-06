@@ -156,6 +156,7 @@ class GameEngine {
       name: name,
       isHost: command.isHost,
       level: state.settings.initialLevel,
+      peakLevel: state.settings.initialLevel,
       strength: state.settings.initialStrength,
       lastSeenAt: _clock.now(),
     );
@@ -283,6 +284,7 @@ class GameEngine {
     return state.copyWith(
       phase: RoomPhase.playing,
       activePlayerId: state.turnOrder.first,
+      startedAt: _clock.now(),
     );
   }
 
@@ -314,7 +316,11 @@ class GameEngine {
       'Strength is outside the room limits.',
     );
     final players = [...state.players];
-    players[index] = player.copyWith(level: level, strength: strength);
+    players[index] = player.copyWith(
+      level: level,
+      peakLevel: level > player.peakLevel ? level : player.peakLevel,
+      strength: strength,
+    );
     return state.copyWith(players: players);
   }
 
@@ -578,6 +584,7 @@ class GameEngine {
       phase: RoomPhase.ended,
       battle: null,
       activePlayerId: null,
+      endedAt: _clock.now(),
     );
   }
 

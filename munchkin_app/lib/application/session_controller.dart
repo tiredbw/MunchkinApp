@@ -12,6 +12,7 @@ import '../data/storage/game_snapshot_store.dart';
 import '../domain/commands/game_command.dart';
 import '../domain/game_engine.dart';
 import '../domain/models/game_models.dart';
+import 'statistics_controller.dart';
 
 class SessionState {
   const SessionState({
@@ -57,6 +58,8 @@ class SessionController extends Notifier<SessionState> {
   GameConnection? _connection;
   StreamSubscription<GameState>? _stateSubscription;
   StreamSubscription<ConnectionStatus>? _statusSubscription;
+  String? _profileId;
+  bool _recordedGameEnd = false;
 
   @override
   SessionState build() {
@@ -84,6 +87,7 @@ class SessionController extends Notifier<SessionState> {
       final addresses = await localIpv4Addresses();
       final invite = server.inviteFor(addresses.firstOrNull ?? '127.0.0.1');
       await _attach(LocalHostConnection(server), invite: invite);
+      await _ensureProfile(hostName);
       state = state.copyWith(busy: false, hasRecovery: true);
     } on Object catch (error) {
       state = state.copyWith(busy: false, error: '$error');
@@ -100,6 +104,7 @@ class SessionController extends Notifier<SessionState> {
     try {
       await client.connect();
       await _attach(client, invite: invite);
+      await _ensureProfile(playerName);
       state = state.copyWith(busy: false);
     } on Object catch (error) {
       await client.disconnect();
@@ -171,6 +176,8 @@ class SessionController extends Notifier<SessionState> {
     await _statusSubscription?.cancel();
     await connection?.disconnect();
     _connection = null;
+    _profileId = null;
+    _recordedGameEnd = false;
     state = SessionState(hasRecovery: await _snapshotStore.load() != null);
   }
 
@@ -183,6 +190,7 @@ class SessionController extends Notifier<SessionState> {
     await _stateSubscription?.cancel();
     await _statusSubscription?.cancel();
     _connection = connection;
+    _recordedGameEnd = false;
     state = state.copyWith(
       game: connection.currentState,
       invite: invite,
@@ -190,10 +198,33 @@ class SessionController extends Notifier<SessionState> {
     );
     _stateSubscription = connection.snapshots.listen((game) {
       state = state.copyWith(game: game);
+      if (game.phase == RoomPhase.ended) unawaited(_recordGameEnd(game));
     });
     _statusSubscription = connection.statuses.listen((status) {
       state = state.copyWith(status: status);
     });
+  }
+
+  Future<void> _ensureProfile(String name) async {
+    final profile = await ref
+        .read(statisticsControllerProvider.notifier)
+        .ensureProfile(name);
+    _profileId = profile.id;
+  }
+
+  Future<void> _recordGameEnd(GameState game) async {
+    if (_recordedGameEnd) return;
+    final profileId = _profileId;
+    final localPlayerId = _connection?.playerId;
+    if (profileId == null || localPlayerId == null) return;
+    _recordedGameEnd = true;
+    await ref
+        .read(statisticsControllerProvider.notifier)
+        .recordCompletedGame(
+          game: game,
+          profileId: profileId,
+          localPlayerId: localPlayerId,
+        );
   }
 
   Future<void> _checkRecovery() async {

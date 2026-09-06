@@ -637,6 +637,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ad privacy options'**
   String get adPrivacyOptions;
+
+  /// No description provided for @statistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get statistics;
+
+  /// No description provided for @gameHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Game history'**
+  String get gameHistory;
+
+  /// No description provided for @gamesPlayed.
+  ///
+  /// In en, this message translates to:
+  /// **'Games played'**
+  String get gamesPlayed;
+
+  /// No description provided for @wins.
+  ///
+  /// In en, this message translates to:
+  /// **'Wins'**
+  String get wins;
+
+  /// No description provided for @maxLevelReached.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum level'**
+  String get maxLevelReached;
+
+  /// No description provided for @averageDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Average duration'**
+  String get averageDuration;
+
+  /// No description provided for @personalProfiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal profiles'**
+  String get personalProfiles;
+
+  /// No description provided for @addProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Add profile'**
+  String get addProfile;
+
+  /// No description provided for @profileName.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile name'**
+  String get profileName;
+
+  /// No description provided for @noProfiles.
+  ///
+  /// In en, this message translates to:
+  /// **'No profiles yet. Add one or start a game.'**
+  String get noProfiles;
+
+  /// No description provided for @noGameHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'No completed games for this profile.'**
+  String get noGameHistory;
+
+  /// No description provided for @noWinner.
+  ///
+  /// In en, this message translates to:
+  /// **'No winner'**
+  String get noWinner;
+
+  /// No description provided for @winnerNames.
+  ///
+  /// In en, this message translates to:
+  /// **'Winner: {names}'**
+  String winnerNames(String names);
+
+  /// No description provided for @durationMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String durationMinutes(int minutes);
+
+  /// No description provided for @durationHoursMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} h {minutes} min'**
+  String durationHoursMinutes(int hours, int minutes);
+
+  /// No description provided for @viewStatistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Game history'**
+  String get viewStatistics;
 }
 
 class _AppLocalizationsDelegate

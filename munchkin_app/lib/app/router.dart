@@ -4,6 +4,7 @@ import '../features/home/home_screen.dart';
 import '../features/room/create_room_screen.dart';
 import '../features/room/join_room_screen.dart';
 import '../features/room/room_screen.dart';
+import '../features/statistics/statistics_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -15,5 +16,9 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(path: '/join', builder: (context, state) => const JoinRoomScreen()),
     GoRoute(path: '/room', builder: (context, state) => const RoomScreen()),
+    GoRoute(
+      path: '/statistics',
+      builder: (context, state) => const StatisticsScreen(),
+    ),
   ],
 );

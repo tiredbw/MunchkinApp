@@ -120,6 +120,12 @@ class HomeScreen extends ConsumerWidget {
                               label: Text(l10n.restoreGame),
                             ),
                           ],
+                          const SizedBox(height: AppSpacing.sm),
+                          TextButton.icon(
+                            onPressed: () => context.go('/statistics'),
+                            icon: const Icon(Icons.bar_chart),
+                            label: Text(l10n.viewStatistics),
+                          ),
                           AnimatedSwitcher(
                             duration: const Duration(milliseconds: 200),
                             child: session.busy

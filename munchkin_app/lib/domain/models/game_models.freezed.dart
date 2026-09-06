@@ -302,7 +302,7 @@ as bool,
 /// @nodoc
 mixin _$Player {
 
- String get id; String get name; bool get isHost; int get level; int get strength; List<MunchkinRace> get races; List<MunchkinClass> get classes; bool get isConnected; DateTime? get lastSeenAt;
+ String get id; String get name; bool get isHost; int get level; int get peakLevel; int get strength; List<MunchkinRace> get races; List<MunchkinClass> get classes; bool get isConnected; DateTime? get lastSeenAt;
 /// Create a copy of Player
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -315,16 +315,16 @@ $PlayerCopyWith<Player> get copyWith => _$PlayerCopyWithImpl<Player>(this as Pla
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Player&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.isHost, isHost) || other.isHost == isHost)&&(identical(other.level, level) || other.level == level)&&(identical(other.strength, strength) || other.strength == strength)&&const DeepCollectionEquality().equals(other.races, races)&&const DeepCollectionEquality().equals(other.classes, classes)&&(identical(other.isConnected, isConnected) || other.isConnected == isConnected)&&(identical(other.lastSeenAt, lastSeenAt) || other.lastSeenAt == lastSeenAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Player&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.isHost, isHost) || other.isHost == isHost)&&(identical(other.level, level) || other.level == level)&&(identical(other.peakLevel, peakLevel) || other.peakLevel == peakLevel)&&(identical(other.strength, strength) || other.strength == strength)&&const DeepCollectionEquality().equals(other.races, races)&&const DeepCollectionEquality().equals(other.classes, classes)&&(identical(other.isConnected, isConnected) || other.isConnected == isConnected)&&(identical(other.lastSeenAt, lastSeenAt) || other.lastSeenAt == lastSeenAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,isHost,level,strength,const DeepCollectionEquality().hash(races),const DeepCollectionEquality().hash(classes),isConnected,lastSeenAt);
+int get hashCode => Object.hash(runtimeType,id,name,isHost,level,peakLevel,strength,const DeepCollectionEquality().hash(races),const DeepCollectionEquality().hash(classes),isConnected,lastSeenAt);
 
 @override
 String toString() {
-  return 'Player(id: $id, name: $name, isHost: $isHost, level: $level, strength: $strength, races: $races, classes: $classes, isConnected: $isConnected, lastSeenAt: $lastSeenAt)';
+  return 'Player(id: $id, name: $name, isHost: $isHost, level: $level, peakLevel: $peakLevel, strength: $strength, races: $races, classes: $classes, isConnected: $isConnected, lastSeenAt: $lastSeenAt)';
 }
 
 
@@ -335,7 +335,7 @@ abstract mixin class $PlayerCopyWith<$Res>  {
   factory $PlayerCopyWith(Player value, $Res Function(Player) _then) = _$PlayerCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, bool isHost, int level, int strength, List<MunchkinRace> races, List<MunchkinClass> classes, bool isConnected, DateTime? lastSeenAt
+ String id, String name, bool isHost, int level, int peakLevel, int strength, List<MunchkinRace> races, List<MunchkinClass> classes, bool isConnected, DateTime? lastSeenAt
 });
 
 
@@ -352,12 +352,13 @@ class _$PlayerCopyWithImpl<$Res>
 
 /// Create a copy of Player
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? isHost = null,Object? level = null,Object? strength = null,Object? races = null,Object? classes = null,Object? isConnected = null,Object? lastSeenAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? isHost = null,Object? level = null,Object? peakLevel = null,Object? strength = null,Object? races = null,Object? classes = null,Object? isConnected = null,Object? lastSeenAt = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,isHost: null == isHost ? _self.isHost : isHost // ignore: cast_nullable_to_non_nullable
 as bool,level: null == level ? _self.level : level // ignore: cast_nullable_to_non_nullable
+as int,peakLevel: null == peakLevel ? _self.peakLevel : peakLevel // ignore: cast_nullable_to_non_nullable
 as int,strength: null == strength ? _self.strength : strength // ignore: cast_nullable_to_non_nullable
 as int,races: null == races ? _self.races : races // ignore: cast_nullable_to_non_nullable
 as List<MunchkinRace>,classes: null == classes ? _self.classes : classes // ignore: cast_nullable_to_non_nullable
@@ -448,10 +449,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  bool isHost,  int level,  int strength,  List<MunchkinRace> races,  List<MunchkinClass> classes,  bool isConnected,  DateTime? lastSeenAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  bool isHost,  int level,  int peakLevel,  int strength,  List<MunchkinRace> races,  List<MunchkinClass> classes,  bool isConnected,  DateTime? lastSeenAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Player() when $default != null:
-return $default(_that.id,_that.name,_that.isHost,_that.level,_that.strength,_that.races,_that.classes,_that.isConnected,_that.lastSeenAt);case _:
+return $default(_that.id,_that.name,_that.isHost,_that.level,_that.peakLevel,_that.strength,_that.races,_that.classes,_that.isConnected,_that.lastSeenAt);case _:
   return orElse();
 
 }
@@ -469,10 +470,10 @@ return $default(_that.id,_that.name,_that.isHost,_that.level,_that.strength,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  bool isHost,  int level,  int strength,  List<MunchkinRace> races,  List<MunchkinClass> classes,  bool isConnected,  DateTime? lastSeenAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  bool isHost,  int level,  int peakLevel,  int strength,  List<MunchkinRace> races,  List<MunchkinClass> classes,  bool isConnected,  DateTime? lastSeenAt)  $default,) {final _that = this;
 switch (_that) {
 case _Player():
-return $default(_that.id,_that.name,_that.isHost,_that.level,_that.strength,_that.races,_that.classes,_that.isConnected,_that.lastSeenAt);case _:
+return $default(_that.id,_that.name,_that.isHost,_that.level,_that.peakLevel,_that.strength,_that.races,_that.classes,_that.isConnected,_that.lastSeenAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -489,10 +490,10 @@ return $default(_that.id,_that.name,_that.isHost,_that.level,_that.strength,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  bool isHost,  int level,  int strength,  List<MunchkinRace> races,  List<MunchkinClass> classes,  bool isConnected,  DateTime? lastSeenAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  bool isHost,  int level,  int peakLevel,  int strength,  List<MunchkinRace> races,  List<MunchkinClass> classes,  bool isConnected,  DateTime? lastSeenAt)?  $default,) {final _that = this;
 switch (_that) {
 case _Player() when $default != null:
-return $default(_that.id,_that.name,_that.isHost,_that.level,_that.strength,_that.races,_that.classes,_that.isConnected,_that.lastSeenAt);case _:
+return $default(_that.id,_that.name,_that.isHost,_that.level,_that.peakLevel,_that.strength,_that.races,_that.classes,_that.isConnected,_that.lastSeenAt);case _:
   return null;
 
 }
@@ -504,13 +505,14 @@ return $default(_that.id,_that.name,_that.isHost,_that.level,_that.strength,_tha
 @JsonSerializable()
 
 class _Player extends Player {
-  const _Player({required this.id, required this.name, required this.isHost, required this.level, required this.strength, final  List<MunchkinRace> races = const <MunchkinRace>[MunchkinRace.human], final  List<MunchkinClass> classes = const <MunchkinClass>[], this.isConnected = true, this.lastSeenAt}): _races = races,_classes = classes,super._();
+  const _Player({required this.id, required this.name, required this.isHost, required this.level, this.peakLevel = 1, required this.strength, final  List<MunchkinRace> races = const <MunchkinRace>[MunchkinRace.human], final  List<MunchkinClass> classes = const <MunchkinClass>[], this.isConnected = true, this.lastSeenAt}): _races = races,_classes = classes,super._();
   factory _Player.fromJson(Map<String, dynamic> json) => _$PlayerFromJson(json);
 
 @override final  String id;
 @override final  String name;
 @override final  bool isHost;
 @override final  int level;
+@override@JsonKey() final  int peakLevel;
 @override final  int strength;
  final  List<MunchkinRace> _races;
 @override@JsonKey() List<MunchkinRace> get races {
@@ -542,16 +544,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Player&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.isHost, isHost) || other.isHost == isHost)&&(identical(other.level, level) || other.level == level)&&(identical(other.strength, strength) || other.strength == strength)&&const DeepCollectionEquality().equals(other._races, _races)&&const DeepCollectionEquality().equals(other._classes, _classes)&&(identical(other.isConnected, isConnected) || other.isConnected == isConnected)&&(identical(other.lastSeenAt, lastSeenAt) || other.lastSeenAt == lastSeenAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Player&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.isHost, isHost) || other.isHost == isHost)&&(identical(other.level, level) || other.level == level)&&(identical(other.peakLevel, peakLevel) || other.peakLevel == peakLevel)&&(identical(other.strength, strength) || other.strength == strength)&&const DeepCollectionEquality().equals(other._races, _races)&&const DeepCollectionEquality().equals(other._classes, _classes)&&(identical(other.isConnected, isConnected) || other.isConnected == isConnected)&&(identical(other.lastSeenAt, lastSeenAt) || other.lastSeenAt == lastSeenAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,isHost,level,strength,const DeepCollectionEquality().hash(_races),const DeepCollectionEquality().hash(_classes),isConnected,lastSeenAt);
+int get hashCode => Object.hash(runtimeType,id,name,isHost,level,peakLevel,strength,const DeepCollectionEquality().hash(_races),const DeepCollectionEquality().hash(_classes),isConnected,lastSeenAt);
 
 @override
 String toString() {
-  return 'Player(id: $id, name: $name, isHost: $isHost, level: $level, strength: $strength, races: $races, classes: $classes, isConnected: $isConnected, lastSeenAt: $lastSeenAt)';
+  return 'Player(id: $id, name: $name, isHost: $isHost, level: $level, peakLevel: $peakLevel, strength: $strength, races: $races, classes: $classes, isConnected: $isConnected, lastSeenAt: $lastSeenAt)';
 }
 
 
@@ -562,7 +564,7 @@ abstract mixin class _$PlayerCopyWith<$Res> implements $PlayerCopyWith<$Res> {
   factory _$PlayerCopyWith(_Player value, $Res Function(_Player) _then) = __$PlayerCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, bool isHost, int level, int strength, List<MunchkinRace> races, List<MunchkinClass> classes, bool isConnected, DateTime? lastSeenAt
+ String id, String name, bool isHost, int level, int peakLevel, int strength, List<MunchkinRace> races, List<MunchkinClass> classes, bool isConnected, DateTime? lastSeenAt
 });
 
 
@@ -579,12 +581,13 @@ class __$PlayerCopyWithImpl<$Res>
 
 /// Create a copy of Player
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? isHost = null,Object? level = null,Object? strength = null,Object? races = null,Object? classes = null,Object? isConnected = null,Object? lastSeenAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? isHost = null,Object? level = null,Object? peakLevel = null,Object? strength = null,Object? races = null,Object? classes = null,Object? isConnected = null,Object? lastSeenAt = freezed,}) {
   return _then(_Player(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,isHost: null == isHost ? _self.isHost : isHost // ignore: cast_nullable_to_non_nullable
 as bool,level: null == level ? _self.level : level // ignore: cast_nullable_to_non_nullable
+as int,peakLevel: null == peakLevel ? _self.peakLevel : peakLevel // ignore: cast_nullable_to_non_nullable
 as int,strength: null == strength ? _self.strength : strength // ignore: cast_nullable_to_non_nullable
 as int,races: null == races ? _self._races : races // ignore: cast_nullable_to_non_nullable
 as List<MunchkinRace>,classes: null == classes ? _self._classes : classes // ignore: cast_nullable_to_non_nullable
@@ -1148,7 +1151,7 @@ as DateTime,
 /// @nodoc
 mixin _$GameState {
 
- int get schemaVersion; String get roomId; int get revision; RoomSettings get settings; RoomPhase get phase; List<Player> get players; List<String> get turnOrder; String? get activePlayerId; BattleState? get battle; DiceRoll? get lastDiceRoll; DateTime get createdAt; DateTime get updatedAt;
+ int get schemaVersion; String get roomId; int get revision; RoomSettings get settings; RoomPhase get phase; List<Player> get players; List<String> get turnOrder; String? get activePlayerId; BattleState? get battle; DiceRoll? get lastDiceRoll; DateTime? get startedAt; DateTime? get endedAt; DateTime get createdAt; DateTime get updatedAt;
 /// Create a copy of GameState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1161,16 +1164,16 @@ $GameStateCopyWith<GameState> get copyWith => _$GameStateCopyWithImpl<GameState>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GameState&&(identical(other.schemaVersion, schemaVersion) || other.schemaVersion == schemaVersion)&&(identical(other.roomId, roomId) || other.roomId == roomId)&&(identical(other.revision, revision) || other.revision == revision)&&(identical(other.settings, settings) || other.settings == settings)&&(identical(other.phase, phase) || other.phase == phase)&&const DeepCollectionEquality().equals(other.players, players)&&const DeepCollectionEquality().equals(other.turnOrder, turnOrder)&&(identical(other.activePlayerId, activePlayerId) || other.activePlayerId == activePlayerId)&&(identical(other.battle, battle) || other.battle == battle)&&(identical(other.lastDiceRoll, lastDiceRoll) || other.lastDiceRoll == lastDiceRoll)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GameState&&(identical(other.schemaVersion, schemaVersion) || other.schemaVersion == schemaVersion)&&(identical(other.roomId, roomId) || other.roomId == roomId)&&(identical(other.revision, revision) || other.revision == revision)&&(identical(other.settings, settings) || other.settings == settings)&&(identical(other.phase, phase) || other.phase == phase)&&const DeepCollectionEquality().equals(other.players, players)&&const DeepCollectionEquality().equals(other.turnOrder, turnOrder)&&(identical(other.activePlayerId, activePlayerId) || other.activePlayerId == activePlayerId)&&(identical(other.battle, battle) || other.battle == battle)&&(identical(other.lastDiceRoll, lastDiceRoll) || other.lastDiceRoll == lastDiceRoll)&&(identical(other.startedAt, startedAt) || other.startedAt == startedAt)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,schemaVersion,roomId,revision,settings,phase,const DeepCollectionEquality().hash(players),const DeepCollectionEquality().hash(turnOrder),activePlayerId,battle,lastDiceRoll,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,schemaVersion,roomId,revision,settings,phase,const DeepCollectionEquality().hash(players),const DeepCollectionEquality().hash(turnOrder),activePlayerId,battle,lastDiceRoll,startedAt,endedAt,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'GameState(schemaVersion: $schemaVersion, roomId: $roomId, revision: $revision, settings: $settings, phase: $phase, players: $players, turnOrder: $turnOrder, activePlayerId: $activePlayerId, battle: $battle, lastDiceRoll: $lastDiceRoll, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'GameState(schemaVersion: $schemaVersion, roomId: $roomId, revision: $revision, settings: $settings, phase: $phase, players: $players, turnOrder: $turnOrder, activePlayerId: $activePlayerId, battle: $battle, lastDiceRoll: $lastDiceRoll, startedAt: $startedAt, endedAt: $endedAt, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -1181,7 +1184,7 @@ abstract mixin class $GameStateCopyWith<$Res>  {
   factory $GameStateCopyWith(GameState value, $Res Function(GameState) _then) = _$GameStateCopyWithImpl;
 @useResult
 $Res call({
- int schemaVersion, String roomId, int revision, RoomSettings settings, RoomPhase phase, List<Player> players, List<String> turnOrder, String? activePlayerId, BattleState? battle, DiceRoll? lastDiceRoll, DateTime createdAt, DateTime updatedAt
+ int schemaVersion, String roomId, int revision, RoomSettings settings, RoomPhase phase, List<Player> players, List<String> turnOrder, String? activePlayerId, BattleState? battle, DiceRoll? lastDiceRoll, DateTime? startedAt, DateTime? endedAt, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -1198,7 +1201,7 @@ class _$GameStateCopyWithImpl<$Res>
 
 /// Create a copy of GameState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? schemaVersion = null,Object? roomId = null,Object? revision = null,Object? settings = null,Object? phase = null,Object? players = null,Object? turnOrder = null,Object? activePlayerId = freezed,Object? battle = freezed,Object? lastDiceRoll = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? schemaVersion = null,Object? roomId = null,Object? revision = null,Object? settings = null,Object? phase = null,Object? players = null,Object? turnOrder = null,Object? activePlayerId = freezed,Object? battle = freezed,Object? lastDiceRoll = freezed,Object? startedAt = freezed,Object? endedAt = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_self.copyWith(
 schemaVersion: null == schemaVersion ? _self.schemaVersion : schemaVersion // ignore: cast_nullable_to_non_nullable
 as int,roomId: null == roomId ? _self.roomId : roomId // ignore: cast_nullable_to_non_nullable
@@ -1210,7 +1213,9 @@ as List<Player>,turnOrder: null == turnOrder ? _self.turnOrder : turnOrder // ig
 as List<String>,activePlayerId: freezed == activePlayerId ? _self.activePlayerId : activePlayerId // ignore: cast_nullable_to_non_nullable
 as String?,battle: freezed == battle ? _self.battle : battle // ignore: cast_nullable_to_non_nullable
 as BattleState?,lastDiceRoll: freezed == lastDiceRoll ? _self.lastDiceRoll : lastDiceRoll // ignore: cast_nullable_to_non_nullable
-as DiceRoll?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DiceRoll?,startedAt: freezed == startedAt ? _self.startedAt : startedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,endedAt: freezed == endedAt ? _self.endedAt : endedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));
@@ -1330,10 +1335,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int schemaVersion,  String roomId,  int revision,  RoomSettings settings,  RoomPhase phase,  List<Player> players,  List<String> turnOrder,  String? activePlayerId,  BattleState? battle,  DiceRoll? lastDiceRoll,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int schemaVersion,  String roomId,  int revision,  RoomSettings settings,  RoomPhase phase,  List<Player> players,  List<String> turnOrder,  String? activePlayerId,  BattleState? battle,  DiceRoll? lastDiceRoll,  DateTime? startedAt,  DateTime? endedAt,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _GameState() when $default != null:
-return $default(_that.schemaVersion,_that.roomId,_that.revision,_that.settings,_that.phase,_that.players,_that.turnOrder,_that.activePlayerId,_that.battle,_that.lastDiceRoll,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.schemaVersion,_that.roomId,_that.revision,_that.settings,_that.phase,_that.players,_that.turnOrder,_that.activePlayerId,_that.battle,_that.lastDiceRoll,_that.startedAt,_that.endedAt,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -1351,10 +1356,10 @@ return $default(_that.schemaVersion,_that.roomId,_that.revision,_that.settings,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int schemaVersion,  String roomId,  int revision,  RoomSettings settings,  RoomPhase phase,  List<Player> players,  List<String> turnOrder,  String? activePlayerId,  BattleState? battle,  DiceRoll? lastDiceRoll,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int schemaVersion,  String roomId,  int revision,  RoomSettings settings,  RoomPhase phase,  List<Player> players,  List<String> turnOrder,  String? activePlayerId,  BattleState? battle,  DiceRoll? lastDiceRoll,  DateTime? startedAt,  DateTime? endedAt,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _GameState():
-return $default(_that.schemaVersion,_that.roomId,_that.revision,_that.settings,_that.phase,_that.players,_that.turnOrder,_that.activePlayerId,_that.battle,_that.lastDiceRoll,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.schemaVersion,_that.roomId,_that.revision,_that.settings,_that.phase,_that.players,_that.turnOrder,_that.activePlayerId,_that.battle,_that.lastDiceRoll,_that.startedAt,_that.endedAt,_that.createdAt,_that.updatedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1371,10 +1376,10 @@ return $default(_that.schemaVersion,_that.roomId,_that.revision,_that.settings,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int schemaVersion,  String roomId,  int revision,  RoomSettings settings,  RoomPhase phase,  List<Player> players,  List<String> turnOrder,  String? activePlayerId,  BattleState? battle,  DiceRoll? lastDiceRoll,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int schemaVersion,  String roomId,  int revision,  RoomSettings settings,  RoomPhase phase,  List<Player> players,  List<String> turnOrder,  String? activePlayerId,  BattleState? battle,  DiceRoll? lastDiceRoll,  DateTime? startedAt,  DateTime? endedAt,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _GameState() when $default != null:
-return $default(_that.schemaVersion,_that.roomId,_that.revision,_that.settings,_that.phase,_that.players,_that.turnOrder,_that.activePlayerId,_that.battle,_that.lastDiceRoll,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.schemaVersion,_that.roomId,_that.revision,_that.settings,_that.phase,_that.players,_that.turnOrder,_that.activePlayerId,_that.battle,_that.lastDiceRoll,_that.startedAt,_that.endedAt,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -1386,7 +1391,7 @@ return $default(_that.schemaVersion,_that.roomId,_that.revision,_that.settings,_
 @JsonSerializable()
 
 class _GameState extends GameState {
-  const _GameState({this.schemaVersion = 1, required this.roomId, this.revision = 0, required this.settings, this.phase = RoomPhase.lobby, final  List<Player> players = const <Player>[], final  List<String> turnOrder = const <String>[], this.activePlayerId, this.battle, this.lastDiceRoll, required this.createdAt, required this.updatedAt}): _players = players,_turnOrder = turnOrder,super._();
+  const _GameState({this.schemaVersion = 1, required this.roomId, this.revision = 0, required this.settings, this.phase = RoomPhase.lobby, final  List<Player> players = const <Player>[], final  List<String> turnOrder = const <String>[], this.activePlayerId, this.battle, this.lastDiceRoll, this.startedAt, this.endedAt, required this.createdAt, required this.updatedAt}): _players = players,_turnOrder = turnOrder,super._();
   factory _GameState.fromJson(Map<String, dynamic> json) => _$GameStateFromJson(json);
 
 @override@JsonKey() final  int schemaVersion;
@@ -1411,6 +1416,8 @@ class _GameState extends GameState {
 @override final  String? activePlayerId;
 @override final  BattleState? battle;
 @override final  DiceRoll? lastDiceRoll;
+@override final  DateTime? startedAt;
+@override final  DateTime? endedAt;
 @override final  DateTime createdAt;
 @override final  DateTime updatedAt;
 
@@ -1427,16 +1434,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GameState&&(identical(other.schemaVersion, schemaVersion) || other.schemaVersion == schemaVersion)&&(identical(other.roomId, roomId) || other.roomId == roomId)&&(identical(other.revision, revision) || other.revision == revision)&&(identical(other.settings, settings) || other.settings == settings)&&(identical(other.phase, phase) || other.phase == phase)&&const DeepCollectionEquality().equals(other._players, _players)&&const DeepCollectionEquality().equals(other._turnOrder, _turnOrder)&&(identical(other.activePlayerId, activePlayerId) || other.activePlayerId == activePlayerId)&&(identical(other.battle, battle) || other.battle == battle)&&(identical(other.lastDiceRoll, lastDiceRoll) || other.lastDiceRoll == lastDiceRoll)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GameState&&(identical(other.schemaVersion, schemaVersion) || other.schemaVersion == schemaVersion)&&(identical(other.roomId, roomId) || other.roomId == roomId)&&(identical(other.revision, revision) || other.revision == revision)&&(identical(other.settings, settings) || other.settings == settings)&&(identical(other.phase, phase) || other.phase == phase)&&const DeepCollectionEquality().equals(other._players, _players)&&const DeepCollectionEquality().equals(other._turnOrder, _turnOrder)&&(identical(other.activePlayerId, activePlayerId) || other.activePlayerId == activePlayerId)&&(identical(other.battle, battle) || other.battle == battle)&&(identical(other.lastDiceRoll, lastDiceRoll) || other.lastDiceRoll == lastDiceRoll)&&(identical(other.startedAt, startedAt) || other.startedAt == startedAt)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,schemaVersion,roomId,revision,settings,phase,const DeepCollectionEquality().hash(_players),const DeepCollectionEquality().hash(_turnOrder),activePlayerId,battle,lastDiceRoll,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,schemaVersion,roomId,revision,settings,phase,const DeepCollectionEquality().hash(_players),const DeepCollectionEquality().hash(_turnOrder),activePlayerId,battle,lastDiceRoll,startedAt,endedAt,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'GameState(schemaVersion: $schemaVersion, roomId: $roomId, revision: $revision, settings: $settings, phase: $phase, players: $players, turnOrder: $turnOrder, activePlayerId: $activePlayerId, battle: $battle, lastDiceRoll: $lastDiceRoll, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'GameState(schemaVersion: $schemaVersion, roomId: $roomId, revision: $revision, settings: $settings, phase: $phase, players: $players, turnOrder: $turnOrder, activePlayerId: $activePlayerId, battle: $battle, lastDiceRoll: $lastDiceRoll, startedAt: $startedAt, endedAt: $endedAt, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -1447,7 +1454,7 @@ abstract mixin class _$GameStateCopyWith<$Res> implements $GameStateCopyWith<$Re
   factory _$GameStateCopyWith(_GameState value, $Res Function(_GameState) _then) = __$GameStateCopyWithImpl;
 @override @useResult
 $Res call({
- int schemaVersion, String roomId, int revision, RoomSettings settings, RoomPhase phase, List<Player> players, List<String> turnOrder, String? activePlayerId, BattleState? battle, DiceRoll? lastDiceRoll, DateTime createdAt, DateTime updatedAt
+ int schemaVersion, String roomId, int revision, RoomSettings settings, RoomPhase phase, List<Player> players, List<String> turnOrder, String? activePlayerId, BattleState? battle, DiceRoll? lastDiceRoll, DateTime? startedAt, DateTime? endedAt, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -1464,7 +1471,7 @@ class __$GameStateCopyWithImpl<$Res>
 
 /// Create a copy of GameState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? schemaVersion = null,Object? roomId = null,Object? revision = null,Object? settings = null,Object? phase = null,Object? players = null,Object? turnOrder = null,Object? activePlayerId = freezed,Object? battle = freezed,Object? lastDiceRoll = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? schemaVersion = null,Object? roomId = null,Object? revision = null,Object? settings = null,Object? phase = null,Object? players = null,Object? turnOrder = null,Object? activePlayerId = freezed,Object? battle = freezed,Object? lastDiceRoll = freezed,Object? startedAt = freezed,Object? endedAt = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_GameState(
 schemaVersion: null == schemaVersion ? _self.schemaVersion : schemaVersion // ignore: cast_nullable_to_non_nullable
 as int,roomId: null == roomId ? _self.roomId : roomId // ignore: cast_nullable_to_non_nullable
@@ -1476,7 +1483,9 @@ as List<Player>,turnOrder: null == turnOrder ? _self._turnOrder : turnOrder // i
 as List<String>,activePlayerId: freezed == activePlayerId ? _self.activePlayerId : activePlayerId // ignore: cast_nullable_to_non_nullable
 as String?,battle: freezed == battle ? _self.battle : battle // ignore: cast_nullable_to_non_nullable
 as BattleState?,lastDiceRoll: freezed == lastDiceRoll ? _self.lastDiceRoll : lastDiceRoll // ignore: cast_nullable_to_non_nullable
-as DiceRoll?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DiceRoll?,startedAt: freezed == startedAt ? _self.startedAt : startedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,endedAt: freezed == endedAt ? _self.endedAt : endedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));

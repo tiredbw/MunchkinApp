@@ -57,6 +57,7 @@ abstract class Player with _$Player {
     required String name,
     required bool isHost,
     required int level,
+    @Default(1) int peakLevel,
     required int strength,
     @Default(<MunchkinRace>[MunchkinRace.human]) List<MunchkinRace> races,
     @Default(<MunchkinClass>[]) List<MunchkinClass> classes,
@@ -111,6 +112,8 @@ abstract class GameState with _$GameState {
     String? activePlayerId,
     BattleState? battle,
     DiceRoll? lastDiceRoll,
+    DateTime? startedAt,
+    DateTime? endedAt,
     required DateTime createdAt,
     required DateTime updatedAt,
   }) = _GameState;

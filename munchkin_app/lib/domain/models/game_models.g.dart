@@ -45,6 +45,7 @@ _Player _$PlayerFromJson(Map<String, dynamic> json) => _Player(
   name: json['name'] as String,
   isHost: json['isHost'] as bool,
   level: (json['level'] as num).toInt(),
+  peakLevel: (json['peakLevel'] as num?)?.toInt() ?? 1,
   strength: (json['strength'] as num).toInt(),
   races:
       (json['races'] as List<dynamic>?)
@@ -67,6 +68,7 @@ Map<String, dynamic> _$PlayerToJson(_Player instance) => <String, dynamic>{
   'name': instance.name,
   'isHost': instance.isHost,
   'level': instance.level,
+  'peakLevel': instance.peakLevel,
   'strength': instance.strength,
   'races': instance.races.map((e) => _$MunchkinRaceEnumMap[e]!).toList(),
   'classes': instance.classes.map((e) => _$MunchkinClassEnumMap[e]!).toList(),
@@ -161,6 +163,12 @@ _GameState _$GameStateFromJson(Map<String, dynamic> json) => _GameState(
   lastDiceRoll: json['lastDiceRoll'] == null
       ? null
       : DiceRoll.fromJson(json['lastDiceRoll'] as Map<String, dynamic>),
+  startedAt: json['startedAt'] == null
+      ? null
+      : DateTime.parse(json['startedAt'] as String),
+  endedAt: json['endedAt'] == null
+      ? null
+      : DateTime.parse(json['endedAt'] as String),
   createdAt: DateTime.parse(json['createdAt'] as String),
   updatedAt: DateTime.parse(json['updatedAt'] as String),
 );
@@ -177,6 +185,8 @@ Map<String, dynamic> _$GameStateToJson(_GameState instance) =>
       'activePlayerId': instance.activePlayerId,
       'battle': instance.battle,
       'lastDiceRoll': instance.lastDiceRoll,
+      'startedAt': instance.startedAt?.toIso8601String(),
+      'endedAt': instance.endedAt?.toIso8601String(),
       'createdAt': instance.createdAt.toIso8601String(),
       'updatedAt': instance.updatedAt.toIso8601String(),
     };

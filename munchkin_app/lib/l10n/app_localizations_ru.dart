@@ -285,4 +285,59 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get adPrivacyOptions => 'Настройки конфиденциальности рекламы';
+
+  @override
+  String get statistics => 'Статистика';
+
+  @override
+  String get gameHistory => 'История партий';
+
+  @override
+  String get gamesPlayed => 'Сыграно партий';
+
+  @override
+  String get wins => 'Победы';
+
+  @override
+  String get maxLevelReached => 'Максимальный уровень';
+
+  @override
+  String get averageDuration => 'Средняя длительность';
+
+  @override
+  String get personalProfiles => 'Персональные профили';
+
+  @override
+  String get addProfile => 'Добавить профиль';
+
+  @override
+  String get profileName => 'Имя профиля';
+
+  @override
+  String get noProfiles =>
+      'Профилей пока нет. Добавьте профиль или начните игру.';
+
+  @override
+  String get noGameHistory => 'У этого профиля пока нет завершённых партий.';
+
+  @override
+  String get noWinner => 'Победителя нет';
+
+  @override
+  String winnerNames(String names) {
+    return 'Победитель: $names';
+  }
+
+  @override
+  String durationMinutes(int minutes) {
+    return '$minutes мин';
+  }
+
+  @override
+  String durationHoursMinutes(int hours, int minutes) {
+    return '$hours ч $minutes мин';
+  }
+
+  @override
+  String get viewStatistics => 'История игр';
 }
