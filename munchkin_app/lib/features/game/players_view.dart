@@ -117,58 +117,48 @@ class PlayersView extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Row(
+                          Text(
+                            player.name,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          const SizedBox(height: 2),
+                          Wrap(
+                            spacing: AppSpacing.xs,
+                            runSpacing: 2,
+                            crossAxisAlignment: WrapCrossAlignment.center,
                             children: <Widget>[
-                              Flexible(
-                                child: Text(
-                                  player.name,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.titleMedium,
-                                ),
-                              ),
-                              if (isMe) ...<Widget>[
-                                const SizedBox(width: AppSpacing.xs),
-                                _Tag(label: l10n.youTag, color: scheme.primary),
-                              ] else if (isMine) ...<Widget>[
-                                const SizedBox(width: AppSpacing.xs),
+                              if (isMe)
+                                _Tag(label: l10n.youTag, color: scheme.primary)
+                              else if (isMine)
                                 _Tag(
                                   label: l10n.localPlayerTag,
                                   color: scheme.primary,
                                   outlined: true,
                                 ),
-                              ],
-                              if (active) ...<Widget>[
-                                const SizedBox(width: AppSpacing.xs),
+                              if (active)
                                 _Tag(
                                   label: l10n.currentTurn,
                                   color: scheme.onPrimaryContainer,
                                   outlined: true,
                                 ),
-                              ],
-                              if (isWinner) ...<Widget>[
-                                const SizedBox(width: AppSpacing.xs),
+                              if (isWinner)
                                 _Tag(
                                   label: l10n.gameWinnerBadge,
                                   color: leaderGold(context),
-                                ),
-                              ] else if (isNext) ...<Widget>[
-                                const SizedBox(width: AppSpacing.xs),
+                                )
+                              else if (isNext)
                                 _Tag(
                                   label: l10n.upNextTag,
                                   color: scheme.onSurfaceVariant,
                                   outlined: true,
                                 ),
-                              ],
-                              if (!player.isConnected) ...<Widget>[
-                                const SizedBox(width: AppSpacing.xs),
+                              if (!player.isConnected)
                                 Icon(
                                   Icons.cloud_off,
                                   size: 16,
                                   color: scheme.error,
                                 ),
-                              ],
                             ],
                           ),
                           const SizedBox(height: 2),
