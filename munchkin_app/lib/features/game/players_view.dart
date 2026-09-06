@@ -175,7 +175,7 @@ class PlayersView extends ConsumerWidget {
                           style: Theme.of(context).textTheme.headlineSmall
                               ?.copyWith(
                                 fontWeight: FontWeight.w800,
-                                color: isLeader ? Colors.amber.shade800 : null,
+                                color: isLeader ? leaderGold(context) : null,
                               ),
                         ),
                         Text(

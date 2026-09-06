@@ -174,6 +174,21 @@ void main() {
     expect(state.activePlayerId, 'host');
   });
 
+  test('battleFoughtThisTurn tracks fights and resets on end turn', () {
+    accept(const GameCommand.closeLobby(), 'host');
+    accept(const GameCommand.confirmOrder(), 'host');
+    accept(const GameCommand.startGame(), 'host');
+    expect(state.battleFoughtThisTurn, isFalse);
+    accept(const GameCommand.startBattle(), 'host');
+    expect(state.battleFoughtThisTurn, isTrue);
+    accept(const GameCommand.startEscape(), 'host');
+    accept(const GameCommand.resolveEscape(), 'host');
+    accept(const GameCommand.finishBattle(), 'host');
+    expect(state.battleFoughtThisTurn, isTrue);
+    accept(const GameCommand.endTurn(), 'host');
+    expect(state.battleFoughtThisTurn, isFalse);
+  });
+
   test('first intervention stops the countdown and late one is rejected', () {
     accept(
       const GameCommand.joinPlayer(playerId: 'p2', name: 'Alice'),

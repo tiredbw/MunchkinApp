@@ -18,6 +18,14 @@ abstract final class AppRadius {
   static const double xl = 28;
 }
 
+/// A gold accent for leader/victory highlights that stays legible on both
+/// light and dark surfaces (a fixed dark amber reads poorly on a dark
+/// background, and vice versa).
+Color leaderGold(BuildContext context) =>
+    Theme.of(context).brightness == Brightness.dark
+    ? Colors.amber.shade300
+    : Colors.amber.shade800;
+
 ThemeData buildAppTheme(Brightness brightness) {
   final colorScheme = ColorScheme.fromSeed(
     seedColor: const Color(0xFF7A3E00),

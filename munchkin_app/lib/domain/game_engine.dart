@@ -363,6 +363,7 @@ class GameEngine {
     );
     return state.copyWith(
       activePlayerId: state.turnOrder[(current + 1) % state.turnOrder.length],
+      battleFoughtThisTurn: false,
     );
   }
 
@@ -373,7 +374,10 @@ class GameEngine {
       GameErrorCode.invalidState,
       'A battle is already active.',
     );
-    return state.copyWith(battle: BattleState(playerId: actorId));
+    return state.copyWith(
+      battle: BattleState(playerId: actorId),
+      battleFoughtThisTurn: true,
+    );
   }
 
   GameState _declareVictory(GameState state, String actorId) {

@@ -44,6 +44,7 @@
   "escape": "Run away",
   "backToBattle": "Back to battle",
   "finishBattle": "Finish battle",
+  "battleAlreadyPlayed": "You already fought a monster this turn. Only some cards let you fight twice — start another battle anyway?",
   "escapeOutcome": "Did you survive?",
   "survivedEscape": "Survived",
   "diedInBattle": "Died (Bad Stuff)",

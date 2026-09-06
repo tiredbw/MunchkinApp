@@ -148,13 +148,20 @@ class TurnActions extends ConsumerWidget {
         ),
       );
     }
+    final battleFoughtThisTurn = ref.watch(
+      sessionControllerProvider.select(
+        (value) => value.game?.battleFoughtThisTurn ?? false,
+      ),
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         FilledButton.icon(
           onPressed: busy
               ? null
-              : () => controller.send(const GameCommand.startBattle()),
+              : () => battleFoughtThisTurn
+                    ? _confirmSecondBattle(context, controller)
+                    : controller.send(const GameCommand.startBattle()),
           icon: const Icon(Icons.shield),
           label: Text(l10n.startBattle),
         ),
@@ -167,6 +174,33 @@ class TurnActions extends ConsumerWidget {
         ),
       ],
     );
+  }
+
+  Future<void> _confirmSecondBattle(
+    BuildContext context,
+    SessionController controller,
+  ) async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.startBattle),
+        content: Text(l10n.battleAlreadyPlayed),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(l10n.startBattle),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      await controller.send(const GameCommand.startBattle());
+    }
   }
 }
 
@@ -300,13 +334,13 @@ class _BattlePanel extends ConsumerWidget {
           return _WaitingState(
             icon: Icons.emoji_events,
             message: l10n.battleWon,
-            color: Colors.amber.shade700,
+            color: leaderGold(context),
           );
         }
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Icon(Icons.emoji_events, size: 40, color: Colors.amber.shade600),
+            Icon(Icons.emoji_events, size: 40, color: leaderGold(context)),
             const SizedBox(height: 8),
             Text(
               l10n.battleWon,

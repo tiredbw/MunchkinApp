@@ -141,6 +141,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get finishBattle => 'Завершить бой';
 
   @override
+  String get battleAlreadyPlayed =>
+      'В этот ход вы уже дрались с монстром. Начать ещё один бой — обычно так можно только по особым картам?';
+
+  @override
   String get escapeOutcome => 'Побег удался?';
 
   @override

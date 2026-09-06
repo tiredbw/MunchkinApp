@@ -141,6 +141,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get finishBattle => 'Finish battle';
 
   @override
+  String get battleAlreadyPlayed =>
+      'You already fought a monster this turn. Only some cards let you fight twice — start another battle anyway?';
+
+  @override
   String get escapeOutcome => 'Did you survive?';
 
   @override

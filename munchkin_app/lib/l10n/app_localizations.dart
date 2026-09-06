@@ -362,6 +362,12 @@ abstract class AppLocalizations {
   /// **'Finish battle'**
   String get finishBattle;
 
+  /// No description provided for @battleAlreadyPlayed.
+  ///
+  /// In en, this message translates to:
+  /// **'You already fought a monster this turn. Only some cards let you fight twice — start another battle anyway?'**
+  String get battleAlreadyPlayed;
+
   /// No description provided for @escapeOutcome.
   ///
   /// In en, this message translates to:
