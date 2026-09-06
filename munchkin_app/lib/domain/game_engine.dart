@@ -87,11 +87,11 @@ class GameEngine {
           levelDelta: value.levelDelta,
           strengthDelta: value.strengthDelta,
         ),
-        adjustEquipment: (value) => _adjustEquipment(
+        setIdentity: (value) => _setIdentity(
           state,
           actorId,
-          slot: value.slot,
-          delta: value.delta,
+          race: value.race,
+          charClass: value.charClass,
         ),
         endTurn: (_) => _endTurn(state, actorId),
         startBattle: (_) => _startBattle(state, actorId),
@@ -318,33 +318,21 @@ class GameEngine {
     return state.copyWith(players: players);
   }
 
-  static const int _minEquipmentBonus = -10;
-  static const int _maxEquipmentBonus = 30;
-
-  GameState _adjustEquipment(
+  GameState _setIdentity(
     GameState state,
     String actorId, {
-    required EquipmentSlot slot,
-    required int delta,
+    required MunchkinRace race,
+    required MunchkinClass charClass,
   }) {
     _require(
-      delta == 1 || delta == -1,
-      GameErrorCode.invalidValue,
-      'Unsupported equipment adjustment.',
+      state.settings.trackRaceClass,
+      GameErrorCode.invalidState,
+      'Race and class tracking is disabled for this room.',
     );
     final index = state.players.indexWhere((player) => player.id == actorId);
     _require(index >= 0, GameErrorCode.playerNotFound, 'Player was not found.');
-    final player = state.players[index];
-    final value = player.equipment.forSlot(slot) + delta;
-    _require(
-      value >= _minEquipmentBonus && value <= _maxEquipmentBonus,
-      GameErrorCode.invalidValue,
-      'Equipment bonus is outside the supported range.',
-    );
     final players = [...state.players];
-    players[index] = player.copyWith(
-      equipment: player.equipment.withSlot(slot, value),
-    );
+    players[index] = players[index].copyWith(race: race, charClass: charClass);
     return state.copyWith(players: players);
   }
 

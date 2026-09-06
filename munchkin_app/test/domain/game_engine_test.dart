@@ -35,27 +35,36 @@ void main() {
     expect(state.revision, 0);
   });
 
-  test('equipment bonuses add to total power and are range-limited', () {
+  test('sets race and class for the acting player', () {
     accept(
-      const GameCommand.adjustEquipment(slot: EquipmentSlot.weapon, delta: 1),
-      'host',
-    );
-    accept(
-      const GameCommand.adjustEquipment(slot: EquipmentSlot.armor, delta: 1),
+      const GameCommand.setIdentity(
+        race: MunchkinRace.dwarf,
+        charClass: MunchkinClass.warrior,
+      ),
       'host',
     );
     final player = state.playerById('host')!;
-    expect(player.equipment.weapon, 1);
-    expect(player.equipment.armor, 1);
-    expect(player.totalPower, player.level + player.strength + 2);
+    expect(player.race, MunchkinRace.dwarf);
+    expect(player.charClass, MunchkinClass.warrior);
+  });
 
-    final tooBig = engine.apply(
+  test('rejects setting identity when the room disabled tracking it', () {
+    state = engine.createRoom(
+      roomId: 'room',
+      hostPlayerId: 'host',
+      hostName: 'Host',
+      settings: const RoomSettings(trackRaceClass: false),
+    );
+    final result = engine.apply(
       state,
-      const GameCommand.adjustEquipment(slot: EquipmentSlot.weapon, delta: 2),
+      const GameCommand.setIdentity(
+        race: MunchkinRace.elf,
+        charClass: MunchkinClass.thief,
+      ),
       actorId: 'host',
     );
-    expect(tooBig, isA<GameRejected>());
-    expect((tooBig as GameRejected).code, GameErrorCode.invalidValue);
+    expect(result, isA<GameRejected>());
+    expect((result as GameRejected).code, GameErrorCode.invalidState);
   });
 
   test('normalizes names and rejects duplicates case-insensitively', () {

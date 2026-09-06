@@ -57,27 +57,40 @@ class AppLocalizationsEn extends AppLocalizations {
   String get totalPower => 'Total power';
 
   @override
-  String totalPowerBreakdown(int level, int strength, int equipment) {
-    return '$level level + $strength strength + $equipment gear';
-  }
+  String get identity => 'Race & class';
 
   @override
-  String get equipment => 'Equipment';
+  String get trackRaceClass => 'Track race & class';
 
   @override
-  String get equipmentHeadgear => 'Headgear';
+  String get raceNone => 'No race';
 
   @override
-  String get equipmentArmor => 'Armor';
+  String get raceHuman => 'Human';
 
   @override
-  String get equipmentWeapon => 'Weapon';
+  String get raceElf => 'Elf';
 
   @override
-  String get equipmentFootgear => 'Footgear';
+  String get raceDwarf => 'Dwarf';
 
   @override
-  String get equipmentOther => 'Other items';
+  String get raceHalfling => 'Halfling';
+
+  @override
+  String get classNone => 'No class';
+
+  @override
+  String get classWarrior => 'Warrior';
+
+  @override
+  String get classWizard => 'Wizard';
+
+  @override
+  String get classCleric => 'Cleric';
+
+  @override
+  String get classThief => 'Thief';
 
   @override
   String get closeLobby => 'Close lobby';

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/theme.dart';
 import '../../application/session_controller.dart';
 import '../../domain/models/game_models.dart';
 import '../../l10n/app_localizations.dart';
@@ -24,6 +25,7 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
   final _initialStrength = TextEditingController(text: '0');
   var _diceMode = DiceMode.virtual;
   var _countdown = 5.0;
+  var _trackRaceClass = true;
 
   @override
   void dispose() {
@@ -58,73 +60,94 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
       body: Form(
         key: _formKey,
         child: ListView(
-          padding: const EdgeInsets.all(20),
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           children: <Widget>[
             TextFormField(
               controller: _name,
               maxLength: 24,
-              decoration: InputDecoration(labelText: l10n.yourName),
+              decoration: InputDecoration(
+                labelText: l10n.yourName,
+                prefixIcon: const Icon(Icons.badge_outlined),
+              ),
               validator: _validateName,
             ),
-            const SizedBox(height: 12),
-            Text(l10n.settings, style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 12),
-            SegmentedButton<DiceMode>(
-              segments: <ButtonSegment<DiceMode>>[
-                ButtonSegment(
-                  value: DiceMode.virtual,
-                  label: Text(l10n.virtualDice),
-                  icon: const Icon(Icons.casino),
+            const SizedBox(height: AppSpacing.md),
+            _SectionCard(
+              icon: Icons.tune,
+              title: l10n.settings,
+              children: <Widget>[
+                SegmentedButton<DiceMode>(
+                  segments: <ButtonSegment<DiceMode>>[
+                    ButtonSegment(
+                      value: DiceMode.virtual,
+                      label: Text(l10n.virtualDice),
+                      icon: const Icon(Icons.casino),
+                    ),
+                    ButtonSegment(
+                      value: DiceMode.physical,
+                      label: Text(l10n.realDice),
+                      icon: const Icon(Icons.casino_outlined),
+                    ),
+                  ],
+                  selected: <DiceMode>{_diceMode},
+                  onSelectionChanged: (value) =>
+                      setState(() => _diceMode = value.single),
                 ),
-                ButtonSegment(
-                  value: DiceMode.physical,
-                  label: Text(l10n.realDice),
-                  icon: const Icon(Icons.casino_outlined),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(l10n.trackRaceClass),
+                  value: _trackRaceClass,
+                  onChanged: (value) => setState(() => _trackRaceClass = value),
                 ),
               ],
-              selected: <DiceMode>{_diceMode},
-              onSelectionChanged: (value) =>
-                  setState(() => _diceMode = value.single),
             ),
-            const SizedBox(height: 24),
-            Text(
-              '${l10n.level}:',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 8),
-            _NumberRow(
-              controllers: <TextEditingController>[
-                _minLevel,
-                _initialLevel,
-                _maxLevel,
+            const SizedBox(height: AppSpacing.md),
+            _SectionCard(
+              icon: Icons.military_tech,
+              title: l10n.level,
+              children: <Widget>[
+                _NumberRow(
+                  controllers: <TextEditingController>[
+                    _minLevel,
+                    _initialLevel,
+                    _maxLevel,
+                  ],
+                  labels: <String>[l10n.minimum, l10n.initial, l10n.maximum],
+                ),
               ],
-              labels: <String>[l10n.minimum, l10n.initial, l10n.maximum],
             ),
-            const SizedBox(height: 20),
-            Text(
-              '${l10n.strength}:',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 8),
-            _NumberRow(
-              controllers: <TextEditingController>[
-                _minStrength,
-                _initialStrength,
-                _maxStrength,
+            const SizedBox(height: AppSpacing.md),
+            _SectionCard(
+              icon: Icons.fitness_center,
+              title: l10n.strength,
+              children: <Widget>[
+                _NumberRow(
+                  controllers: <TextEditingController>[
+                    _minStrength,
+                    _initialStrength,
+                    _maxStrength,
+                  ],
+                  labels: <String>[l10n.minimum, l10n.initial, l10n.maximum],
+                ),
               ],
-              labels: <String>[l10n.minimum, l10n.initial, l10n.maximum],
             ),
-            const SizedBox(height: 24),
-            Text('${l10n.countdownSeconds}: ${_countdown.round()}'),
-            Slider(
-              min: 3,
-              max: 60,
-              divisions: 57,
-              value: _countdown,
-              label: '${_countdown.round()}',
-              onChanged: (value) => setState(() => _countdown = value),
+            const SizedBox(height: AppSpacing.md),
+            _SectionCard(
+              icon: Icons.timer_outlined,
+              title: '${l10n.countdownSeconds}: ${_countdown.round()}',
+              children: <Widget>[
+                Slider(
+                  min: 3,
+                  max: 60,
+                  divisions: 57,
+                  value: _countdown,
+                  label: '${_countdown.round()}',
+                  onChanged: (value) => setState(() => _countdown = value),
+                ),
+              ],
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.xl),
             FilledButton(
               onPressed: busy ? null : _submit,
               child: busy
@@ -134,6 +157,7 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
                     )
                   : Text(l10n.createRoom),
             ),
+            const SizedBox(height: AppSpacing.md),
           ],
         ),
       ),
@@ -156,6 +180,7 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
       initialStrength: int.parse(_initialStrength.text),
       maxStrength: int.parse(_maxStrength.text),
       victoryCountdownSeconds: _countdown.round(),
+      trackRaceClass: _trackRaceClass,
     );
     if (!(settings.minLevel >= 1 &&
         settings.minLevel <= settings.initialLevel &&
@@ -185,6 +210,42 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
         ).showSnackBar(SnackBar(content: Text(message)));
       }
     }
+  }
+}
+
+class _SectionCard extends StatelessWidget {
+  const _SectionCard({
+    required this.icon,
+    required this.title,
+    required this.children,
+  });
+
+  final IconData icon;
+  final String title;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Icon(icon, size: 18, color: scheme.onSurfaceVariant),
+                const SizedBox(width: 6),
+                Text(title, style: Theme.of(context).textTheme.titleMedium),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            ...children,
+          ],
+        ),
+      ),
+    );
   }
 }
 

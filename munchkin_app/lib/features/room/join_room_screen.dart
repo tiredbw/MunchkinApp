@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
+import '../../app/theme.dart';
 import '../../application/session_controller.dart';
 import '../../core/network/network_protocol.dart';
 import '../../l10n/app_localizations.dart';
@@ -52,60 +53,92 @@ class _JoinRoomScreenState extends ConsumerState<JoinRoomScreen> {
       body: Form(
         key: _formKey,
         child: ListView(
-          padding: const EdgeInsets.all(20),
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           children: <Widget>[
             TextFormField(
               controller: _name,
               maxLength: 24,
-              decoration: InputDecoration(labelText: l10n.yourName),
+              decoration: InputDecoration(
+                labelText: l10n.yourName,
+                prefixIcon: const Icon(Icons.badge_outlined),
+              ),
               validator: (value) =>
                   (value?.trim().isEmpty ?? true) ? '1–24' : null,
             ),
+            const SizedBox(height: AppSpacing.md),
             OutlinedButton.icon(
               onPressed: session.busy ? null : _scan,
               icon: const Icon(Icons.qr_code_scanner),
               label: Text(l10n.scanQr),
             ),
-            const SizedBox(height: 24),
-            Text(
-              l10n.manualJoin,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _host,
-              decoration: InputDecoration(labelText: l10n.hostAddress),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: TextFormField(
-                    controller: _port,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(labelText: l10n.port),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TextFormField(
-                    controller: _pin,
-                    keyboardType: TextInputType.number,
-                    maxLength: 6,
-                    decoration: InputDecoration(
-                      labelText: l10n.pin,
-                      counterText: '',
+            const SizedBox(height: AppSpacing.lg),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Icon(
+                          Icons.edit_note,
+                          size: 18,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          l10n.manualJoin,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                      ],
                     ),
-                  ),
+                    const SizedBox(height: AppSpacing.sm),
+                    TextFormField(
+                      controller: _host,
+                      decoration: InputDecoration(
+                        labelText: l10n.hostAddress,
+                        prefixIcon: const Icon(Icons.dns_outlined),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: TextFormField(
+                            controller: _port,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(labelText: l10n.port),
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.sm),
+                        Expanded(
+                          child: TextFormField(
+                            controller: _pin,
+                            keyboardType: TextInputType.number,
+                            maxLength: 6,
+                            decoration: InputDecoration(
+                              labelText: l10n.pin,
+                              counterText: '',
+                              prefixIcon: const Icon(Icons.password),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    TextFormField(
+                      controller: _room,
+                      decoration: InputDecoration(
+                        labelText: l10n.roomId,
+                        prefixIcon: const Icon(Icons.meeting_room_outlined),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _room,
-              decoration: InputDecoration(labelText: l10n.roomId),
-            ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.lg),
             FilledButton(
               onPressed: session.busy ? null : _join,
               child: session.busy
@@ -116,12 +149,23 @@ class _JoinRoomScreenState extends ConsumerState<JoinRoomScreen> {
                   : Text(l10n.joinRoom),
             ),
             if (session.error != null) ...<Widget>[
-              const SizedBox(height: 12),
-              Text(
-                session.error!,
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              const SizedBox(height: AppSpacing.md),
+              Container(
+                padding: const EdgeInsets.all(AppSpacing.sm),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.errorContainer,
+                  borderRadius: BorderRadius.circular(AppRadius.sm),
+                ),
+                child: Text(
+                  session.error!,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onErrorContainer,
+                  ),
+                ),
               ),
             ],
+            const SizedBox(height: AppSpacing.md),
           ],
         ),
       ),
@@ -180,20 +224,41 @@ class _ScannerScreenState extends State<_ScannerScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(AppLocalizations.of(context).scanQr)),
-    body: MobileScanner(
-      onDetect: (capture) {
-        if (_handled) return;
-        final value = capture.barcodes.firstOrNull?.rawValue;
-        if (value == null) return;
-        try {
-          final invite = RoomInvite.parse(value);
-          _handled = true;
-          Navigator.of(context).pop(invite);
-        } on FormatException {
-          return;
-        }
-      },
+    appBar: AppBar(
+      backgroundColor: Colors.black,
+      foregroundColor: Colors.white,
+      title: Text(AppLocalizations.of(context).scanQr),
+    ),
+    body: Stack(
+      fit: StackFit.expand,
+      children: <Widget>[
+        MobileScanner(
+          onDetect: (capture) {
+            if (_handled) return;
+            final value = capture.barcodes.firstOrNull?.rawValue;
+            if (value == null) return;
+            try {
+              final invite = RoomInvite.parse(value);
+              _handled = true;
+              Navigator.of(context).pop(invite);
+            } on FormatException {
+              return;
+            }
+          },
+        ),
+        IgnorePointer(
+          child: Center(
+            child: Container(
+              width: 240,
+              height: 240,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.white, width: 3),
+                borderRadius: BorderRadius.circular(AppRadius.lg),
+              ),
+            ),
+          ),
+        ),
+      ],
     ),
   );
 }

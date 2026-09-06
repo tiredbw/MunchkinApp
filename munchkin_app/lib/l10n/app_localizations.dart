@@ -194,47 +194,77 @@ abstract class AppLocalizations {
   /// **'Total power'**
   String get totalPower;
 
-  /// No description provided for @totalPowerBreakdown.
+  /// No description provided for @identity.
   ///
   /// In en, this message translates to:
-  /// **'{level} level + {strength} strength + {equipment} gear'**
-  String totalPowerBreakdown(int level, int strength, int equipment);
+  /// **'Race & class'**
+  String get identity;
 
-  /// No description provided for @equipment.
+  /// No description provided for @trackRaceClass.
   ///
   /// In en, this message translates to:
-  /// **'Equipment'**
-  String get equipment;
+  /// **'Track race & class'**
+  String get trackRaceClass;
 
-  /// No description provided for @equipmentHeadgear.
+  /// No description provided for @raceNone.
   ///
   /// In en, this message translates to:
-  /// **'Headgear'**
-  String get equipmentHeadgear;
+  /// **'No race'**
+  String get raceNone;
 
-  /// No description provided for @equipmentArmor.
+  /// No description provided for @raceHuman.
   ///
   /// In en, this message translates to:
-  /// **'Armor'**
-  String get equipmentArmor;
+  /// **'Human'**
+  String get raceHuman;
 
-  /// No description provided for @equipmentWeapon.
+  /// No description provided for @raceElf.
   ///
   /// In en, this message translates to:
-  /// **'Weapon'**
-  String get equipmentWeapon;
+  /// **'Elf'**
+  String get raceElf;
 
-  /// No description provided for @equipmentFootgear.
+  /// No description provided for @raceDwarf.
   ///
   /// In en, this message translates to:
-  /// **'Footgear'**
-  String get equipmentFootgear;
+  /// **'Dwarf'**
+  String get raceDwarf;
 
-  /// No description provided for @equipmentOther.
+  /// No description provided for @raceHalfling.
   ///
   /// In en, this message translates to:
-  /// **'Other items'**
-  String get equipmentOther;
+  /// **'Halfling'**
+  String get raceHalfling;
+
+  /// No description provided for @classNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No class'**
+  String get classNone;
+
+  /// No description provided for @classWarrior.
+  ///
+  /// In en, this message translates to:
+  /// **'Warrior'**
+  String get classWarrior;
+
+  /// No description provided for @classWizard.
+  ///
+  /// In en, this message translates to:
+  /// **'Wizard'**
+  String get classWizard;
+
+  /// No description provided for @classCleric.
+  ///
+  /// In en, this message translates to:
+  /// **'Cleric'**
+  String get classCleric;
+
+  /// No description provided for @classThief.
+  ///
+  /// In en, this message translates to:
+  /// **'Thief'**
+  String get classThief;
 
   /// No description provided for @closeLobby.
   ///

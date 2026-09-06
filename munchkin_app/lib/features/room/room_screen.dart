@@ -389,13 +389,21 @@ class _InviteChip extends StatelessWidget {
         color: scheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(AppRadius.sm),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Icon(icon, size: 16, color: scheme.onSurfaceVariant),
-          const SizedBox(width: 4),
-          SelectableText(text, style: Theme.of(context).textTheme.bodyMedium),
-        ],
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 220),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Icon(icon, size: 16, color: scheme.onSurfaceVariant),
+            const SizedBox(width: 4),
+            Flexible(
+              child: SelectableText(
+                text,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

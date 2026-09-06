@@ -57,27 +57,40 @@ class AppLocalizationsRu extends AppLocalizations {
   String get totalPower => 'Общая мощь';
 
   @override
-  String totalPowerBreakdown(int level, int strength, int equipment) {
-    return '$level уровень + $strength сила + $equipment снаряжение';
-  }
+  String get identity => 'Раса и класс';
 
   @override
-  String get equipment => 'Снаряжение';
+  String get trackRaceClass => 'Отмечать расу и класс';
 
   @override
-  String get equipmentHeadgear => 'Голова';
+  String get raceNone => 'Без расы';
 
   @override
-  String get equipmentArmor => 'Броня';
+  String get raceHuman => 'Человек';
 
   @override
-  String get equipmentWeapon => 'Оружие';
+  String get raceElf => 'Эльф';
 
   @override
-  String get equipmentFootgear => 'Обувь';
+  String get raceDwarf => 'Дворф';
 
   @override
-  String get equipmentOther => 'Прочие предметы';
+  String get raceHalfling => 'Полурослик';
+
+  @override
+  String get classNone => 'Без класса';
+
+  @override
+  String get classWarrior => 'Воин';
+
+  @override
+  String get classWizard => 'Волшебник';
+
+  @override
+  String get classCleric => 'Клирик';
+
+  @override
+  String get classThief => 'Вор';
 
   @override
   String get closeLobby => 'Закрыть лобби';

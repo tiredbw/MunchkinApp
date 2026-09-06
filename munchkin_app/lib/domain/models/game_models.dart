@@ -7,7 +7,9 @@ enum DiceMode { physical, virtual }
 
 enum RoomPhase { lobby, ordering, ready, playing, ended }
 
-enum EquipmentSlot { headgear, armor, weapon, footgear, other }
+enum MunchkinRace { none, human, elf, dwarf, halfling }
+
+enum MunchkinClass { none, warrior, wizard, cleric, thief }
 
 enum BattleStatus {
   fighting,
@@ -30,44 +32,11 @@ abstract class RoomSettings with _$RoomSettings {
     @Default(99) int maxStrength,
     @Default(0) int initialStrength,
     @Default(5) int victoryCountdownSeconds,
+    @Default(true) bool trackRaceClass,
   }) = _RoomSettings;
 
   factory RoomSettings.fromJson(Map<String, Object?> json) =>
       _$RoomSettingsFromJson(json);
-}
-
-@freezed
-abstract class Equipment with _$Equipment {
-  const Equipment._();
-
-  const factory Equipment({
-    @Default(0) int headgear,
-    @Default(0) int armor,
-    @Default(0) int weapon,
-    @Default(0) int footgear,
-    @Default(0) int other,
-  }) = _Equipment;
-
-  factory Equipment.fromJson(Map<String, Object?> json) =>
-      _$EquipmentFromJson(json);
-
-  int get total => headgear + armor + weapon + footgear + other;
-
-  int forSlot(EquipmentSlot slot) => switch (slot) {
-    EquipmentSlot.headgear => headgear,
-    EquipmentSlot.armor => armor,
-    EquipmentSlot.weapon => weapon,
-    EquipmentSlot.footgear => footgear,
-    EquipmentSlot.other => other,
-  };
-
-  Equipment withSlot(EquipmentSlot slot, int value) => switch (slot) {
-    EquipmentSlot.headgear => copyWith(headgear: value),
-    EquipmentSlot.armor => copyWith(armor: value),
-    EquipmentSlot.weapon => copyWith(weapon: value),
-    EquipmentSlot.footgear => copyWith(footgear: value),
-    EquipmentSlot.other => copyWith(other: value),
-  };
 }
 
 @freezed
@@ -80,14 +49,15 @@ abstract class Player with _$Player {
     required bool isHost,
     required int level,
     required int strength,
-    @Default(Equipment()) Equipment equipment,
+    @Default(MunchkinRace.none) MunchkinRace race,
+    @Default(MunchkinClass.none) MunchkinClass charClass,
     @Default(true) bool isConnected,
     DateTime? lastSeenAt,
   }) = _Player;
 
   factory Player.fromJson(Map<String, Object?> json) => _$PlayerFromJson(json);
 
-  int get totalPower => level + strength + equipment.total;
+  int get totalPower => level + strength;
 }
 
 @freezed

@@ -19,6 +19,7 @@ _RoomSettings _$RoomSettingsFromJson(Map<String, dynamic> json) =>
       initialStrength: (json['initialStrength'] as num?)?.toInt() ?? 0,
       victoryCountdownSeconds:
           (json['victoryCountdownSeconds'] as num?)?.toInt() ?? 5,
+      trackRaceClass: json['trackRaceClass'] as bool? ?? true,
     );
 
 Map<String, dynamic> _$RoomSettingsToJson(_RoomSettings instance) =>
@@ -31,6 +32,7 @@ Map<String, dynamic> _$RoomSettingsToJson(_RoomSettings instance) =>
       'maxStrength': instance.maxStrength,
       'initialStrength': instance.initialStrength,
       'victoryCountdownSeconds': instance.victoryCountdownSeconds,
+      'trackRaceClass': instance.trackRaceClass,
     };
 
 const _$DiceModeEnumMap = {
@@ -38,32 +40,18 @@ const _$DiceModeEnumMap = {
   DiceMode.virtual: 'virtual',
 };
 
-_Equipment _$EquipmentFromJson(Map<String, dynamic> json) => _Equipment(
-  headgear: (json['headgear'] as num?)?.toInt() ?? 0,
-  armor: (json['armor'] as num?)?.toInt() ?? 0,
-  weapon: (json['weapon'] as num?)?.toInt() ?? 0,
-  footgear: (json['footgear'] as num?)?.toInt() ?? 0,
-  other: (json['other'] as num?)?.toInt() ?? 0,
-);
-
-Map<String, dynamic> _$EquipmentToJson(_Equipment instance) =>
-    <String, dynamic>{
-      'headgear': instance.headgear,
-      'armor': instance.armor,
-      'weapon': instance.weapon,
-      'footgear': instance.footgear,
-      'other': instance.other,
-    };
-
 _Player _$PlayerFromJson(Map<String, dynamic> json) => _Player(
   id: json['id'] as String,
   name: json['name'] as String,
   isHost: json['isHost'] as bool,
   level: (json['level'] as num).toInt(),
   strength: (json['strength'] as num).toInt(),
-  equipment: json['equipment'] == null
-      ? const Equipment()
-      : Equipment.fromJson(json['equipment'] as Map<String, dynamic>),
+  race:
+      $enumDecodeNullable(_$MunchkinRaceEnumMap, json['race']) ??
+      MunchkinRace.none,
+  charClass:
+      $enumDecodeNullable(_$MunchkinClassEnumMap, json['charClass']) ??
+      MunchkinClass.none,
   isConnected: json['isConnected'] as bool? ?? true,
   lastSeenAt: json['lastSeenAt'] == null
       ? null
@@ -76,9 +64,26 @@ Map<String, dynamic> _$PlayerToJson(_Player instance) => <String, dynamic>{
   'isHost': instance.isHost,
   'level': instance.level,
   'strength': instance.strength,
-  'equipment': instance.equipment,
+  'race': _$MunchkinRaceEnumMap[instance.race]!,
+  'charClass': _$MunchkinClassEnumMap[instance.charClass]!,
   'isConnected': instance.isConnected,
   'lastSeenAt': instance.lastSeenAt?.toIso8601String(),
+};
+
+const _$MunchkinRaceEnumMap = {
+  MunchkinRace.none: 'none',
+  MunchkinRace.human: 'human',
+  MunchkinRace.elf: 'elf',
+  MunchkinRace.dwarf: 'dwarf',
+  MunchkinRace.halfling: 'halfling',
+};
+
+const _$MunchkinClassEnumMap = {
+  MunchkinClass.none: 'none',
+  MunchkinClass.warrior: 'warrior',
+  MunchkinClass.wizard: 'wizard',
+  MunchkinClass.cleric: 'cleric',
+  MunchkinClass.thief: 'thief',
 };
 
 _BattleState _$BattleStateFromJson(Map<String, dynamic> json) => _BattleState(

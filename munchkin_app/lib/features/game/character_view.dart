@@ -20,6 +20,7 @@ class CharacterView extends ConsumerWidget {
     final scheme = Theme.of(context).colorScheme;
     if (player == null) return const Center(child: CircularProgressIndicator());
     return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.all(AppSpacing.lg),
       children: <Widget>[
         Row(
@@ -88,12 +89,6 @@ class CharacterView extends ConsumerWidget {
               ),
           ],
         ),
-        const SizedBox(height: AppSpacing.sm),
-        _EquipmentCard(
-          player: player,
-          busy: session.busy,
-          controller: controller,
-        ),
         const SizedBox(height: AppSpacing.md),
         Card(
           color: scheme.primaryContainer,
@@ -115,21 +110,18 @@ class CharacterView extends ConsumerWidget {
                     color: scheme.onPrimaryContainer,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  l10n.totalPowerBreakdown(
-                    player.level,
-                    player.strength,
-                    player.equipment.total,
-                  ),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: scheme.onPrimaryContainer.withValues(alpha: 0.8),
-                  ),
-                ),
               ],
             ),
           ),
         ),
+        if (session.game!.settings.trackRaceClass) ...<Widget>[
+          const SizedBox(height: AppSpacing.sm),
+          _IdentityCard(
+            player: player,
+            busy: session.busy,
+            controller: controller,
+          ),
+        ],
         if (session.game!.battle == null) ...<Widget>[
           const SizedBox(height: AppSpacing.md),
           Card(
@@ -192,8 +184,8 @@ class _StatCard extends StatelessWidget {
   }
 }
 
-class _EquipmentCard extends StatelessWidget {
-  const _EquipmentCard({
+class _IdentityCard extends StatelessWidget {
+  const _IdentityCard({
     required this.player,
     required this.busy,
     required this.controller,
@@ -203,21 +195,40 @@ class _EquipmentCard extends StatelessWidget {
   final bool busy;
   final SessionController controller;
 
-  static const Map<EquipmentSlot, IconData> _icons = <EquipmentSlot, IconData>{
-    EquipmentSlot.headgear: Icons.sports_motorsports,
-    EquipmentSlot.armor: Icons.shield,
-    EquipmentSlot.weapon: Icons.gavel,
-    EquipmentSlot.footgear: Icons.directions_walk,
-    EquipmentSlot.other: Icons.inventory_2,
+  static const Map<MunchkinRace, IconData> _raceIcons =
+      <MunchkinRace, IconData>{
+        MunchkinRace.none: Icons.block,
+        MunchkinRace.human: Icons.person,
+        MunchkinRace.elf: Icons.forest,
+        MunchkinRace.dwarf: Icons.terrain,
+        MunchkinRace.halfling: Icons.hiking,
+      };
+
+  static const Map<MunchkinClass, IconData> _classIcons =
+      <MunchkinClass, IconData>{
+        MunchkinClass.none: Icons.block,
+        MunchkinClass.warrior: Icons.gavel,
+        MunchkinClass.wizard: Icons.auto_fix_high,
+        MunchkinClass.cleric: Icons.favorite,
+        MunchkinClass.thief: Icons.visibility_off,
+      };
+
+  String _raceLabel(AppLocalizations l10n, MunchkinRace race) => switch (race) {
+    MunchkinRace.none => l10n.raceNone,
+    MunchkinRace.human => l10n.raceHuman,
+    MunchkinRace.elf => l10n.raceElf,
+    MunchkinRace.dwarf => l10n.raceDwarf,
+    MunchkinRace.halfling => l10n.raceHalfling,
   };
 
-  String _labelFor(AppLocalizations l10n, EquipmentSlot slot) => switch (slot) {
-    EquipmentSlot.headgear => l10n.equipmentHeadgear,
-    EquipmentSlot.armor => l10n.equipmentArmor,
-    EquipmentSlot.weapon => l10n.equipmentWeapon,
-    EquipmentSlot.footgear => l10n.equipmentFootgear,
-    EquipmentSlot.other => l10n.equipmentOther,
-  };
+  String _classLabel(AppLocalizations l10n, MunchkinClass value) =>
+      switch (value) {
+        MunchkinClass.none => l10n.classNone,
+        MunchkinClass.warrior => l10n.classWarrior,
+        MunchkinClass.wizard => l10n.classWizard,
+        MunchkinClass.cleric => l10n.classCleric,
+        MunchkinClass.thief => l10n.classThief,
+      };
 
   @override
   Widget build(BuildContext context) {
@@ -225,87 +236,66 @@ class _EquipmentCard extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     return Card(
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.sm,
-        ),
+        padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-              child: Row(
-                children: <Widget>[
-                  Icon(
-                    Icons.backpack,
-                    size: 18,
-                    color: scheme.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    l10n.equipment,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const Spacer(),
-                  Text(
-                    '+${player.equipment.total}',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      color: scheme.primary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            for (final slot in EquipmentSlot.values)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2),
-                child: Row(
-                  children: <Widget>[
-                    Icon(
-                      _icons[slot],
-                      size: 20,
-                      color: scheme.onSurfaceVariant,
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Expanded(
-                      child: Text(
-                        _labelFor(l10n, slot),
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 28,
-                      child: Text(
-                        '${player.equipment.forSlot(slot)}',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    ),
-                    IconButton(
-                      visualDensity: VisualDensity.compact,
-                      onPressed: busy
-                          ? null
-                          : () => controller.send(
-                              GameCommand.adjustEquipment(
-                                slot: slot,
-                                delta: -1,
-                              ),
-                            ),
-                      icon: const Icon(Icons.remove_circle_outline, size: 20),
-                    ),
-                    IconButton(
-                      visualDensity: VisualDensity.compact,
-                      onPressed: busy
-                          ? null
-                          : () => controller.send(
-                              GameCommand.adjustEquipment(slot: slot, delta: 1),
-                            ),
-                      icon: const Icon(Icons.add_circle_outline, size: 20),
-                    ),
-                  ],
+            Row(
+              children: <Widget>[
+                Icon(
+                  Icons.auto_awesome,
+                  size: 18,
+                  color: scheme.onSurfaceVariant,
                 ),
-              ),
+                const SizedBox(width: 6),
+                Text(
+                  l10n.identity,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Wrap(
+              spacing: AppSpacing.xs,
+              runSpacing: AppSpacing.xs,
+              children: <Widget>[
+                for (final race in MunchkinRace.values)
+                  ChoiceChip(
+                    avatar: Icon(_raceIcons[race], size: 16),
+                    label: Text(_raceLabel(l10n, race)),
+                    selected: player.race == race,
+                    onSelected: busy
+                        ? null
+                        : (_) => controller.send(
+                            GameCommand.setIdentity(
+                              race: race,
+                              charClass: player.charClass,
+                            ),
+                          ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Wrap(
+              spacing: AppSpacing.xs,
+              runSpacing: AppSpacing.xs,
+              children: <Widget>[
+                for (final charClass in MunchkinClass.values)
+                  ChoiceChip(
+                    avatar: Icon(_classIcons[charClass], size: 16),
+                    label: Text(_classLabel(l10n, charClass)),
+                    selected: player.charClass == charClass,
+                    onSelected: busy
+                        ? null
+                        : (_) => controller.send(
+                            GameCommand.setIdentity(
+                              race: player.race,
+                              charClass: charClass,
+                            ),
+                          ),
+                  ),
+              ],
+            ),
           ],
         ),
       ),
