@@ -342,12 +342,60 @@ class _BattlePanel extends ConsumerWidget {
             message: l10n.escapingNow,
           );
         }
-        return FilledButton(
-          onPressed: busy
-              ? null
-              : () => controller.send(const GameCommand.finishBattle()),
-          child: Text(l10n.finishBattle),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Text(
+              l10n.escapeOutcome,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            FilledButton.icon(
+              onPressed: busy
+                  ? null
+                  : () => controller.send(const GameCommand.finishBattle()),
+              icon: const Icon(Icons.check_circle_outline),
+              label: Text(l10n.survivedEscape),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            OutlinedButton.icon(
+              onPressed: busy
+                  ? null
+                  : () => _confirmDeath(context, controller, game),
+              icon: const Icon(Icons.dangerous),
+              label: Text(l10n.diedInBattle),
+            ),
+          ],
         );
+    }
+  }
+
+  Future<void> _confirmDeath(
+    BuildContext context,
+    SessionController controller,
+    GameState game,
+  ) async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.diedInBattle),
+        content: Text(l10n.diedInBattleConfirm(game.settings.minLevel)),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(l10n.diedInBattle),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      await controller.send(const GameCommand.dieInBattle());
     }
   }
 

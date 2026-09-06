@@ -141,6 +141,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get finishBattle => 'Finish battle';
 
   @override
+  String get escapeOutcome => 'Did you survive?';
+
+  @override
+  String get survivedEscape => 'Survived';
+
+  @override
+  String get diedInBattle => 'Died (Bad Stuff)';
+
+  @override
+  String diedInBattleConfirm(int level) {
+    return 'The monster\'s Bad Stuff struck home: you shrink back to level $level. Confirm?';
+  }
+
+  @override
   String get raiseLevel => 'Raise level';
 
   @override

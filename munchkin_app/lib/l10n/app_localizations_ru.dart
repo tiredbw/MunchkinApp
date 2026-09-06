@@ -141,6 +141,20 @@ class AppLocalizationsRu extends AppLocalizations {
   String get finishBattle => 'Завершить бой';
 
   @override
+  String get escapeOutcome => 'Побег удался?';
+
+  @override
+  String get survivedEscape => 'Удалось сбежать';
+
+  @override
+  String get diedInBattle => 'Погиб (Гадость)';
+
+  @override
+  String diedInBattleConfirm(int level) {
+    return 'Монстр настиг вас своей Гадостью: уровень падает до $level. Подтвердить?';
+  }
+
+  @override
   String get raiseLevel => 'Повысить уровень';
 
   @override

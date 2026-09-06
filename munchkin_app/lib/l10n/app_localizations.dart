@@ -362,6 +362,30 @@ abstract class AppLocalizations {
   /// **'Finish battle'**
   String get finishBattle;
 
+  /// No description provided for @escapeOutcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Did you survive?'**
+  String get escapeOutcome;
+
+  /// No description provided for @survivedEscape.
+  ///
+  /// In en, this message translates to:
+  /// **'Survived'**
+  String get survivedEscape;
+
+  /// No description provided for @diedInBattle.
+  ///
+  /// In en, this message translates to:
+  /// **'Died (Bad Stuff)'**
+  String get diedInBattle;
+
+  /// No description provided for @diedInBattleConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'The monster\'s Bad Stuff struck home: you shrink back to level {level}. Confirm?'**
+  String diedInBattleConfirm(int level);
+
   /// No description provided for @raiseLevel.
   ///
   /// In en, this message translates to:

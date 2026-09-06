@@ -99,6 +99,10 @@ GameCommand _$GameCommandFromJson(
           return FinishBattle.fromJson(
             json
           );
+                case 'DieInBattle':
+          return DieInBattle.fromJson(
+            json
+          );
                 case 'RollDice':
           return RollDice.fromJson(
             json
@@ -173,7 +177,7 @@ extension GameCommandPatterns on GameCommand {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( JoinPlayer value)?  joinPlayer,TResult Function( SetConnection value)?  setConnection,TResult Function( UpdateSettings value)?  updateSettings,TResult Function( CloseLobby value)?  closeLobby,TResult Function( ReopenLobby value)?  reopenLobby,TResult Function( SetTurnOrder value)?  setTurnOrder,TResult Function( ShuffleTurnOrder value)?  shuffleTurnOrder,TResult Function( ConfirmOrder value)?  confirmOrder,TResult Function( StartGame value)?  startGame,TResult Function( AdjustStats value)?  adjustStats,TResult Function( SetIdentity value)?  setIdentity,TResult Function( EndTurn value)?  endTurn,TResult Function( StartBattle value)?  startBattle,TResult Function( DeclareVictory value)?  declareVictory,TResult Function( Intervene value)?  intervene,TResult Function( RequestHelp value)?  requestHelp,TResult Function( ResumeBattle value)?  resumeBattle,TResult Function( StartEscape value)?  startEscape,TResult Function( ResolveEscape value)?  resolveEscape,TResult Function( RaiseLevel value)?  raiseLevel,TResult Function( FinishBattle value)?  finishBattle,TResult Function( RollDice value)?  rollDice,TResult Function( RemovePlayer value)?  removePlayer,TResult Function( LeaveRoom value)?  leaveRoom,TResult Function( EndGame value)?  endGame,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( JoinPlayer value)?  joinPlayer,TResult Function( SetConnection value)?  setConnection,TResult Function( UpdateSettings value)?  updateSettings,TResult Function( CloseLobby value)?  closeLobby,TResult Function( ReopenLobby value)?  reopenLobby,TResult Function( SetTurnOrder value)?  setTurnOrder,TResult Function( ShuffleTurnOrder value)?  shuffleTurnOrder,TResult Function( ConfirmOrder value)?  confirmOrder,TResult Function( StartGame value)?  startGame,TResult Function( AdjustStats value)?  adjustStats,TResult Function( SetIdentity value)?  setIdentity,TResult Function( EndTurn value)?  endTurn,TResult Function( StartBattle value)?  startBattle,TResult Function( DeclareVictory value)?  declareVictory,TResult Function( Intervene value)?  intervene,TResult Function( RequestHelp value)?  requestHelp,TResult Function( ResumeBattle value)?  resumeBattle,TResult Function( StartEscape value)?  startEscape,TResult Function( ResolveEscape value)?  resolveEscape,TResult Function( RaiseLevel value)?  raiseLevel,TResult Function( FinishBattle value)?  finishBattle,TResult Function( DieInBattle value)?  dieInBattle,TResult Function( RollDice value)?  rollDice,TResult Function( RemovePlayer value)?  removePlayer,TResult Function( LeaveRoom value)?  leaveRoom,TResult Function( EndGame value)?  endGame,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case JoinPlayer() when joinPlayer != null:
@@ -197,7 +201,8 @@ return resumeBattle(_that);case StartEscape() when startEscape != null:
 return startEscape(_that);case ResolveEscape() when resolveEscape != null:
 return resolveEscape(_that);case RaiseLevel() when raiseLevel != null:
 return raiseLevel(_that);case FinishBattle() when finishBattle != null:
-return finishBattle(_that);case RollDice() when rollDice != null:
+return finishBattle(_that);case DieInBattle() when dieInBattle != null:
+return dieInBattle(_that);case RollDice() when rollDice != null:
 return rollDice(_that);case RemovePlayer() when removePlayer != null:
 return removePlayer(_that);case LeaveRoom() when leaveRoom != null:
 return leaveRoom(_that);case EndGame() when endGame != null:
@@ -219,7 +224,7 @@ return endGame(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( JoinPlayer value)  joinPlayer,required TResult Function( SetConnection value)  setConnection,required TResult Function( UpdateSettings value)  updateSettings,required TResult Function( CloseLobby value)  closeLobby,required TResult Function( ReopenLobby value)  reopenLobby,required TResult Function( SetTurnOrder value)  setTurnOrder,required TResult Function( ShuffleTurnOrder value)  shuffleTurnOrder,required TResult Function( ConfirmOrder value)  confirmOrder,required TResult Function( StartGame value)  startGame,required TResult Function( AdjustStats value)  adjustStats,required TResult Function( SetIdentity value)  setIdentity,required TResult Function( EndTurn value)  endTurn,required TResult Function( StartBattle value)  startBattle,required TResult Function( DeclareVictory value)  declareVictory,required TResult Function( Intervene value)  intervene,required TResult Function( RequestHelp value)  requestHelp,required TResult Function( ResumeBattle value)  resumeBattle,required TResult Function( StartEscape value)  startEscape,required TResult Function( ResolveEscape value)  resolveEscape,required TResult Function( RaiseLevel value)  raiseLevel,required TResult Function( FinishBattle value)  finishBattle,required TResult Function( RollDice value)  rollDice,required TResult Function( RemovePlayer value)  removePlayer,required TResult Function( LeaveRoom value)  leaveRoom,required TResult Function( EndGame value)  endGame,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( JoinPlayer value)  joinPlayer,required TResult Function( SetConnection value)  setConnection,required TResult Function( UpdateSettings value)  updateSettings,required TResult Function( CloseLobby value)  closeLobby,required TResult Function( ReopenLobby value)  reopenLobby,required TResult Function( SetTurnOrder value)  setTurnOrder,required TResult Function( ShuffleTurnOrder value)  shuffleTurnOrder,required TResult Function( ConfirmOrder value)  confirmOrder,required TResult Function( StartGame value)  startGame,required TResult Function( AdjustStats value)  adjustStats,required TResult Function( SetIdentity value)  setIdentity,required TResult Function( EndTurn value)  endTurn,required TResult Function( StartBattle value)  startBattle,required TResult Function( DeclareVictory value)  declareVictory,required TResult Function( Intervene value)  intervene,required TResult Function( RequestHelp value)  requestHelp,required TResult Function( ResumeBattle value)  resumeBattle,required TResult Function( StartEscape value)  startEscape,required TResult Function( ResolveEscape value)  resolveEscape,required TResult Function( RaiseLevel value)  raiseLevel,required TResult Function( FinishBattle value)  finishBattle,required TResult Function( DieInBattle value)  dieInBattle,required TResult Function( RollDice value)  rollDice,required TResult Function( RemovePlayer value)  removePlayer,required TResult Function( LeaveRoom value)  leaveRoom,required TResult Function( EndGame value)  endGame,}){
 final _that = this;
 switch (_that) {
 case JoinPlayer():
@@ -243,7 +248,8 @@ return resumeBattle(_that);case StartEscape():
 return startEscape(_that);case ResolveEscape():
 return resolveEscape(_that);case RaiseLevel():
 return raiseLevel(_that);case FinishBattle():
-return finishBattle(_that);case RollDice():
+return finishBattle(_that);case DieInBattle():
+return dieInBattle(_that);case RollDice():
 return rollDice(_that);case RemovePlayer():
 return removePlayer(_that);case LeaveRoom():
 return leaveRoom(_that);case EndGame():
@@ -261,7 +267,7 @@ return endGame(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( JoinPlayer value)?  joinPlayer,TResult? Function( SetConnection value)?  setConnection,TResult? Function( UpdateSettings value)?  updateSettings,TResult? Function( CloseLobby value)?  closeLobby,TResult? Function( ReopenLobby value)?  reopenLobby,TResult? Function( SetTurnOrder value)?  setTurnOrder,TResult? Function( ShuffleTurnOrder value)?  shuffleTurnOrder,TResult? Function( ConfirmOrder value)?  confirmOrder,TResult? Function( StartGame value)?  startGame,TResult? Function( AdjustStats value)?  adjustStats,TResult? Function( SetIdentity value)?  setIdentity,TResult? Function( EndTurn value)?  endTurn,TResult? Function( StartBattle value)?  startBattle,TResult? Function( DeclareVictory value)?  declareVictory,TResult? Function( Intervene value)?  intervene,TResult? Function( RequestHelp value)?  requestHelp,TResult? Function( ResumeBattle value)?  resumeBattle,TResult? Function( StartEscape value)?  startEscape,TResult? Function( ResolveEscape value)?  resolveEscape,TResult? Function( RaiseLevel value)?  raiseLevel,TResult? Function( FinishBattle value)?  finishBattle,TResult? Function( RollDice value)?  rollDice,TResult? Function( RemovePlayer value)?  removePlayer,TResult? Function( LeaveRoom value)?  leaveRoom,TResult? Function( EndGame value)?  endGame,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( JoinPlayer value)?  joinPlayer,TResult? Function( SetConnection value)?  setConnection,TResult? Function( UpdateSettings value)?  updateSettings,TResult? Function( CloseLobby value)?  closeLobby,TResult? Function( ReopenLobby value)?  reopenLobby,TResult? Function( SetTurnOrder value)?  setTurnOrder,TResult? Function( ShuffleTurnOrder value)?  shuffleTurnOrder,TResult? Function( ConfirmOrder value)?  confirmOrder,TResult? Function( StartGame value)?  startGame,TResult? Function( AdjustStats value)?  adjustStats,TResult? Function( SetIdentity value)?  setIdentity,TResult? Function( EndTurn value)?  endTurn,TResult? Function( StartBattle value)?  startBattle,TResult? Function( DeclareVictory value)?  declareVictory,TResult? Function( Intervene value)?  intervene,TResult? Function( RequestHelp value)?  requestHelp,TResult? Function( ResumeBattle value)?  resumeBattle,TResult? Function( StartEscape value)?  startEscape,TResult? Function( ResolveEscape value)?  resolveEscape,TResult? Function( RaiseLevel value)?  raiseLevel,TResult? Function( FinishBattle value)?  finishBattle,TResult? Function( DieInBattle value)?  dieInBattle,TResult? Function( RollDice value)?  rollDice,TResult? Function( RemovePlayer value)?  removePlayer,TResult? Function( LeaveRoom value)?  leaveRoom,TResult? Function( EndGame value)?  endGame,}){
 final _that = this;
 switch (_that) {
 case JoinPlayer() when joinPlayer != null:
@@ -285,7 +291,8 @@ return resumeBattle(_that);case StartEscape() when startEscape != null:
 return startEscape(_that);case ResolveEscape() when resolveEscape != null:
 return resolveEscape(_that);case RaiseLevel() when raiseLevel != null:
 return raiseLevel(_that);case FinishBattle() when finishBattle != null:
-return finishBattle(_that);case RollDice() when rollDice != null:
+return finishBattle(_that);case DieInBattle() when dieInBattle != null:
+return dieInBattle(_that);case RollDice() when rollDice != null:
 return rollDice(_that);case RemovePlayer() when removePlayer != null:
 return removePlayer(_that);case LeaveRoom() when leaveRoom != null:
 return leaveRoom(_that);case EndGame() when endGame != null:
@@ -306,7 +313,7 @@ return endGame(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String playerId,  String name,  bool isHost)?  joinPlayer,TResult Function( String playerId,  bool connected)?  setConnection,TResult Function( RoomSettings settings)?  updateSettings,TResult Function()?  closeLobby,TResult Function()?  reopenLobby,TResult Function( List<String> playerIds)?  setTurnOrder,TResult Function()?  shuffleTurnOrder,TResult Function()?  confirmOrder,TResult Function()?  startGame,TResult Function( int levelDelta,  int strengthDelta)?  adjustStats,TResult Function( List<MunchkinRace> races,  List<MunchkinClass> classes)?  setIdentity,TResult Function()?  endTurn,TResult Function()?  startBattle,TResult Function()?  declareVictory,TResult Function()?  intervene,TResult Function()?  requestHelp,TResult Function()?  resumeBattle,TResult Function()?  startEscape,TResult Function()?  resolveEscape,TResult Function()?  raiseLevel,TResult Function()?  finishBattle,TResult Function()?  rollDice,TResult Function( String playerId)?  removePlayer,TResult Function()?  leaveRoom,TResult Function()?  endGame,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String playerId,  String name,  bool isHost)?  joinPlayer,TResult Function( String playerId,  bool connected)?  setConnection,TResult Function( RoomSettings settings)?  updateSettings,TResult Function()?  closeLobby,TResult Function()?  reopenLobby,TResult Function( List<String> playerIds)?  setTurnOrder,TResult Function()?  shuffleTurnOrder,TResult Function()?  confirmOrder,TResult Function()?  startGame,TResult Function( int levelDelta,  int strengthDelta)?  adjustStats,TResult Function( List<MunchkinRace> races,  List<MunchkinClass> classes)?  setIdentity,TResult Function()?  endTurn,TResult Function()?  startBattle,TResult Function()?  declareVictory,TResult Function()?  intervene,TResult Function()?  requestHelp,TResult Function()?  resumeBattle,TResult Function()?  startEscape,TResult Function()?  resolveEscape,TResult Function()?  raiseLevel,TResult Function()?  finishBattle,TResult Function()?  dieInBattle,TResult Function()?  rollDice,TResult Function( String playerId)?  removePlayer,TResult Function()?  leaveRoom,TResult Function()?  endGame,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case JoinPlayer() when joinPlayer != null:
 return joinPlayer(_that.playerId,_that.name,_that.isHost);case SetConnection() when setConnection != null:
@@ -329,7 +336,8 @@ return resumeBattle();case StartEscape() when startEscape != null:
 return startEscape();case ResolveEscape() when resolveEscape != null:
 return resolveEscape();case RaiseLevel() when raiseLevel != null:
 return raiseLevel();case FinishBattle() when finishBattle != null:
-return finishBattle();case RollDice() when rollDice != null:
+return finishBattle();case DieInBattle() when dieInBattle != null:
+return dieInBattle();case RollDice() when rollDice != null:
 return rollDice();case RemovePlayer() when removePlayer != null:
 return removePlayer(_that.playerId);case LeaveRoom() when leaveRoom != null:
 return leaveRoom();case EndGame() when endGame != null:
@@ -351,7 +359,7 @@ return endGame();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String playerId,  String name,  bool isHost)  joinPlayer,required TResult Function( String playerId,  bool connected)  setConnection,required TResult Function( RoomSettings settings)  updateSettings,required TResult Function()  closeLobby,required TResult Function()  reopenLobby,required TResult Function( List<String> playerIds)  setTurnOrder,required TResult Function()  shuffleTurnOrder,required TResult Function()  confirmOrder,required TResult Function()  startGame,required TResult Function( int levelDelta,  int strengthDelta)  adjustStats,required TResult Function( List<MunchkinRace> races,  List<MunchkinClass> classes)  setIdentity,required TResult Function()  endTurn,required TResult Function()  startBattle,required TResult Function()  declareVictory,required TResult Function()  intervene,required TResult Function()  requestHelp,required TResult Function()  resumeBattle,required TResult Function()  startEscape,required TResult Function()  resolveEscape,required TResult Function()  raiseLevel,required TResult Function()  finishBattle,required TResult Function()  rollDice,required TResult Function( String playerId)  removePlayer,required TResult Function()  leaveRoom,required TResult Function()  endGame,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String playerId,  String name,  bool isHost)  joinPlayer,required TResult Function( String playerId,  bool connected)  setConnection,required TResult Function( RoomSettings settings)  updateSettings,required TResult Function()  closeLobby,required TResult Function()  reopenLobby,required TResult Function( List<String> playerIds)  setTurnOrder,required TResult Function()  shuffleTurnOrder,required TResult Function()  confirmOrder,required TResult Function()  startGame,required TResult Function( int levelDelta,  int strengthDelta)  adjustStats,required TResult Function( List<MunchkinRace> races,  List<MunchkinClass> classes)  setIdentity,required TResult Function()  endTurn,required TResult Function()  startBattle,required TResult Function()  declareVictory,required TResult Function()  intervene,required TResult Function()  requestHelp,required TResult Function()  resumeBattle,required TResult Function()  startEscape,required TResult Function()  resolveEscape,required TResult Function()  raiseLevel,required TResult Function()  finishBattle,required TResult Function()  dieInBattle,required TResult Function()  rollDice,required TResult Function( String playerId)  removePlayer,required TResult Function()  leaveRoom,required TResult Function()  endGame,}) {final _that = this;
 switch (_that) {
 case JoinPlayer():
 return joinPlayer(_that.playerId,_that.name,_that.isHost);case SetConnection():
@@ -374,7 +382,8 @@ return resumeBattle();case StartEscape():
 return startEscape();case ResolveEscape():
 return resolveEscape();case RaiseLevel():
 return raiseLevel();case FinishBattle():
-return finishBattle();case RollDice():
+return finishBattle();case DieInBattle():
+return dieInBattle();case RollDice():
 return rollDice();case RemovePlayer():
 return removePlayer(_that.playerId);case LeaveRoom():
 return leaveRoom();case EndGame():
@@ -392,7 +401,7 @@ return endGame();}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String playerId,  String name,  bool isHost)?  joinPlayer,TResult? Function( String playerId,  bool connected)?  setConnection,TResult? Function( RoomSettings settings)?  updateSettings,TResult? Function()?  closeLobby,TResult? Function()?  reopenLobby,TResult? Function( List<String> playerIds)?  setTurnOrder,TResult? Function()?  shuffleTurnOrder,TResult? Function()?  confirmOrder,TResult? Function()?  startGame,TResult? Function( int levelDelta,  int strengthDelta)?  adjustStats,TResult? Function( List<MunchkinRace> races,  List<MunchkinClass> classes)?  setIdentity,TResult? Function()?  endTurn,TResult? Function()?  startBattle,TResult? Function()?  declareVictory,TResult? Function()?  intervene,TResult? Function()?  requestHelp,TResult? Function()?  resumeBattle,TResult? Function()?  startEscape,TResult? Function()?  resolveEscape,TResult? Function()?  raiseLevel,TResult? Function()?  finishBattle,TResult? Function()?  rollDice,TResult? Function( String playerId)?  removePlayer,TResult? Function()?  leaveRoom,TResult? Function()?  endGame,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String playerId,  String name,  bool isHost)?  joinPlayer,TResult? Function( String playerId,  bool connected)?  setConnection,TResult? Function( RoomSettings settings)?  updateSettings,TResult? Function()?  closeLobby,TResult? Function()?  reopenLobby,TResult? Function( List<String> playerIds)?  setTurnOrder,TResult? Function()?  shuffleTurnOrder,TResult? Function()?  confirmOrder,TResult? Function()?  startGame,TResult? Function( int levelDelta,  int strengthDelta)?  adjustStats,TResult? Function( List<MunchkinRace> races,  List<MunchkinClass> classes)?  setIdentity,TResult? Function()?  endTurn,TResult? Function()?  startBattle,TResult? Function()?  declareVictory,TResult? Function()?  intervene,TResult? Function()?  requestHelp,TResult? Function()?  resumeBattle,TResult? Function()?  startEscape,TResult? Function()?  resolveEscape,TResult? Function()?  raiseLevel,TResult? Function()?  finishBattle,TResult? Function()?  dieInBattle,TResult? Function()?  rollDice,TResult? Function( String playerId)?  removePlayer,TResult? Function()?  leaveRoom,TResult? Function()?  endGame,}) {final _that = this;
 switch (_that) {
 case JoinPlayer() when joinPlayer != null:
 return joinPlayer(_that.playerId,_that.name,_that.isHost);case SetConnection() when setConnection != null:
@@ -415,7 +424,8 @@ return resumeBattle();case StartEscape() when startEscape != null:
 return startEscape();case ResolveEscape() when resolveEscape != null:
 return resolveEscape();case RaiseLevel() when raiseLevel != null:
 return raiseLevel();case FinishBattle() when finishBattle != null:
-return finishBattle();case RollDice() when rollDice != null:
+return finishBattle();case DieInBattle() when dieInBattle != null:
+return dieInBattle();case RollDice() when rollDice != null:
 return rollDice();case RemovePlayer() when removePlayer != null:
 return removePlayer(_that.playerId);case LeaveRoom() when leaveRoom != null:
 return leaveRoom();case EndGame() when endGame != null:
@@ -1479,6 +1489,45 @@ int get hashCode => runtimeType.hashCode;
 @override
 String toString() {
   return 'GameCommand.finishBattle()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+@JsonSerializable()
+
+class DieInBattle implements GameCommand {
+  const DieInBattle({final  String? $type}): $type = $type ?? 'DieInBattle';
+  factory DieInBattle.fromJson(Map<String, dynamic> json) => _$DieInBattleFromJson(json);
+
+
+
+@JsonKey(name: 'type')
+final String $type;
+
+
+
+@override
+Map<String, dynamic> toJson() {
+  return _$DieInBattleToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DieInBattle);
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'GameCommand.dieInBattle()';
 }
 
 

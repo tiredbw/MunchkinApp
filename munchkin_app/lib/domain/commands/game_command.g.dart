@@ -196,6 +196,12 @@ FinishBattle _$FinishBattleFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$FinishBattleToJson(FinishBattle instance) =>
     <String, dynamic>{'type': instance.$type};
 
+DieInBattle _$DieInBattleFromJson(Map<String, dynamic> json) =>
+    DieInBattle($type: json['type'] as String?);
+
+Map<String, dynamic> _$DieInBattleToJson(DieInBattle instance) =>
+    <String, dynamic>{'type': instance.$type};
+
 RollDice _$RollDiceFromJson(Map<String, dynamic> json) =>
     RollDice($type: json['type'] as String?);
 

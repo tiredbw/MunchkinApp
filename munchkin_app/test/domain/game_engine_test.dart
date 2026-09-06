@@ -83,6 +83,28 @@ void main() {
     expect((result as GameRejected).code, GameErrorCode.invalidState);
   });
 
+  test(
+    'dying in battle after a failed escape resets to the room minimum level',
+    () {
+      accept(const GameCommand.closeLobby(), 'host');
+      accept(const GameCommand.confirmOrder(), 'host');
+      accept(const GameCommand.startGame(), 'host');
+      accept(const GameCommand.adjustStats(levelDelta: 1), 'host');
+      accept(const GameCommand.adjustStats(levelDelta: 1), 'host');
+      expect(state.playerById('host')!.level, 3);
+      accept(const GameCommand.startBattle(), 'host');
+      accept(const GameCommand.startEscape(), 'host');
+      accept(const GameCommand.resolveEscape(), 'host');
+      expect(state.battle?.status, BattleStatus.endedWithoutVictory);
+      accept(const GameCommand.dieInBattle(), 'host');
+      expect(state.playerById('host')!.level, state.settings.minLevel);
+      expect(state.battle, isNull);
+      // The historical peak level survives death, matching statistics'
+      // "maximum level reached" semantics.
+      expect(state.playerById('host')!.peakLevel, 3);
+    },
+  );
+
   test('normalizes names and rejects duplicates case-insensitively', () {
     accept(
       const GameCommand.joinPlayer(playerId: 'p2', name: '  Alice  '),

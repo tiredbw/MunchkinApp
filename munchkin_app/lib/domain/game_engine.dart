@@ -103,6 +103,7 @@ class GameEngine {
         resolveEscape: (_) => _resolveEscape(state, actorId),
         raiseLevel: (_) => _raiseLevel(state, actorId),
         finishBattle: (_) => _finishBattle(state, actorId),
+        dieInBattle: (_) => _dieInBattle(state, actorId),
         rollDice: (_) => _rollDice(state, actorId),
         removePlayer: (value) => _removePlayer(state, actorId, value.playerId),
         leaveRoom: (_) => _leaveRoom(state, actorId),
@@ -507,6 +508,24 @@ class GameEngine {
       'Resolve the battle first.',
     );
     return state.copyWith(battle: null);
+  }
+
+  /// A munchkin who fails to escape and suffers the monster's Bad Stuff
+  /// dies: per the core rules they shrink back down to level 1 (never
+  /// below the room's configured minimum) and the battle ends.
+  GameState _dieInBattle(GameState state, String actorId) {
+    _requireActive(state, actorId);
+    final battle = _requireBattle(state);
+    _require(
+      battle.status == BattleStatus.endedWithoutVictory,
+      GameErrorCode.invalidState,
+      'There is no failed escape to resolve.',
+    );
+    final index = state.players.indexWhere((player) => player.id == actorId);
+    _require(index >= 0, GameErrorCode.playerNotFound, 'Player was not found.');
+    final players = [...state.players];
+    players[index] = players[index].copyWith(level: state.settings.minLevel);
+    return state.copyWith(players: players, battle: null);
   }
 
   GameState _rollDice(GameState state, String actorId) {
