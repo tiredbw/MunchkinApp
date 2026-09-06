@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The app's primary brand color (matches ColorScheme.fromSeed's seed
+         in lib/app/theme.dart and the app icon background). -->
+    <color name="launch_background">#FF7A3E00</color>
+</resources>
