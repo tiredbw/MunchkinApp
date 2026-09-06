@@ -466,4 +466,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get increaseLevel => 'Увеличить уровень';
+
+  @override
+  String get shareInvite => 'Поделиться приглашением';
 }

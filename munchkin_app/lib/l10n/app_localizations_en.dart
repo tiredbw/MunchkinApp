@@ -464,4 +464,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get increaseLevel => 'Increase level';
+
+  @override
+  String get shareInvite => 'Share invite';
 }

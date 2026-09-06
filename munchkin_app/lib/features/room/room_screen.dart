@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../app/theme.dart';
 import '../../application/session_controller.dart';
@@ -454,17 +455,30 @@ class _InviteCard extends ConsumerWidget {
                 ).textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
               ),
               const SizedBox(height: AppSpacing.xs),
-              TextButton.icon(
-                onPressed: () async {
-                  await Clipboard.setData(ClipboardData(text: encoded));
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(SnackBar(content: Text(l10n.inviteCopied)));
-                  }
-                },
-                icon: const Icon(Icons.copy),
-                label: Text(l10n.copyInvite),
+              Wrap(
+                spacing: AppSpacing.sm,
+                alignment: WrapAlignment.center,
+                children: <Widget>[
+                  TextButton.icon(
+                    onPressed: () async {
+                      await Clipboard.setData(ClipboardData(text: encoded));
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(l10n.inviteCopied)),
+                        );
+                      }
+                    },
+                    icon: const Icon(Icons.copy),
+                    label: Text(l10n.copyInvite),
+                  ),
+                  TextButton.icon(
+                    onPressed: () => SharePlus.instance.share(
+                      ShareParams(text: encoded, subject: l10n.roomInvite),
+                    ),
+                    icon: const Icon(Icons.ios_share),
+                    label: Text(l10n.shareInvite),
+                  ),
+                ],
               ),
             ],
           ),

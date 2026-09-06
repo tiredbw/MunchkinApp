@@ -151,5 +151,6 @@
   "escapeRollHint": "A roll of 5 or 6 usually succeeds, unless a card says otherwise.",
   "upNextTag": "Up next",
   "decreaseLevel": "Decrease level",
-  "increaseLevel": "Increase level"
+  "increaseLevel": "Increase level",
+  "shareInvite": "Share invite"
 }
