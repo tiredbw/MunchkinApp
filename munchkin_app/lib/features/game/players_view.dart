@@ -104,7 +104,7 @@ class PlayersView extends ConsumerWidget {
                             child: Icon(
                               Icons.emoji_events,
                               size: 18,
-                              color: Colors.amber.shade600,
+                              color: leaderGold(context),
                               shadows: const <Shadow>[
                                 Shadow(color: Colors.black26, blurRadius: 2),
                               ],
