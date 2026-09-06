@@ -90,8 +90,8 @@ class GameEngine {
         setIdentity: (value) => _setIdentity(
           state,
           actorId,
-          race: value.race,
-          charClass: value.charClass,
+          races: value.races,
+          classes: value.classes,
         ),
         endTurn: (_) => _endTurn(state, actorId),
         startBattle: (_) => _startBattle(state, actorId),
@@ -321,18 +321,23 @@ class GameEngine {
   GameState _setIdentity(
     GameState state,
     String actorId, {
-    required MunchkinRace race,
-    required MunchkinClass charClass,
+    required List<MunchkinRace> races,
+    required List<MunchkinClass> classes,
   }) {
     _require(
       state.settings.trackRaceClass,
       GameErrorCode.invalidState,
       'Race and class tracking is disabled for this room.',
     );
+    _require(
+      races.isNotEmpty,
+      GameErrorCode.invalidValue,
+      'A munchkin always has at least one race.',
+    );
     final index = state.players.indexWhere((player) => player.id == actorId);
     _require(index >= 0, GameErrorCode.playerNotFound, 'Player was not found.');
     final players = [...state.players];
-    players[index] = players[index].copyWith(race: race, charClass: charClass);
+    players[index] = players[index].copyWith(races: races, classes: classes);
     return state.copyWith(players: players);
   }
 

@@ -7,9 +7,18 @@ enum DiceMode { physical, virtual }
 
 enum RoomPhase { lobby, ordering, ready, playing, ended }
 
-enum MunchkinRace { none, human, elf, dwarf, halfling }
+enum MunchkinRace {
+  human,
+  elf,
+  dwarf,
+  halfling,
+  orc,
+  gnome,
+  centaur,
+  lizardGuy,
+}
 
-enum MunchkinClass { none, warrior, wizard, cleric, thief }
+enum MunchkinClass { warrior, wizard, cleric, thief, bard, ranger }
 
 enum BattleStatus {
   fighting,
@@ -49,8 +58,8 @@ abstract class Player with _$Player {
     required bool isHost,
     required int level,
     required int strength,
-    @Default(MunchkinRace.none) MunchkinRace race,
-    @Default(MunchkinClass.none) MunchkinClass charClass,
+    @Default(<MunchkinRace>[MunchkinRace.human]) List<MunchkinRace> races,
+    @Default(<MunchkinClass>[]) List<MunchkinClass> classes,
     @Default(true) bool isConnected,
     DateTime? lastSeenAt,
   }) = _Player;

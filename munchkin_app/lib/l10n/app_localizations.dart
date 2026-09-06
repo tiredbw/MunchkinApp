@@ -206,12 +206,6 @@ abstract class AppLocalizations {
   /// **'Track race & class'**
   String get trackRaceClass;
 
-  /// No description provided for @raceNone.
-  ///
-  /// In en, this message translates to:
-  /// **'No race'**
-  String get raceNone;
-
   /// No description provided for @raceHuman.
   ///
   /// In en, this message translates to:
@@ -236,11 +230,29 @@ abstract class AppLocalizations {
   /// **'Halfling'**
   String get raceHalfling;
 
-  /// No description provided for @classNone.
+  /// No description provided for @raceOrc.
   ///
   /// In en, this message translates to:
-  /// **'No class'**
-  String get classNone;
+  /// **'Orc'**
+  String get raceOrc;
+
+  /// No description provided for @raceGnome.
+  ///
+  /// In en, this message translates to:
+  /// **'Gnome'**
+  String get raceGnome;
+
+  /// No description provided for @raceCentaur.
+  ///
+  /// In en, this message translates to:
+  /// **'Centaur'**
+  String get raceCentaur;
+
+  /// No description provided for @raceLizardGuy.
+  ///
+  /// In en, this message translates to:
+  /// **'Lizard Guy'**
+  String get raceLizardGuy;
 
   /// No description provided for @classWarrior.
   ///
@@ -265,6 +277,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Thief'**
   String get classThief;
+
+  /// No description provided for @classBard.
+  ///
+  /// In en, this message translates to:
+  /// **'Bard'**
+  String get classBard;
+
+  /// No description provided for @classRanger.
+  ///
+  /// In en, this message translates to:
+  /// **'Ranger'**
+  String get classRanger;
 
   /// No description provided for @closeLobby.
   ///

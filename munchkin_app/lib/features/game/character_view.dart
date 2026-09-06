@@ -6,6 +6,7 @@ import '../../application/session_controller.dart';
 import '../../domain/commands/game_command.dart';
 import '../../domain/models/game_models.dart';
 import '../../l10n/app_localizations.dart';
+import 'identity_labels.dart';
 import 'turn_view.dart';
 
 class CharacterView extends ConsumerWidget {
@@ -195,41 +196,6 @@ class _IdentityCard extends StatelessWidget {
   final bool busy;
   final SessionController controller;
 
-  static const Map<MunchkinRace, IconData> _raceIcons =
-      <MunchkinRace, IconData>{
-        MunchkinRace.none: Icons.block,
-        MunchkinRace.human: Icons.person,
-        MunchkinRace.elf: Icons.forest,
-        MunchkinRace.dwarf: Icons.terrain,
-        MunchkinRace.halfling: Icons.hiking,
-      };
-
-  static const Map<MunchkinClass, IconData> _classIcons =
-      <MunchkinClass, IconData>{
-        MunchkinClass.none: Icons.block,
-        MunchkinClass.warrior: Icons.gavel,
-        MunchkinClass.wizard: Icons.auto_fix_high,
-        MunchkinClass.cleric: Icons.favorite,
-        MunchkinClass.thief: Icons.visibility_off,
-      };
-
-  String _raceLabel(AppLocalizations l10n, MunchkinRace race) => switch (race) {
-    MunchkinRace.none => l10n.raceNone,
-    MunchkinRace.human => l10n.raceHuman,
-    MunchkinRace.elf => l10n.raceElf,
-    MunchkinRace.dwarf => l10n.raceDwarf,
-    MunchkinRace.halfling => l10n.raceHalfling,
-  };
-
-  String _classLabel(AppLocalizations l10n, MunchkinClass value) =>
-      switch (value) {
-        MunchkinClass.none => l10n.classNone,
-        MunchkinClass.warrior => l10n.classWarrior,
-        MunchkinClass.wizard => l10n.classWizard,
-        MunchkinClass.cleric => l10n.classCleric,
-        MunchkinClass.thief => l10n.classThief,
-      };
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -260,18 +226,27 @@ class _IdentityCard extends StatelessWidget {
               runSpacing: AppSpacing.xs,
               children: <Widget>[
                 for (final race in MunchkinRace.values)
-                  ChoiceChip(
-                    avatar: Icon(_raceIcons[race], size: 16),
-                    label: Text(_raceLabel(l10n, race)),
-                    selected: player.race == race,
+                  FilterChip(
+                    avatar: Icon(raceIcons[race], size: 16),
+                    label: Text(raceLabel(l10n, race)),
+                    selected: player.races.contains(race),
                     onSelected: busy
                         ? null
-                        : (_) => controller.send(
-                            GameCommand.setIdentity(
-                              race: race,
-                              charClass: player.charClass,
-                            ),
-                          ),
+                        : (selected) {
+                            final next = <MunchkinRace>{...player.races};
+                            if (selected) {
+                              next.add(race);
+                            } else if (next.length > 1) {
+                              // A munchkin always keeps at least one race.
+                              next.remove(race);
+                            }
+                            controller.send(
+                              GameCommand.setIdentity(
+                                races: next.toList(growable: false),
+                                classes: player.classes,
+                              ),
+                            );
+                          },
                   ),
               ],
             ),
@@ -281,18 +256,26 @@ class _IdentityCard extends StatelessWidget {
               runSpacing: AppSpacing.xs,
               children: <Widget>[
                 for (final charClass in MunchkinClass.values)
-                  ChoiceChip(
-                    avatar: Icon(_classIcons[charClass], size: 16),
-                    label: Text(_classLabel(l10n, charClass)),
-                    selected: player.charClass == charClass,
+                  FilterChip(
+                    avatar: Icon(classIcons[charClass], size: 16),
+                    label: Text(classLabel(l10n, charClass)),
+                    selected: player.classes.contains(charClass),
                     onSelected: busy
                         ? null
-                        : (_) => controller.send(
-                            GameCommand.setIdentity(
-                              race: player.race,
-                              charClass: charClass,
-                            ),
-                          ),
+                        : (selected) {
+                            final next = <MunchkinClass>{...player.classes};
+                            if (selected) {
+                              next.add(charClass);
+                            } else {
+                              next.remove(charClass);
+                            }
+                            controller.send(
+                              GameCommand.setIdentity(
+                                races: player.races,
+                                classes: next.toList(growable: false),
+                              ),
+                            );
+                          },
                   ),
               ],
             ),

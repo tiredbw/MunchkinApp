@@ -3,7 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/theme.dart';
 import '../../application/session_controller.dart';
+import '../../domain/models/game_models.dart';
 import '../../l10n/app_localizations.dart';
+import 'identity_labels.dart';
+
+String _identitySummary(AppLocalizations l10n, Player player) {
+  final races = player.races.map((race) => raceLabel(l10n, race)).join('/');
+  final classes = player.classes
+      .map((charClass) => classLabel(l10n, charClass))
+      .join('/');
+  return classes.isEmpty ? races : '$races · $classes';
+}
 
 const List<Color> _avatarPalette = <Color>[
   Color(0xFFB3541E),
@@ -142,6 +152,18 @@ class PlayersView extends ConsumerWidget {
                             style: Theme.of(context).textTheme.bodySmall
                                 ?.copyWith(color: scheme.onSurfaceVariant),
                           ),
+                          if (game.settings.trackRaceClass) ...<Widget>[
+                            const SizedBox(height: 2),
+                            Text(
+                              _identitySummary(l10n, player),
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(
+                                    color: scheme.primary,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                            ),
+                          ],
                         ],
                       ),
                     ),

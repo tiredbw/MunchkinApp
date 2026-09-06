@@ -31,8 +31,8 @@ sealed class GameCommand with _$GameCommand {
     @Default(0) int strengthDelta,
   }) = AdjustStats;
   const factory GameCommand.setIdentity({
-    required MunchkinRace race,
-    required MunchkinClass charClass,
+    required List<MunchkinRace> races,
+    required List<MunchkinClass> classes,
   }) = SetIdentity;
   const factory GameCommand.endTurn() = EndTurn;
   const factory GameCommand.startBattle() = StartBattle;

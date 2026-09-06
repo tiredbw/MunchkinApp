@@ -63,9 +63,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get trackRaceClass => 'Track race & class';
 
   @override
-  String get raceNone => 'No race';
-
-  @override
   String get raceHuman => 'Human';
 
   @override
@@ -78,7 +75,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get raceHalfling => 'Halfling';
 
   @override
-  String get classNone => 'No class';
+  String get raceOrc => 'Orc';
+
+  @override
+  String get raceGnome => 'Gnome';
+
+  @override
+  String get raceCentaur => 'Centaur';
+
+  @override
+  String get raceLizardGuy => 'Lizard Guy';
 
   @override
   String get classWarrior => 'Warrior';
@@ -91,6 +97,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get classThief => 'Thief';
+
+  @override
+  String get classBard => 'Bard';
+
+  @override
+  String get classRanger => 'Ranger';
 
   @override
   String get closeLobby => 'Close lobby';

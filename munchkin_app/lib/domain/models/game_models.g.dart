@@ -46,12 +46,16 @@ _Player _$PlayerFromJson(Map<String, dynamic> json) => _Player(
   isHost: json['isHost'] as bool,
   level: (json['level'] as num).toInt(),
   strength: (json['strength'] as num).toInt(),
-  race:
-      $enumDecodeNullable(_$MunchkinRaceEnumMap, json['race']) ??
-      MunchkinRace.none,
-  charClass:
-      $enumDecodeNullable(_$MunchkinClassEnumMap, json['charClass']) ??
-      MunchkinClass.none,
+  races:
+      (json['races'] as List<dynamic>?)
+          ?.map((e) => $enumDecode(_$MunchkinRaceEnumMap, e))
+          .toList() ??
+      const <MunchkinRace>[MunchkinRace.human],
+  classes:
+      (json['classes'] as List<dynamic>?)
+          ?.map((e) => $enumDecode(_$MunchkinClassEnumMap, e))
+          .toList() ??
+      const <MunchkinClass>[],
   isConnected: json['isConnected'] as bool? ?? true,
   lastSeenAt: json['lastSeenAt'] == null
       ? null
@@ -64,26 +68,30 @@ Map<String, dynamic> _$PlayerToJson(_Player instance) => <String, dynamic>{
   'isHost': instance.isHost,
   'level': instance.level,
   'strength': instance.strength,
-  'race': _$MunchkinRaceEnumMap[instance.race]!,
-  'charClass': _$MunchkinClassEnumMap[instance.charClass]!,
+  'races': instance.races.map((e) => _$MunchkinRaceEnumMap[e]!).toList(),
+  'classes': instance.classes.map((e) => _$MunchkinClassEnumMap[e]!).toList(),
   'isConnected': instance.isConnected,
   'lastSeenAt': instance.lastSeenAt?.toIso8601String(),
 };
 
 const _$MunchkinRaceEnumMap = {
-  MunchkinRace.none: 'none',
   MunchkinRace.human: 'human',
   MunchkinRace.elf: 'elf',
   MunchkinRace.dwarf: 'dwarf',
   MunchkinRace.halfling: 'halfling',
+  MunchkinRace.orc: 'orc',
+  MunchkinRace.gnome: 'gnome',
+  MunchkinRace.centaur: 'centaur',
+  MunchkinRace.lizardGuy: 'lizardGuy',
 };
 
 const _$MunchkinClassEnumMap = {
-  MunchkinClass.none: 'none',
   MunchkinClass.warrior: 'warrior',
   MunchkinClass.wizard: 'wizard',
   MunchkinClass.cleric: 'cleric',
   MunchkinClass.thief: 'thief',
+  MunchkinClass.bard: 'bard',
+  MunchkinClass.ranger: 'ranger',
 };
 
 _BattleState _$BattleStateFromJson(Map<String, dynamic> json) => _BattleState(

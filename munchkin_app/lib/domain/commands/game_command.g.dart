@@ -97,32 +97,41 @@ Map<String, dynamic> _$AdjustStatsToJson(AdjustStats instance) =>
     };
 
 SetIdentity _$SetIdentityFromJson(Map<String, dynamic> json) => SetIdentity(
-  race: $enumDecode(_$MunchkinRaceEnumMap, json['race']),
-  charClass: $enumDecode(_$MunchkinClassEnumMap, json['charClass']),
+  races: (json['races'] as List<dynamic>)
+      .map((e) => $enumDecode(_$MunchkinRaceEnumMap, e))
+      .toList(),
+  classes: (json['classes'] as List<dynamic>)
+      .map((e) => $enumDecode(_$MunchkinClassEnumMap, e))
+      .toList(),
   $type: json['type'] as String?,
 );
 
-Map<String, dynamic> _$SetIdentityToJson(SetIdentity instance) =>
-    <String, dynamic>{
-      'race': _$MunchkinRaceEnumMap[instance.race]!,
-      'charClass': _$MunchkinClassEnumMap[instance.charClass]!,
-      'type': instance.$type,
-    };
+Map<String, dynamic> _$SetIdentityToJson(
+  SetIdentity instance,
+) => <String, dynamic>{
+  'races': instance.races.map((e) => _$MunchkinRaceEnumMap[e]!).toList(),
+  'classes': instance.classes.map((e) => _$MunchkinClassEnumMap[e]!).toList(),
+  'type': instance.$type,
+};
 
 const _$MunchkinRaceEnumMap = {
-  MunchkinRace.none: 'none',
   MunchkinRace.human: 'human',
   MunchkinRace.elf: 'elf',
   MunchkinRace.dwarf: 'dwarf',
   MunchkinRace.halfling: 'halfling',
+  MunchkinRace.orc: 'orc',
+  MunchkinRace.gnome: 'gnome',
+  MunchkinRace.centaur: 'centaur',
+  MunchkinRace.lizardGuy: 'lizardGuy',
 };
 
 const _$MunchkinClassEnumMap = {
-  MunchkinClass.none: 'none',
   MunchkinClass.warrior: 'warrior',
   MunchkinClass.wizard: 'wizard',
   MunchkinClass.cleric: 'cleric',
   MunchkinClass.thief: 'thief',
+  MunchkinClass.bard: 'bard',
+  MunchkinClass.ranger: 'ranger',
 };
 
 EndTurn _$EndTurnFromJson(Map<String, dynamic> json) =>

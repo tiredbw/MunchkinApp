@@ -302,7 +302,7 @@ as bool,
 /// @nodoc
 mixin _$Player {
 
- String get id; String get name; bool get isHost; int get level; int get strength; MunchkinRace get race; MunchkinClass get charClass; bool get isConnected; DateTime? get lastSeenAt;
+ String get id; String get name; bool get isHost; int get level; int get strength; List<MunchkinRace> get races; List<MunchkinClass> get classes; bool get isConnected; DateTime? get lastSeenAt;
 /// Create a copy of Player
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -315,16 +315,16 @@ $PlayerCopyWith<Player> get copyWith => _$PlayerCopyWithImpl<Player>(this as Pla
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Player&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.isHost, isHost) || other.isHost == isHost)&&(identical(other.level, level) || other.level == level)&&(identical(other.strength, strength) || other.strength == strength)&&(identical(other.race, race) || other.race == race)&&(identical(other.charClass, charClass) || other.charClass == charClass)&&(identical(other.isConnected, isConnected) || other.isConnected == isConnected)&&(identical(other.lastSeenAt, lastSeenAt) || other.lastSeenAt == lastSeenAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Player&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.isHost, isHost) || other.isHost == isHost)&&(identical(other.level, level) || other.level == level)&&(identical(other.strength, strength) || other.strength == strength)&&const DeepCollectionEquality().equals(other.races, races)&&const DeepCollectionEquality().equals(other.classes, classes)&&(identical(other.isConnected, isConnected) || other.isConnected == isConnected)&&(identical(other.lastSeenAt, lastSeenAt) || other.lastSeenAt == lastSeenAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,isHost,level,strength,race,charClass,isConnected,lastSeenAt);
+int get hashCode => Object.hash(runtimeType,id,name,isHost,level,strength,const DeepCollectionEquality().hash(races),const DeepCollectionEquality().hash(classes),isConnected,lastSeenAt);
 
 @override
 String toString() {
-  return 'Player(id: $id, name: $name, isHost: $isHost, level: $level, strength: $strength, race: $race, charClass: $charClass, isConnected: $isConnected, lastSeenAt: $lastSeenAt)';
+  return 'Player(id: $id, name: $name, isHost: $isHost, level: $level, strength: $strength, races: $races, classes: $classes, isConnected: $isConnected, lastSeenAt: $lastSeenAt)';
 }
 
 
@@ -335,7 +335,7 @@ abstract mixin class $PlayerCopyWith<$Res>  {
   factory $PlayerCopyWith(Player value, $Res Function(Player) _then) = _$PlayerCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, bool isHost, int level, int strength, MunchkinRace race, MunchkinClass charClass, bool isConnected, DateTime? lastSeenAt
+ String id, String name, bool isHost, int level, int strength, List<MunchkinRace> races, List<MunchkinClass> classes, bool isConnected, DateTime? lastSeenAt
 });
 
 
@@ -352,16 +352,16 @@ class _$PlayerCopyWithImpl<$Res>
 
 /// Create a copy of Player
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? isHost = null,Object? level = null,Object? strength = null,Object? race = null,Object? charClass = null,Object? isConnected = null,Object? lastSeenAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? isHost = null,Object? level = null,Object? strength = null,Object? races = null,Object? classes = null,Object? isConnected = null,Object? lastSeenAt = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,isHost: null == isHost ? _self.isHost : isHost // ignore: cast_nullable_to_non_nullable
 as bool,level: null == level ? _self.level : level // ignore: cast_nullable_to_non_nullable
 as int,strength: null == strength ? _self.strength : strength // ignore: cast_nullable_to_non_nullable
-as int,race: null == race ? _self.race : race // ignore: cast_nullable_to_non_nullable
-as MunchkinRace,charClass: null == charClass ? _self.charClass : charClass // ignore: cast_nullable_to_non_nullable
-as MunchkinClass,isConnected: null == isConnected ? _self.isConnected : isConnected // ignore: cast_nullable_to_non_nullable
+as int,races: null == races ? _self.races : races // ignore: cast_nullable_to_non_nullable
+as List<MunchkinRace>,classes: null == classes ? _self.classes : classes // ignore: cast_nullable_to_non_nullable
+as List<MunchkinClass>,isConnected: null == isConnected ? _self.isConnected : isConnected // ignore: cast_nullable_to_non_nullable
 as bool,lastSeenAt: freezed == lastSeenAt ? _self.lastSeenAt : lastSeenAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));
@@ -448,10 +448,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  bool isHost,  int level,  int strength,  MunchkinRace race,  MunchkinClass charClass,  bool isConnected,  DateTime? lastSeenAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  bool isHost,  int level,  int strength,  List<MunchkinRace> races,  List<MunchkinClass> classes,  bool isConnected,  DateTime? lastSeenAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Player() when $default != null:
-return $default(_that.id,_that.name,_that.isHost,_that.level,_that.strength,_that.race,_that.charClass,_that.isConnected,_that.lastSeenAt);case _:
+return $default(_that.id,_that.name,_that.isHost,_that.level,_that.strength,_that.races,_that.classes,_that.isConnected,_that.lastSeenAt);case _:
   return orElse();
 
 }
@@ -469,10 +469,10 @@ return $default(_that.id,_that.name,_that.isHost,_that.level,_that.strength,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  bool isHost,  int level,  int strength,  MunchkinRace race,  MunchkinClass charClass,  bool isConnected,  DateTime? lastSeenAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  bool isHost,  int level,  int strength,  List<MunchkinRace> races,  List<MunchkinClass> classes,  bool isConnected,  DateTime? lastSeenAt)  $default,) {final _that = this;
 switch (_that) {
 case _Player():
-return $default(_that.id,_that.name,_that.isHost,_that.level,_that.strength,_that.race,_that.charClass,_that.isConnected,_that.lastSeenAt);case _:
+return $default(_that.id,_that.name,_that.isHost,_that.level,_that.strength,_that.races,_that.classes,_that.isConnected,_that.lastSeenAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -489,10 +489,10 @@ return $default(_that.id,_that.name,_that.isHost,_that.level,_that.strength,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  bool isHost,  int level,  int strength,  MunchkinRace race,  MunchkinClass charClass,  bool isConnected,  DateTime? lastSeenAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  bool isHost,  int level,  int strength,  List<MunchkinRace> races,  List<MunchkinClass> classes,  bool isConnected,  DateTime? lastSeenAt)?  $default,) {final _that = this;
 switch (_that) {
 case _Player() when $default != null:
-return $default(_that.id,_that.name,_that.isHost,_that.level,_that.strength,_that.race,_that.charClass,_that.isConnected,_that.lastSeenAt);case _:
+return $default(_that.id,_that.name,_that.isHost,_that.level,_that.strength,_that.races,_that.classes,_that.isConnected,_that.lastSeenAt);case _:
   return null;
 
 }
@@ -504,7 +504,7 @@ return $default(_that.id,_that.name,_that.isHost,_that.level,_that.strength,_tha
 @JsonSerializable()
 
 class _Player extends Player {
-  const _Player({required this.id, required this.name, required this.isHost, required this.level, required this.strength, this.race = MunchkinRace.none, this.charClass = MunchkinClass.none, this.isConnected = true, this.lastSeenAt}): super._();
+  const _Player({required this.id, required this.name, required this.isHost, required this.level, required this.strength, final  List<MunchkinRace> races = const <MunchkinRace>[MunchkinRace.human], final  List<MunchkinClass> classes = const <MunchkinClass>[], this.isConnected = true, this.lastSeenAt}): _races = races,_classes = classes,super._();
   factory _Player.fromJson(Map<String, dynamic> json) => _$PlayerFromJson(json);
 
 @override final  String id;
@@ -512,8 +512,20 @@ class _Player extends Player {
 @override final  bool isHost;
 @override final  int level;
 @override final  int strength;
-@override@JsonKey() final  MunchkinRace race;
-@override@JsonKey() final  MunchkinClass charClass;
+ final  List<MunchkinRace> _races;
+@override@JsonKey() List<MunchkinRace> get races {
+  if (_races is EqualUnmodifiableListView) return _races;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_races);
+}
+
+ final  List<MunchkinClass> _classes;
+@override@JsonKey() List<MunchkinClass> get classes {
+  if (_classes is EqualUnmodifiableListView) return _classes;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_classes);
+}
+
 @override@JsonKey() final  bool isConnected;
 @override final  DateTime? lastSeenAt;
 
@@ -530,16 +542,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Player&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.isHost, isHost) || other.isHost == isHost)&&(identical(other.level, level) || other.level == level)&&(identical(other.strength, strength) || other.strength == strength)&&(identical(other.race, race) || other.race == race)&&(identical(other.charClass, charClass) || other.charClass == charClass)&&(identical(other.isConnected, isConnected) || other.isConnected == isConnected)&&(identical(other.lastSeenAt, lastSeenAt) || other.lastSeenAt == lastSeenAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Player&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.isHost, isHost) || other.isHost == isHost)&&(identical(other.level, level) || other.level == level)&&(identical(other.strength, strength) || other.strength == strength)&&const DeepCollectionEquality().equals(other._races, _races)&&const DeepCollectionEquality().equals(other._classes, _classes)&&(identical(other.isConnected, isConnected) || other.isConnected == isConnected)&&(identical(other.lastSeenAt, lastSeenAt) || other.lastSeenAt == lastSeenAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,isHost,level,strength,race,charClass,isConnected,lastSeenAt);
+int get hashCode => Object.hash(runtimeType,id,name,isHost,level,strength,const DeepCollectionEquality().hash(_races),const DeepCollectionEquality().hash(_classes),isConnected,lastSeenAt);
 
 @override
 String toString() {
-  return 'Player(id: $id, name: $name, isHost: $isHost, level: $level, strength: $strength, race: $race, charClass: $charClass, isConnected: $isConnected, lastSeenAt: $lastSeenAt)';
+  return 'Player(id: $id, name: $name, isHost: $isHost, level: $level, strength: $strength, races: $races, classes: $classes, isConnected: $isConnected, lastSeenAt: $lastSeenAt)';
 }
 
 
@@ -550,7 +562,7 @@ abstract mixin class _$PlayerCopyWith<$Res> implements $PlayerCopyWith<$Res> {
   factory _$PlayerCopyWith(_Player value, $Res Function(_Player) _then) = __$PlayerCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, bool isHost, int level, int strength, MunchkinRace race, MunchkinClass charClass, bool isConnected, DateTime? lastSeenAt
+ String id, String name, bool isHost, int level, int strength, List<MunchkinRace> races, List<MunchkinClass> classes, bool isConnected, DateTime? lastSeenAt
 });
 
 
@@ -567,16 +579,16 @@ class __$PlayerCopyWithImpl<$Res>
 
 /// Create a copy of Player
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? isHost = null,Object? level = null,Object? strength = null,Object? race = null,Object? charClass = null,Object? isConnected = null,Object? lastSeenAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? isHost = null,Object? level = null,Object? strength = null,Object? races = null,Object? classes = null,Object? isConnected = null,Object? lastSeenAt = freezed,}) {
   return _then(_Player(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,isHost: null == isHost ? _self.isHost : isHost // ignore: cast_nullable_to_non_nullable
 as bool,level: null == level ? _self.level : level // ignore: cast_nullable_to_non_nullable
 as int,strength: null == strength ? _self.strength : strength // ignore: cast_nullable_to_non_nullable
-as int,race: null == race ? _self.race : race // ignore: cast_nullable_to_non_nullable
-as MunchkinRace,charClass: null == charClass ? _self.charClass : charClass // ignore: cast_nullable_to_non_nullable
-as MunchkinClass,isConnected: null == isConnected ? _self.isConnected : isConnected // ignore: cast_nullable_to_non_nullable
+as int,races: null == races ? _self._races : races // ignore: cast_nullable_to_non_nullable
+as List<MunchkinRace>,classes: null == classes ? _self._classes : classes // ignore: cast_nullable_to_non_nullable
+as List<MunchkinClass>,isConnected: null == isConnected ? _self.isConnected : isConnected // ignore: cast_nullable_to_non_nullable
 as bool,lastSeenAt: freezed == lastSeenAt ? _self.lastSeenAt : lastSeenAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));

@@ -35,17 +35,33 @@ void main() {
     expect(state.revision, 0);
   });
 
-  test('sets race and class for the acting player', () {
+  test('sets multiple races and classes for the acting player', () {
     accept(
       const GameCommand.setIdentity(
-        race: MunchkinRace.dwarf,
-        charClass: MunchkinClass.warrior,
+        races: <MunchkinRace>[MunchkinRace.dwarf, MunchkinRace.elf],
+        classes: <MunchkinClass>[MunchkinClass.warrior, MunchkinClass.wizard],
       ),
       'host',
     );
     final player = state.playerById('host')!;
-    expect(player.race, MunchkinRace.dwarf);
-    expect(player.charClass, MunchkinClass.warrior);
+    expect(player.races, <MunchkinRace>[MunchkinRace.dwarf, MunchkinRace.elf]);
+    expect(player.classes, <MunchkinClass>[
+      MunchkinClass.warrior,
+      MunchkinClass.wizard,
+    ]);
+  });
+
+  test('rejects an empty race list', () {
+    final result = engine.apply(
+      state,
+      const GameCommand.setIdentity(
+        races: <MunchkinRace>[],
+        classes: <MunchkinClass>[],
+      ),
+      actorId: 'host',
+    );
+    expect(result, isA<GameRejected>());
+    expect((result as GameRejected).code, GameErrorCode.invalidValue);
   });
 
   test('rejects setting identity when the room disabled tracking it', () {
@@ -58,8 +74,8 @@ void main() {
     final result = engine.apply(
       state,
       const GameCommand.setIdentity(
-        race: MunchkinRace.elf,
-        charClass: MunchkinClass.thief,
+        races: <MunchkinRace>[MunchkinRace.elf],
+        classes: <MunchkinClass>[MunchkinClass.thief],
       ),
       actorId: 'host',
     );

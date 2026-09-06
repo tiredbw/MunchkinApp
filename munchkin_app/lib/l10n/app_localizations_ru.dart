@@ -63,9 +63,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get trackRaceClass => 'Отмечать расу и класс';
 
   @override
-  String get raceNone => 'Без расы';
-
-  @override
   String get raceHuman => 'Человек';
 
   @override
@@ -78,19 +75,34 @@ class AppLocalizationsRu extends AppLocalizations {
   String get raceHalfling => 'Полурослик';
 
   @override
-  String get classNone => 'Без класса';
+  String get raceOrc => 'Орк';
+
+  @override
+  String get raceGnome => 'Гном';
+
+  @override
+  String get raceCentaur => 'Кентавр';
+
+  @override
+  String get raceLizardGuy => 'Ящеролюд';
 
   @override
   String get classWarrior => 'Воин';
 
   @override
-  String get classWizard => 'Волшебник';
+  String get classWizard => 'Маг';
 
   @override
-  String get classCleric => 'Клирик';
+  String get classCleric => 'Жрец';
 
   @override
   String get classThief => 'Вор';
+
+  @override
+  String get classBard => 'Бард';
+
+  @override
+  String get classRanger => 'Следопыт';
 
   @override
   String get closeLobby => 'Закрыть лобби';

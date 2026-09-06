@@ -306,7 +306,7 @@ return endGame(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String playerId,  String name,  bool isHost)?  joinPlayer,TResult Function( String playerId,  bool connected)?  setConnection,TResult Function( RoomSettings settings)?  updateSettings,TResult Function()?  closeLobby,TResult Function()?  reopenLobby,TResult Function( List<String> playerIds)?  setTurnOrder,TResult Function()?  shuffleTurnOrder,TResult Function()?  confirmOrder,TResult Function()?  startGame,TResult Function( int levelDelta,  int strengthDelta)?  adjustStats,TResult Function( MunchkinRace race,  MunchkinClass charClass)?  setIdentity,TResult Function()?  endTurn,TResult Function()?  startBattle,TResult Function()?  declareVictory,TResult Function()?  intervene,TResult Function()?  requestHelp,TResult Function()?  resumeBattle,TResult Function()?  startEscape,TResult Function()?  resolveEscape,TResult Function()?  raiseLevel,TResult Function()?  finishBattle,TResult Function()?  rollDice,TResult Function( String playerId)?  removePlayer,TResult Function()?  leaveRoom,TResult Function()?  endGame,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String playerId,  String name,  bool isHost)?  joinPlayer,TResult Function( String playerId,  bool connected)?  setConnection,TResult Function( RoomSettings settings)?  updateSettings,TResult Function()?  closeLobby,TResult Function()?  reopenLobby,TResult Function( List<String> playerIds)?  setTurnOrder,TResult Function()?  shuffleTurnOrder,TResult Function()?  confirmOrder,TResult Function()?  startGame,TResult Function( int levelDelta,  int strengthDelta)?  adjustStats,TResult Function( List<MunchkinRace> races,  List<MunchkinClass> classes)?  setIdentity,TResult Function()?  endTurn,TResult Function()?  startBattle,TResult Function()?  declareVictory,TResult Function()?  intervene,TResult Function()?  requestHelp,TResult Function()?  resumeBattle,TResult Function()?  startEscape,TResult Function()?  resolveEscape,TResult Function()?  raiseLevel,TResult Function()?  finishBattle,TResult Function()?  rollDice,TResult Function( String playerId)?  removePlayer,TResult Function()?  leaveRoom,TResult Function()?  endGame,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case JoinPlayer() when joinPlayer != null:
 return joinPlayer(_that.playerId,_that.name,_that.isHost);case SetConnection() when setConnection != null:
@@ -319,7 +319,7 @@ return shuffleTurnOrder();case ConfirmOrder() when confirmOrder != null:
 return confirmOrder();case StartGame() when startGame != null:
 return startGame();case AdjustStats() when adjustStats != null:
 return adjustStats(_that.levelDelta,_that.strengthDelta);case SetIdentity() when setIdentity != null:
-return setIdentity(_that.race,_that.charClass);case EndTurn() when endTurn != null:
+return setIdentity(_that.races,_that.classes);case EndTurn() when endTurn != null:
 return endTurn();case StartBattle() when startBattle != null:
 return startBattle();case DeclareVictory() when declareVictory != null:
 return declareVictory();case Intervene() when intervene != null:
@@ -351,7 +351,7 @@ return endGame();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String playerId,  String name,  bool isHost)  joinPlayer,required TResult Function( String playerId,  bool connected)  setConnection,required TResult Function( RoomSettings settings)  updateSettings,required TResult Function()  closeLobby,required TResult Function()  reopenLobby,required TResult Function( List<String> playerIds)  setTurnOrder,required TResult Function()  shuffleTurnOrder,required TResult Function()  confirmOrder,required TResult Function()  startGame,required TResult Function( int levelDelta,  int strengthDelta)  adjustStats,required TResult Function( MunchkinRace race,  MunchkinClass charClass)  setIdentity,required TResult Function()  endTurn,required TResult Function()  startBattle,required TResult Function()  declareVictory,required TResult Function()  intervene,required TResult Function()  requestHelp,required TResult Function()  resumeBattle,required TResult Function()  startEscape,required TResult Function()  resolveEscape,required TResult Function()  raiseLevel,required TResult Function()  finishBattle,required TResult Function()  rollDice,required TResult Function( String playerId)  removePlayer,required TResult Function()  leaveRoom,required TResult Function()  endGame,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String playerId,  String name,  bool isHost)  joinPlayer,required TResult Function( String playerId,  bool connected)  setConnection,required TResult Function( RoomSettings settings)  updateSettings,required TResult Function()  closeLobby,required TResult Function()  reopenLobby,required TResult Function( List<String> playerIds)  setTurnOrder,required TResult Function()  shuffleTurnOrder,required TResult Function()  confirmOrder,required TResult Function()  startGame,required TResult Function( int levelDelta,  int strengthDelta)  adjustStats,required TResult Function( List<MunchkinRace> races,  List<MunchkinClass> classes)  setIdentity,required TResult Function()  endTurn,required TResult Function()  startBattle,required TResult Function()  declareVictory,required TResult Function()  intervene,required TResult Function()  requestHelp,required TResult Function()  resumeBattle,required TResult Function()  startEscape,required TResult Function()  resolveEscape,required TResult Function()  raiseLevel,required TResult Function()  finishBattle,required TResult Function()  rollDice,required TResult Function( String playerId)  removePlayer,required TResult Function()  leaveRoom,required TResult Function()  endGame,}) {final _that = this;
 switch (_that) {
 case JoinPlayer():
 return joinPlayer(_that.playerId,_that.name,_that.isHost);case SetConnection():
@@ -364,7 +364,7 @@ return shuffleTurnOrder();case ConfirmOrder():
 return confirmOrder();case StartGame():
 return startGame();case AdjustStats():
 return adjustStats(_that.levelDelta,_that.strengthDelta);case SetIdentity():
-return setIdentity(_that.race,_that.charClass);case EndTurn():
+return setIdentity(_that.races,_that.classes);case EndTurn():
 return endTurn();case StartBattle():
 return startBattle();case DeclareVictory():
 return declareVictory();case Intervene():
@@ -392,7 +392,7 @@ return endGame();}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String playerId,  String name,  bool isHost)?  joinPlayer,TResult? Function( String playerId,  bool connected)?  setConnection,TResult? Function( RoomSettings settings)?  updateSettings,TResult? Function()?  closeLobby,TResult? Function()?  reopenLobby,TResult? Function( List<String> playerIds)?  setTurnOrder,TResult? Function()?  shuffleTurnOrder,TResult? Function()?  confirmOrder,TResult? Function()?  startGame,TResult? Function( int levelDelta,  int strengthDelta)?  adjustStats,TResult? Function( MunchkinRace race,  MunchkinClass charClass)?  setIdentity,TResult? Function()?  endTurn,TResult? Function()?  startBattle,TResult? Function()?  declareVictory,TResult? Function()?  intervene,TResult? Function()?  requestHelp,TResult? Function()?  resumeBattle,TResult? Function()?  startEscape,TResult? Function()?  resolveEscape,TResult? Function()?  raiseLevel,TResult? Function()?  finishBattle,TResult? Function()?  rollDice,TResult? Function( String playerId)?  removePlayer,TResult? Function()?  leaveRoom,TResult? Function()?  endGame,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String playerId,  String name,  bool isHost)?  joinPlayer,TResult? Function( String playerId,  bool connected)?  setConnection,TResult? Function( RoomSettings settings)?  updateSettings,TResult? Function()?  closeLobby,TResult? Function()?  reopenLobby,TResult? Function( List<String> playerIds)?  setTurnOrder,TResult? Function()?  shuffleTurnOrder,TResult? Function()?  confirmOrder,TResult? Function()?  startGame,TResult? Function( int levelDelta,  int strengthDelta)?  adjustStats,TResult? Function( List<MunchkinRace> races,  List<MunchkinClass> classes)?  setIdentity,TResult? Function()?  endTurn,TResult? Function()?  startBattle,TResult? Function()?  declareVictory,TResult? Function()?  intervene,TResult? Function()?  requestHelp,TResult? Function()?  resumeBattle,TResult? Function()?  startEscape,TResult? Function()?  resolveEscape,TResult? Function()?  raiseLevel,TResult? Function()?  finishBattle,TResult? Function()?  rollDice,TResult? Function( String playerId)?  removePlayer,TResult? Function()?  leaveRoom,TResult? Function()?  endGame,}) {final _that = this;
 switch (_that) {
 case JoinPlayer() when joinPlayer != null:
 return joinPlayer(_that.playerId,_that.name,_that.isHost);case SetConnection() when setConnection != null:
@@ -405,7 +405,7 @@ return shuffleTurnOrder();case ConfirmOrder() when confirmOrder != null:
 return confirmOrder();case StartGame() when startGame != null:
 return startGame();case AdjustStats() when adjustStats != null:
 return adjustStats(_that.levelDelta,_that.strengthDelta);case SetIdentity() when setIdentity != null:
-return setIdentity(_that.race,_that.charClass);case EndTurn() when endTurn != null:
+return setIdentity(_that.races,_that.classes);case EndTurn() when endTurn != null:
 return endTurn();case StartBattle() when startBattle != null:
 return startBattle();case DeclareVictory() when declareVictory != null:
 return declareVictory();case Intervene() when intervene != null:
@@ -1014,11 +1014,23 @@ as int,
 @JsonSerializable()
 
 class SetIdentity implements GameCommand {
-  const SetIdentity({required this.race, required this.charClass, final  String? $type}): $type = $type ?? 'SetIdentity';
+  const SetIdentity({required final  List<MunchkinRace> races, required final  List<MunchkinClass> classes, final  String? $type}): _races = races,_classes = classes,$type = $type ?? 'SetIdentity';
   factory SetIdentity.fromJson(Map<String, dynamic> json) => _$SetIdentityFromJson(json);
 
- final  MunchkinRace race;
- final  MunchkinClass charClass;
+ final  List<MunchkinRace> _races;
+ List<MunchkinRace> get races {
+  if (_races is EqualUnmodifiableListView) return _races;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_races);
+}
+
+ final  List<MunchkinClass> _classes;
+ List<MunchkinClass> get classes {
+  if (_classes is EqualUnmodifiableListView) return _classes;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_classes);
+}
+
 
 @JsonKey(name: 'type')
 final String $type;
@@ -1037,16 +1049,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SetIdentity&&(identical(other.race, race) || other.race == race)&&(identical(other.charClass, charClass) || other.charClass == charClass));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SetIdentity&&const DeepCollectionEquality().equals(other._races, _races)&&const DeepCollectionEquality().equals(other._classes, _classes));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,race,charClass);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_races),const DeepCollectionEquality().hash(_classes));
 
 @override
 String toString() {
-  return 'GameCommand.setIdentity(race: $race, charClass: $charClass)';
+  return 'GameCommand.setIdentity(races: $races, classes: $classes)';
 }
 
 
@@ -1057,7 +1069,7 @@ abstract mixin class $SetIdentityCopyWith<$Res> implements $GameCommandCopyWith<
   factory $SetIdentityCopyWith(SetIdentity value, $Res Function(SetIdentity) _then) = _$SetIdentityCopyWithImpl;
 @useResult
 $Res call({
- MunchkinRace race, MunchkinClass charClass
+ List<MunchkinRace> races, List<MunchkinClass> classes
 });
 
 
@@ -1074,11 +1086,11 @@ class _$SetIdentityCopyWithImpl<$Res>
 
 /// Create a copy of GameCommand
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? race = null,Object? charClass = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? races = null,Object? classes = null,}) {
   return _then(SetIdentity(
-race: null == race ? _self.race : race // ignore: cast_nullable_to_non_nullable
-as MunchkinRace,charClass: null == charClass ? _self.charClass : charClass // ignore: cast_nullable_to_non_nullable
-as MunchkinClass,
+races: null == races ? _self._races : races // ignore: cast_nullable_to_non_nullable
+as List<MunchkinRace>,classes: null == classes ? _self._classes : classes // ignore: cast_nullable_to_non_nullable
+as List<MunchkinClass>,
   ));
 }
 
