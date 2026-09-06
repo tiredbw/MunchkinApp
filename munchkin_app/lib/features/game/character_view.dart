@@ -132,10 +132,13 @@ class CharacterView extends ConsumerWidget {
               FilledButton.tonal(
                 onPressed: session.busy
                     ? null
-                    : () => controller.send(
-                        GameCommand.adjustStats(strengthDelta: delta),
-                        actAsPlayerId: viewedPlayerId,
-                      ),
+                    : () {
+                        HapticFeedback.selectionClick();
+                        controller.send(
+                          GameCommand.adjustStats(strengthDelta: delta),
+                          actAsPlayerId: viewedPlayerId,
+                        );
+                      },
                 child: Text(delta > 0 ? '+$delta' : '$delta'),
               ),
           ],
@@ -309,6 +312,7 @@ class _IdentityCard extends StatelessWidget {
                     onSelected: busy
                         ? null
                         : (selected) {
+                            HapticFeedback.selectionClick();
                             final next = <MunchkinRace>{...player.races};
                             if (selected) {
                               next.add(race);
@@ -340,6 +344,7 @@ class _IdentityCard extends StatelessWidget {
                     onSelected: busy
                         ? null
                         : (selected) {
+                            HapticFeedback.selectionClick();
                             final next = <MunchkinClass>{...player.classes};
                             if (selected) {
                               next.add(charClass);

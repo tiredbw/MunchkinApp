@@ -119,10 +119,13 @@ class _TurnViewState extends ConsumerState<TurnView> {
           OutlinedButton.icon(
             onPressed: session.busy
                 ? null
-                : () => controller.send(
-                    const GameCommand.rollDice(),
-                    actAsPlayerId: game.activePlayerId,
-                  ),
+                : () {
+                    HapticFeedback.lightImpact();
+                    controller.send(
+                      const GameCommand.rollDice(),
+                      actAsPlayerId: game.activePlayerId,
+                    );
+                  },
             icon: const Icon(Icons.casino),
             label: Text(l10n.rollDice),
           ),
@@ -233,12 +236,17 @@ class TurnActions extends ConsumerWidget {
         FilledButton.icon(
           onPressed: busy
               ? null
-              : () => battleFoughtThisTurn
-                    ? _confirmSecondBattle(context, controller)
-                    : controller.send(
-                        const GameCommand.startBattle(),
-                        actAsPlayerId: actingPlayerId,
-                      ),
+              : () {
+                  HapticFeedback.mediumImpact();
+                  if (battleFoughtThisTurn) {
+                    _confirmSecondBattle(context, controller);
+                  } else {
+                    controller.send(
+                      const GameCommand.startBattle(),
+                      actAsPlayerId: actingPlayerId,
+                    );
+                  }
+                },
           icon: const Icon(Icons.shield),
           label: Text(l10n.startBattle),
         ),
@@ -408,10 +416,13 @@ class _BattlePanel extends ConsumerWidget {
               OutlinedButton.icon(
                 onPressed: busy
                     ? null
-                    : () => controller.send(
-                        const GameCommand.rollDice(),
-                        actAsPlayerId: actingPlayerId,
-                      ),
+                    : () {
+                        HapticFeedback.lightImpact();
+                        controller.send(
+                          const GameCommand.rollDice(),
+                          actAsPlayerId: actingPlayerId,
+                        );
+                      },
                 icon: const Icon(Icons.casino),
                 label: Text(l10n.rollDice),
               ),
