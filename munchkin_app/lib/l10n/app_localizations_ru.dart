@@ -460,4 +460,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get upNextTag => 'Следующий ход';
+
+  @override
+  String get decreaseLevel => 'Уменьшить уровень';
+
+  @override
+  String get increaseLevel => 'Увеличить уровень';
 }

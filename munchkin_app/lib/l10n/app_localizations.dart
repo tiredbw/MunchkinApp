@@ -937,6 +937,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Up next'**
   String get upNextTag;
+
+  /// No description provided for @decreaseLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Decrease level'**
+  String get decreaseLevel;
+
+  /// No description provided for @increaseLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Increase level'**
+  String get increaseLevel;
 }
 
 class _AppLocalizationsDelegate

@@ -458,4 +458,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get upNextTag => 'Up next';
+
+  @override
+  String get decreaseLevel => 'Decrease level';
+
+  @override
+  String get increaseLevel => 'Increase level';
 }

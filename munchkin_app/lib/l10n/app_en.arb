@@ -149,5 +149,7 @@
   "openDoor": "Open a door",
   "openDoorHint": "Deal with whatever is behind it, then start a battle or end your turn.",
   "escapeRollHint": "A roll of 5 or 6 usually succeeds, unless a card says otherwise.",
-  "upNextTag": "Up next"
+  "upNextTag": "Up next",
+  "decreaseLevel": "Decrease level",
+  "increaseLevel": "Increase level"
 }

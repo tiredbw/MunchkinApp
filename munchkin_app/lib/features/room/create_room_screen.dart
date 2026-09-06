@@ -59,6 +59,7 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
+          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.go('/'),
         ),

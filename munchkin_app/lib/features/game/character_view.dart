@@ -95,6 +95,7 @@ class CharacterView extends ConsumerWidget {
               : null,
           actions: <Widget>[
             IconButton.filledTonal(
+              tooltip: l10n.decreaseLevel,
               onPressed: session.busy
                   ? null
                   : () {
@@ -107,6 +108,7 @@ class CharacterView extends ConsumerWidget {
               icon: const Icon(Icons.remove),
             ),
             IconButton.filled(
+              tooltip: l10n.increaseLevel,
               onPressed: session.busy
                   ? null
                   : () {
