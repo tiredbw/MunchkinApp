@@ -93,7 +93,10 @@ Future<void> _addLocalPlayerDialog(
         controller: nameController,
         autofocus: true,
         maxLength: 24,
-        decoration: InputDecoration(labelText: l10n.playerNameLabel),
+        decoration: InputDecoration(
+          labelText: l10n.playerNameLabel,
+          prefixIcon: const Icon(Icons.smartphone),
+        ),
       ),
       actions: <Widget>[
         TextButton(

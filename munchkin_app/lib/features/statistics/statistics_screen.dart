@@ -94,6 +94,7 @@ class _StatisticsBody extends ConsumerWidget {
           children: data.profiles
               .map(
                 (profile) => ChoiceChip(
+                  avatar: const Icon(Icons.person, size: 18),
                   selected: profile.id == active.id,
                   label: Text(profile.name),
                   onSelected: (_) => controller.selectProfile(profile.id),
@@ -121,6 +122,7 @@ class _StatisticsBody extends ConsumerWidget {
               icon: Icons.emoji_events,
               label: l10n.wins,
               value: '${profileStats.wins}',
+              iconColor: profileStats.wins > 0 ? leaderGold(context) : null,
             ),
             _MetricCard(
               icon: Icons.military_tech,
@@ -156,11 +158,13 @@ class _MetricCard extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.value,
+    this.iconColor,
   });
 
   final IconData icon;
   final String label;
   final String value;
+  final Color? iconColor;
 
   @override
   Widget build(BuildContext context) {
@@ -171,7 +175,7 @@ class _MetricCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Icon(icon, size: 18, color: scheme.onSurfaceVariant),
+            Icon(icon, size: 18, color: iconColor ?? scheme.onSurfaceVariant),
             const SizedBox(height: 4),
             Text(
               value,
@@ -212,7 +216,7 @@ class _HistoryCard extends StatelessWidget {
         leading: Icon(
           record.localPlayerWon ? Icons.emoji_events : Icons.history,
           color: record.localPlayerWon
-              ? Colors.amber.shade700
+              ? leaderGold(context)
               : Theme.of(context).colorScheme.onSurfaceVariant,
         ),
         title: Text('$date · ${_formatDuration(l10n, record.duration)}'),
@@ -227,7 +231,7 @@ class _HistoryCard extends StatelessWidget {
                   '${l10n.maxLevelReached}: ${participant.peakLevel}',
                 ),
                 trailing: record.winnerPlayerIds.contains(participant.playerId)
-                    ? const Icon(Icons.emoji_events)
+                    ? Icon(Icons.emoji_events, color: leaderGold(context))
                     : null,
               ),
             )

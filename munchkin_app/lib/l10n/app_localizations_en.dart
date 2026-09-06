@@ -391,7 +391,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rulesEscapeBody =>
-      'Roll to escape. If you make it, the battle ends with no reward and no penalty. If you don\'t, the monster\'s Bad Stuff applies - usually you shrink back down to the table\'s minimum level.';
+      'Roll to escape - a 5 or 6 usually succeeds, unless a card says otherwise. If you make it, the battle ends with no reward and no penalty. If you don\'t, the monster\'s Bad Stuff applies - usually you shrink back down to the table\'s minimum level.';
 
   @override
   String get rulesIdentityTitle => 'Race & class';

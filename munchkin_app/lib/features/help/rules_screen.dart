@@ -40,6 +40,7 @@ class RulesScreen extends StatelessWidget {
         icon: Icons.emoji_events,
         title: l10n.rulesWinningTitle,
         body: l10n.rulesWinningBody,
+        highlight: true,
       ),
     ];
     return Scaffold(
@@ -73,7 +74,13 @@ class RulesScreen extends StatelessWidget {
                 children: <Widget>[
                   Row(
                     children: <Widget>[
-                      Icon(section.icon, size: 18, color: scheme.primary),
+                      Icon(
+                        section.icon,
+                        size: 18,
+                        color: section.highlight
+                            ? leaderGold(context)
+                            : scheme.primary,
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         section.title,
@@ -103,9 +110,11 @@ class _RuleSection {
     required this.icon,
     required this.title,
     required this.body,
+    this.highlight = false,
   });
 
   final IconData icon;
   final String title;
   final String body;
+  final bool highlight;
 }
