@@ -11,6 +11,7 @@ import '../../domain/commands/game_command.dart';
 import '../../domain/models/game_models.dart';
 import '../../l10n/app_localizations.dart';
 import '../game/character_view.dart';
+import '../game/identity_labels.dart';
 import '../game/players_view.dart';
 import '../game/turn_view.dart';
 
@@ -227,29 +228,43 @@ class _LobbyView extends ConsumerWidget {
                           child: ListTile(
                             contentPadding: EdgeInsets.zero,
                             leading: CircleAvatar(
-                              backgroundColor: player.isConnected
-                                  ? Theme.of(
-                                      context,
-                                    ).colorScheme.primaryContainer
-                                  : Theme.of(
-                                      context,
-                                    ).colorScheme.surfaceContainerHighest,
-                              child: Icon(
-                                player.isLocal
-                                    ? Icons.smartphone
-                                    : player.isConnected
-                                    ? Icons.person
-                                    : Icons.person_off,
-                                color: player.isConnected
-                                    ? Theme.of(
-                                        context,
-                                      ).colorScheme.onPrimaryContainer
-                                    : Theme.of(
-                                        context,
-                                      ).colorScheme.onSurfaceVariant,
-                              ),
+                              backgroundColor: avatarColorFor(player.id),
+                              child: player.isLocal
+                                  ? const Icon(
+                                      Icons.smartphone,
+                                      color: Colors.white,
+                                    )
+                                  : Text(
+                                      player.name.isEmpty
+                                          ? '?'
+                                          : player.name
+                                                .substring(0, 1)
+                                                .toUpperCase(),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
                             ),
-                            title: Text(player.name),
+                            title: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Flexible(
+                                  child: Text(
+                                    player.name,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                if (!player.isLocal && !player.isConnected) ...[
+                                  const SizedBox(width: AppSpacing.xs),
+                                  Icon(
+                                    Icons.cloud_off,
+                                    size: 16,
+                                    color: Theme.of(context).colorScheme.error,
+                                  ),
+                                ],
+                              ],
+                            ),
                             subtitle: Text(
                               player.isLocal
                                   ? l10n.localPlayerTag
