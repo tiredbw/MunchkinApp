@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/theme.dart';
@@ -19,6 +20,7 @@ class TurnView extends ConsumerStatefulWidget {
 
 class _TurnViewState extends ConsumerState<TurnView> {
   Timer? _ticker;
+  int? _lastHapticSecond;
 
   @override
   void initState() {
@@ -43,6 +45,7 @@ class _TurnViewState extends ConsumerState<TurnView> {
     final active = game.activePlayer;
     final isActive = controller.playerId == game.activePlayerId;
     final scheme = Theme.of(context).colorScheme;
+    _tickCountdownHaptic(game);
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.lg),
       children: <Widget>[
@@ -119,6 +122,22 @@ class _TurnViewState extends ConsumerState<TurnView> {
         .inMilliseconds;
     if (milliseconds <= 0) return 0;
     return (milliseconds / 1000).ceil();
+  }
+
+  /// A light tick each second the victory countdown is in its final
+  /// stretch, so an intervening player feels the urgency without staring
+  /// at the screen.
+  void _tickCountdownHaptic(GameState game) {
+    final battle = game.battle;
+    if (battle == null || battle.status != BattleStatus.countdown) {
+      _lastHapticSecond = null;
+      return;
+    }
+    final remaining = _remaining(battle.endsAt);
+    if (remaining > 0 && remaining <= 3 && remaining != _lastHapticSecond) {
+      _lastHapticSecond = remaining;
+      HapticFeedback.lightImpact();
+    }
   }
 }
 
@@ -240,7 +259,10 @@ class _BattlePanel extends ConsumerWidget {
             FilledButton(
               onPressed: busy
                   ? null
-                  : () => controller.send(const GameCommand.declareVictory()),
+                  : () {
+                      HapticFeedback.mediumImpact();
+                      controller.send(const GameCommand.declareVictory());
+                    },
               child: Text(l10n.canWin),
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -357,7 +379,10 @@ class _BattlePanel extends ConsumerWidget {
             OutlinedButton.icon(
               onPressed: busy
                   ? null
-                  : () => controller.send(const GameCommand.raiseLevel()),
+                  : () {
+                      HapticFeedback.mediumImpact();
+                      controller.send(const GameCommand.raiseLevel());
+                    },
               icon: const Icon(Icons.arrow_upward),
               label: Text(l10n.raiseLevel),
             ),
@@ -612,7 +637,10 @@ class _ResumePanel extends ConsumerWidget {
           FilledButton(
             onPressed: busy
                 ? null
-                : () => controller.send(const GameCommand.declareVictory()),
+                : () {
+                    HapticFeedback.mediumImpact();
+                    controller.send(const GameCommand.declareVictory());
+                  },
             child: Text(l10n.canWin),
           ),
           OutlinedButton(

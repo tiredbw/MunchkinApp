@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/theme.dart';
@@ -58,17 +59,23 @@ class CharacterView extends ConsumerWidget {
             IconButton.filledTonal(
               onPressed: session.busy
                   ? null
-                  : () => controller.send(
-                      const GameCommand.adjustStats(levelDelta: -1),
-                    ),
+                  : () {
+                      HapticFeedback.selectionClick();
+                      controller.send(
+                        const GameCommand.adjustStats(levelDelta: -1),
+                      );
+                    },
               icon: const Icon(Icons.remove),
             ),
             IconButton.filled(
               onPressed: session.busy
                   ? null
-                  : () => controller.send(
-                      const GameCommand.adjustStats(levelDelta: 1),
-                    ),
+                  : () {
+                      HapticFeedback.selectionClick();
+                      controller.send(
+                        const GameCommand.adjustStats(levelDelta: 1),
+                      );
+                    },
               icon: const Icon(Icons.add),
             ),
           ],
@@ -170,7 +177,18 @@ class _StatCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 4),
-            Text('$value', style: Theme.of(context).textTheme.displaySmall),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 220),
+              transitionBuilder: (child, animation) => ScaleTransition(
+                scale: animation,
+                child: FadeTransition(opacity: animation, child: child),
+              ),
+              child: Text(
+                '$value',
+                key: ValueKey<int>(value),
+                style: Theme.of(context).textTheme.displaySmall,
+              ),
+            ),
             const SizedBox(height: AppSpacing.sm),
             Wrap(
               spacing: AppSpacing.sm,
