@@ -203,7 +203,7 @@ class _JoinRoomScreenState extends ConsumerState<JoinRoomScreen> {
     final invite = await Navigator.of(context).push<RoomInvite>(
       MaterialPageRoute(builder: (context) => const _ScannerScreen()),
     );
-    if (invite == null) return;
+    if (invite == null || !mounted) return;
     setState(() {
       _scannedInvite = invite;
       _host.text = invite.host;

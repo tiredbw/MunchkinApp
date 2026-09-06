@@ -418,6 +418,39 @@ void main() {
     accept(GameCommand.removePlayer(local.id), 'p2');
     expect(state.playerById(local.id), isNull);
   });
+
+  test(
+    'adjustStats and setIdentity are rejected once the game has ended',
+    () {
+      accept(const GameCommand.closeLobby(), 'host');
+      accept(const GameCommand.confirmOrder(), 'host');
+      accept(const GameCommand.startGame(), 'host');
+      accept(const GameCommand.endGame(), 'host');
+      expect(state.phase, RoomPhase.ended);
+
+      final statsResult = engine.apply(
+        state,
+        const GameCommand.adjustStats(strengthDelta: 1),
+        actorId: 'host',
+      );
+      expect(statsResult, isA<GameRejected>());
+      expect((statsResult as GameRejected).code, GameErrorCode.invalidState);
+
+      final identityResult = engine.apply(
+        state,
+        const GameCommand.setIdentity(
+          races: <MunchkinRace>[MunchkinRace.elf],
+          classes: <MunchkinClass>[],
+        ),
+        actorId: 'host',
+      );
+      expect(identityResult, isA<GameRejected>());
+      expect(
+        (identityResult as GameRejected).code,
+        GameErrorCode.invalidState,
+      );
+    },
+  );
 }
 
 class FakeClock implements Clock {

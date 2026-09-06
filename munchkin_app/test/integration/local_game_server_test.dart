@@ -186,6 +186,37 @@ void main() {
       expect(store.value?.state.revision, server.state.revision);
     },
   );
+
+  test(
+    'a malformed command payload is rejected instead of crashing the server',
+    () async {
+      final store = MemoryGameSnapshotStore();
+      final server = await LocalGameServer.create(
+        roomId: 'room',
+        hostPlayerId: 'host',
+        hostName: 'Host',
+        snapshotStore: store,
+      );
+      addTearDown(server.stop);
+      final invite = server.inviteFor('127.0.0.1');
+      final client = await _TestClient.connect(invite, 'Alice');
+      addTearDown(client.close);
+
+      final reply = await client.sendRawCommand(
+        <String, Object?>{'type': 'notARealCommand'},
+        revision: server.state.revision,
+      );
+      expect(reply.type, 'error');
+
+      // The server itself must still be alive and processing commands.
+      final followUp = await client.send(
+        const GameCommand.adjustStats(strengthDelta: 1),
+        revision: server.state.revision,
+      );
+      expect(followUp.type, 'accepted');
+      expect(server.state.playerById(client.playerId)?.strength, 1);
+    },
+  );
 }
 
 class _TestClient {
@@ -260,6 +291,36 @@ class _TestClient {
         .where((data) => data is String)
         .map((data) => NetworkEnvelope.decode(data as String))
         .firstWhere((message) => message.messageId == messageId)
+        .timeout(const Duration(seconds: 3));
+  }
+
+  /// Sends a hand-built, possibly malformed `command` payload, bypassing
+  /// [GameCommand] entirely — for exercising the server's handling of
+  /// garbage input a real client would never produce.
+  Future<NetworkEnvelope> sendRawCommand(
+    Object? rawCommand, {
+    required int revision,
+  }) async {
+    final messageId = 'command-${DateTime.now().microsecondsSinceEpoch}';
+    socket.add(
+      NetworkEnvelope(
+        messageId: messageId,
+        type: 'command',
+        roomId: 'room',
+        senderId: playerId,
+        expectedRevision: revision,
+        payload: <String, Object?>{'command': rawCommand},
+      ).encode(),
+    );
+    return (_externalMessages ?? _messages)
+        .where((data) => data is String)
+        .map((data) => NetworkEnvelope.decode(data as String))
+        // A malformed command is rejected before a per-command messageId is
+        // assigned, via the generic `_sendError` path (its own random id),
+        // so accept either the matching reply or any 'error' envelope.
+        .firstWhere(
+          (message) => message.messageId == messageId || message.type == 'error',
+        )
         .timeout(const Duration(seconds: 3));
   }
 

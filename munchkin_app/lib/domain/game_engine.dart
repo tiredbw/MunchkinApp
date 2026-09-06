@@ -336,6 +336,11 @@ class GameEngine {
     required int strengthDelta,
   }) {
     _require(
+      state.phase != RoomPhase.ended,
+      GameErrorCode.invalidState,
+      'The game has ended.',
+    );
+    _require(
       levelDelta.abs() <= 1 && const {-5, -1, 0, 1, 5}.contains(strengthDelta),
       GameErrorCode.invalidValue,
       'Unsupported stat adjustment.',
@@ -371,6 +376,11 @@ class GameEngine {
     required List<MunchkinRace> races,
     required List<MunchkinClass> classes,
   }) {
+    _require(
+      state.phase != RoomPhase.ended,
+      GameErrorCode.invalidState,
+      'The game has ended.',
+    );
     _require(
       state.settings.trackRaceClass,
       GameErrorCode.invalidState,

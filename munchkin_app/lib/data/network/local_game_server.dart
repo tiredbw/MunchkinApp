@@ -22,6 +22,7 @@ class LocalGameServer {
     required String inviteToken,
     required String pin,
     required Map<String, String> resumeTokenHashes,
+    required Clock clock,
   }) : this.__(
          engine,
          snapshotStore,
@@ -29,6 +30,7 @@ class LocalGameServer {
          inviteToken,
          pin,
          resumeTokenHashes,
+         clock,
        );
 
   LocalGameServer.__(
@@ -38,6 +40,7 @@ class LocalGameServer {
     this._inviteToken,
     this._pin,
     this._resumeTokenHashes,
+    this._clock,
   );
 
   /*
@@ -46,6 +49,7 @@ class LocalGameServer {
    */
 
   final GameEngine _engine;
+  final Clock _clock;
   final GameSnapshotStore _snapshotStore;
   final String _inviteToken;
   final String _pin;
@@ -90,6 +94,7 @@ class LocalGameServer {
       inviteToken: _secureToken(),
       pin: _sixDigitPin(randomSource),
       resumeTokenHashes: <String, String>{},
+      clock: clock,
     );
     await server._start();
     await server._persist();
@@ -122,6 +127,7 @@ class LocalGameServer {
       inviteToken: _secureToken(),
       pin: _sixDigitPin(randomSource),
       resumeTokenHashes: {...snapshot.resumeTokenHashes},
+      clock: clock,
     );
     await server._start();
     await server._persist();
@@ -349,7 +355,13 @@ class LocalGameServer {
       _sendError(socket, 'invalidCommand', 'Command payload is missing.');
       return;
     }
-    final command = GameCommand.fromJson(rawCommand);
+    final GameCommand command;
+    try {
+      command = GameCommand.fromJson(rawCommand);
+    } on Object catch (error) {
+      _sendError(socket, 'invalidCommand', 'Malformed command: $error');
+      return;
+    }
     final actAsPlayerId = envelope.payload['actAs'] as String?;
     final resolvedActorId = _resolveActor(actorId, actAsPlayerId);
     if (resolvedActorId == null) {
@@ -485,7 +497,7 @@ class LocalGameServer {
     if (_state.battle?.status != BattleStatus.countdown || endsAt == null) {
       return;
     }
-    final delay = endsAt.difference(DateTime.now().toUtc());
+    final delay = endsAt.difference(_clock.now());
     _battleTimer = Timer(delay.isNegative ? Duration.zero : delay, () {
       _queue = _queue.then((_) async {
         final resolved = _engine.resolveExpiredTimers(_state);
