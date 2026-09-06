@@ -94,6 +94,8 @@
   "invalidForm": "Check the entered values",
   "gameEnded": "The game has ended",
   "removePlayer": "Remove player",
+  "removePlayerConfirm": "Remove {name} from the room? They'll need to rejoin with the invite to come back.",
+  "@removePlayerConfirm": {"placeholders": {"name": {"type": "String"}}},
   "roomClosed": "Joining is closed",
   "resumeBattle": "Resume battle",
   "hostMustStayOpen": "The host app must remain open",

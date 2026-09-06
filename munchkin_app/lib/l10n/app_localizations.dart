@@ -638,6 +638,12 @@ abstract class AppLocalizations {
   /// **'Remove player'**
   String get removePlayer;
 
+  /// No description provided for @removePlayerConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name} from the room? They\'ll need to rejoin with the invite to come back.'**
+  String removePlayerConfirm(String name);
+
   /// No description provided for @roomClosed.
   ///
   /// In en, this message translates to:

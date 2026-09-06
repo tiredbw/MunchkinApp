@@ -94,6 +94,8 @@
   "invalidForm": "Проверьте введённые значения",
   "gameEnded": "Партия завершена",
   "removePlayer": "Удалить игрока",
+  "removePlayerConfirm": "Удалить {name} из комнаты? Чтобы вернуться, игроку нужно будет снова подключиться по приглашению.",
+  "@removePlayerConfirm": {"placeholders": {"name": {"type": "String"}}},
   "roomClosed": "Подключение закрыто",
   "resumeBattle": "Продолжить бой",
   "hostMustStayOpen": "Приложение ведущего должно оставаться открытым",

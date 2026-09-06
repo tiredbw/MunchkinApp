@@ -79,6 +79,31 @@ Future<bool> _confirmEndGame(
   return result ?? false;
 }
 
+Future<bool> _confirmRemovePlayer(
+  BuildContext context,
+  AppLocalizations l10n,
+  String playerName,
+) async {
+  final result = await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(l10n.removePlayer),
+      content: Text(l10n.removePlayerConfirm(playerName)),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: Text(l10n.cancel),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, true),
+          child: Text(l10n.removePlayer),
+        ),
+      ],
+    ),
+  );
+  return result ?? false;
+}
+
 class _LobbyView extends ConsumerWidget {
   const _LobbyView();
 
@@ -169,9 +194,18 @@ class _LobbyView extends ConsumerWidget {
                                   tooltip: l10n.removePlayer,
                                   onPressed: session.busy
                                       ? null
-                                      : () => controller.send(
-                                          GameCommand.removePlayer(player.id),
-                                        ),
+                                      : () async {
+                                          if (!await _confirmRemovePlayer(
+                                            context,
+                                            l10n,
+                                            player.name,
+                                          )) {
+                                            return;
+                                          }
+                                          await controller.send(
+                                            GameCommand.removePlayer(player.id),
+                                          );
+                                        },
                                   icon: const Icon(
                                     Icons.person_remove_outlined,
                                   ),

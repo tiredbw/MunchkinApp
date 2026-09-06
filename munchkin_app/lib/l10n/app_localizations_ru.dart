@@ -289,6 +289,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get removePlayer => 'Удалить игрока';
 
   @override
+  String removePlayerConfirm(String name) {
+    return 'Удалить $name из комнаты? Чтобы вернуться, игроку нужно будет снова подключиться по приглашению.';
+  }
+
+  @override
   String get roomClosed => 'Подключение закрыто';
 
   @override

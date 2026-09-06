@@ -289,6 +289,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get removePlayer => 'Remove player';
 
   @override
+  String removePlayerConfirm(String name) {
+    return 'Remove $name from the room? They\'ll need to rejoin with the invite to come back.';
+  }
+
+  @override
   String get roomClosed => 'Joining is closed';
 
   @override
