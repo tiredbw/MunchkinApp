@@ -158,7 +158,10 @@ class PlayersView extends ConsumerWidget {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            '${l10n.level} ${player.level}  ·  ${l10n.strength} ${player.strength}',
+                            player.peakLevel > player.level
+                                ? '${l10n.level} ${player.level}  ·  ${l10n.strength} ${player.strength}  ·  ${l10n.peakLevelCaption(player.peakLevel)}'
+                                : '${l10n.level} ${player.level}  ·  ${l10n.strength} ${player.strength}',
+                            overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.bodySmall
                                 ?.copyWith(color: scheme.onSurfaceVariant),
                           ),

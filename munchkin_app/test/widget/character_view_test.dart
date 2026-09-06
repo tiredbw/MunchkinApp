@@ -26,6 +26,7 @@ void main() {
       players: <Player>[player],
       turnOrder: const <String>['p1'],
       activePlayerId: 'p1',
+      doorOpenedThisTurn: true,
       createdAt: now,
       updatedAt: now,
     );

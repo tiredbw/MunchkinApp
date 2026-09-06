@@ -143,5 +143,9 @@
   "gameWinnerBadge": "Winner",
   "gameWinnerAnnouncement": "{name} reached level {level} and won the game!",
   "@gameWinnerAnnouncement": {"placeholders": {"name": {"type": "String"}, "level": {"type": "int"}}},
-  "endGameNow": "End the game"
+  "endGameNow": "End the game",
+  "peakLevelCaption": "Peak this game: {level}",
+  "@peakLevelCaption": {"placeholders": {"level": {"type": "int"}}},
+  "openDoor": "Open a door",
+  "openDoorHint": "Deal with whatever is behind it, then start a battle or end your turn."
 }

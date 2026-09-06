@@ -35,6 +35,7 @@ sealed class GameCommand with _$GameCommand {
     required List<MunchkinClass> classes,
   }) = SetIdentity;
   const factory GameCommand.endTurn() = EndTurn;
+  const factory GameCommand.openDoor() = OpenDoor;
   const factory GameCommand.startBattle() = StartBattle;
   const factory GameCommand.declareVictory() = DeclareVictory;
   const factory GameCommand.intervene() = Intervene;

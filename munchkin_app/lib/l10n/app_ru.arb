@@ -143,5 +143,9 @@
   "gameWinnerBadge": "Победитель",
   "gameWinnerAnnouncement": "{name} достиг {level} уровня и победил в игре!",
   "@gameWinnerAnnouncement": {"placeholders": {"name": {"type": "String"}, "level": {"type": "int"}}},
-  "endGameNow": "Завершить партию"
+  "endGameNow": "Завершить партию",
+  "peakLevelCaption": "Пик за партию: {level}",
+  "@peakLevelCaption": {"placeholders": {"level": {"type": "int"}}},
+  "openDoor": "Открыть дверь",
+  "openDoorHint": "Разыграйте то, что за ней, затем начните бой или завершите ход."
 }

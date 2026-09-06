@@ -184,6 +184,39 @@ class TurnActions extends ConsumerWidget {
         (value) => value.game?.battleFoughtThisTurn ?? false,
       ),
     );
+    final doorOpenedThisTurn = ref.watch(
+      sessionControllerProvider.select(
+        (value) => value.game?.doorOpenedThisTurn ?? false,
+      ),
+    );
+    if (!doorOpenedThisTurn) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          FilledButton.icon(
+            onPressed: busy
+                ? null
+                : () {
+                    HapticFeedback.mediumImpact();
+                    controller.send(
+                      const GameCommand.openDoor(),
+                      actAsPlayerId: actingPlayerId,
+                    );
+                  },
+            icon: const Icon(Icons.door_front_door),
+            label: Text(l10n.openDoor),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            l10n.openDoorHint,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[

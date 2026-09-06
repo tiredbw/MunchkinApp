@@ -112,6 +112,7 @@ abstract class GameState with _$GameState {
     @Default(<Player>[]) List<Player> players,
     @Default(<String>[]) List<String> turnOrder,
     String? activePlayerId,
+    @Default(false) bool doorOpenedThisTurn,
     @Default(false) bool battleFoughtThisTurn,
     BattleState? battle,
     DiceRoll? lastDiceRoll,

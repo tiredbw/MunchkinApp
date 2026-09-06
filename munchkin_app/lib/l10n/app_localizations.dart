@@ -907,6 +907,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'End the game'**
   String get endGameNow;
+
+  /// No description provided for @peakLevelCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Peak this game: {level}'**
+  String peakLevelCaption(int level);
+
+  /// No description provided for @openDoor.
+  ///
+  /// In en, this message translates to:
+  /// **'Open a door'**
+  String get openDoor;
+
+  /// No description provided for @openDoorHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Deal with whatever is behind it, then start a battle or end your turn.'**
+  String get openDoorHint;
 }
 
 class _AppLocalizationsDelegate

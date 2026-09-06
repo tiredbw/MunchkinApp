@@ -441,4 +441,16 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get endGameNow => 'Завершить партию';
+
+  @override
+  String peakLevelCaption(int level) {
+    return 'Пик за партию: $level';
+  }
+
+  @override
+  String get openDoor => 'Открыть дверь';
+
+  @override
+  String get openDoorHint =>
+      'Разыграйте то, что за ней, затем начните бой или завершите ход.';
 }

@@ -161,6 +161,7 @@ _GameState _$GameStateFromJson(Map<String, dynamic> json) => _GameState(
       (json['turnOrder'] as List<dynamic>?)?.map((e) => e as String).toList() ??
       const <String>[],
   activePlayerId: json['activePlayerId'] as String?,
+  doorOpenedThisTurn: json['doorOpenedThisTurn'] as bool? ?? false,
   battleFoughtThisTurn: json['battleFoughtThisTurn'] as bool? ?? false,
   battle: json['battle'] == null
       ? null
@@ -189,6 +190,7 @@ Map<String, dynamic> _$GameStateToJson(_GameState instance) =>
       'players': instance.players,
       'turnOrder': instance.turnOrder,
       'activePlayerId': instance.activePlayerId,
+      'doorOpenedThisTurn': instance.doorOpenedThisTurn,
       'battleFoughtThisTurn': instance.battleFoughtThisTurn,
       'battle': instance.battle,
       'lastDiceRoll': instance.lastDiceRoll,

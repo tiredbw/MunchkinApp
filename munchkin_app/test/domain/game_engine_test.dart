@@ -189,6 +189,23 @@ void main() {
     expect(state.battleFoughtThisTurn, isFalse);
   });
 
+  test(
+    'opening a door is tracked and reset per turn; starting a battle counts as one',
+    () {
+      accept(const GameCommand.closeLobby(), 'host');
+      accept(const GameCommand.confirmOrder(), 'host');
+      accept(const GameCommand.startGame(), 'host');
+      expect(state.doorOpenedThisTurn, isFalse);
+      accept(const GameCommand.openDoor(), 'host');
+      expect(state.doorOpenedThisTurn, isTrue);
+      accept(const GameCommand.endTurn(), 'host');
+      expect(state.doorOpenedThisTurn, isFalse);
+
+      accept(const GameCommand.startBattle(), 'host');
+      expect(state.doorOpenedThisTurn, isTrue);
+    },
+  );
+
   test('first intervention stops the countdown and late one is rejected', () {
     accept(
       const GameCommand.joinPlayer(playerId: 'p2', name: 'Alice'),

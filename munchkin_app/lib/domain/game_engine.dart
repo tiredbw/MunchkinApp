@@ -94,6 +94,7 @@ class GameEngine {
           classes: value.classes,
         ),
         endTurn: (_) => _endTurn(state, actorId),
+        openDoor: (_) => _openDoor(state, actorId),
         startBattle: (_) => _startBattle(state, actorId),
         declareVictory: (_) => _declareVictory(state, actorId),
         intervene: (_) => _intervene(state, actorId),
@@ -402,8 +403,22 @@ class GameEngine {
     );
     return state.copyWith(
       activePlayerId: state.turnOrder[(current + 1) % state.turnOrder.length],
+      doorOpenedThisTurn: false,
       battleFoughtThisTurn: false,
     );
+  }
+
+  /// The first action of a Munchkin turn: open a door and deal with
+  /// whatever is revealed at the table. Purely a soft reminder flag, like
+  /// [battleFoughtThisTurn] - the app has no card data to resolve.
+  GameState _openDoor(GameState state, String actorId) {
+    _requireActive(state, actorId);
+    _require(
+      state.phase == RoomPhase.playing && state.battle == null,
+      GameErrorCode.invalidState,
+      'A battle is already active.',
+    );
+    return state.copyWith(doorOpenedThisTurn: true);
   }
 
   GameState _startBattle(GameState state, String actorId) {
@@ -415,6 +430,7 @@ class GameEngine {
     );
     return state.copyWith(
       battle: BattleState(playerId: actorId),
+      doorOpenedThisTurn: true,
       battleFoughtThisTurn: true,
     );
   }

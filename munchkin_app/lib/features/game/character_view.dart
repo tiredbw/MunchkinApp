@@ -90,6 +90,9 @@ class CharacterView extends ConsumerWidget {
           label: l10n.level,
           value: player.level,
           icon: Icons.military_tech,
+          caption: player.peakLevel > player.level
+              ? l10n.peakLevelCaption(player.peakLevel)
+              : null,
           actions: <Widget>[
             IconButton.filledTonal(
               onPressed: session.busy
@@ -193,12 +196,14 @@ class _StatCard extends StatelessWidget {
     required this.value,
     required this.icon,
     required this.actions,
+    this.caption,
   });
 
   final String label;
   final int value;
   final IconData icon;
   final List<Widget> actions;
+  final String? caption;
 
   @override
   Widget build(BuildContext context) {
@@ -229,6 +234,15 @@ class _StatCard extends StatelessWidget {
                 style: Theme.of(context).textTheme.displaySmall,
               ),
             ),
+            if (caption != null) ...<Widget>[
+              const SizedBox(height: 2),
+              Text(
+                caption!,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: scheme.onSurfaceVariant,
+                ),
+              ),
+            ],
             const SizedBox(height: AppSpacing.sm),
             Wrap(
               spacing: AppSpacing.sm,

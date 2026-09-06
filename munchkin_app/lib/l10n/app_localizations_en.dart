@@ -439,4 +439,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get endGameNow => 'End the game';
+
+  @override
+  String peakLevelCaption(int level) {
+    return 'Peak this game: $level';
+  }
+
+  @override
+  String get openDoor => 'Open a door';
+
+  @override
+  String get openDoorHint =>
+      'Deal with whatever is behind it, then start a battle or end your turn.';
 }

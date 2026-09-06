@@ -1157,7 +1157,7 @@ as DateTime,
 /// @nodoc
 mixin _$GameState {
 
- int get schemaVersion; String get roomId; int get revision; RoomSettings get settings; RoomPhase get phase; List<Player> get players; List<String> get turnOrder; String? get activePlayerId; bool get battleFoughtThisTurn; BattleState? get battle; DiceRoll? get lastDiceRoll; String? get winnerPlayerId; DateTime? get startedAt; DateTime? get endedAt; DateTime get createdAt; DateTime get updatedAt;
+ int get schemaVersion; String get roomId; int get revision; RoomSettings get settings; RoomPhase get phase; List<Player> get players; List<String> get turnOrder; String? get activePlayerId; bool get doorOpenedThisTurn; bool get battleFoughtThisTurn; BattleState? get battle; DiceRoll? get lastDiceRoll; String? get winnerPlayerId; DateTime? get startedAt; DateTime? get endedAt; DateTime get createdAt; DateTime get updatedAt;
 /// Create a copy of GameState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1170,16 +1170,16 @@ $GameStateCopyWith<GameState> get copyWith => _$GameStateCopyWithImpl<GameState>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GameState&&(identical(other.schemaVersion, schemaVersion) || other.schemaVersion == schemaVersion)&&(identical(other.roomId, roomId) || other.roomId == roomId)&&(identical(other.revision, revision) || other.revision == revision)&&(identical(other.settings, settings) || other.settings == settings)&&(identical(other.phase, phase) || other.phase == phase)&&const DeepCollectionEquality().equals(other.players, players)&&const DeepCollectionEquality().equals(other.turnOrder, turnOrder)&&(identical(other.activePlayerId, activePlayerId) || other.activePlayerId == activePlayerId)&&(identical(other.battleFoughtThisTurn, battleFoughtThisTurn) || other.battleFoughtThisTurn == battleFoughtThisTurn)&&(identical(other.battle, battle) || other.battle == battle)&&(identical(other.lastDiceRoll, lastDiceRoll) || other.lastDiceRoll == lastDiceRoll)&&(identical(other.winnerPlayerId, winnerPlayerId) || other.winnerPlayerId == winnerPlayerId)&&(identical(other.startedAt, startedAt) || other.startedAt == startedAt)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GameState&&(identical(other.schemaVersion, schemaVersion) || other.schemaVersion == schemaVersion)&&(identical(other.roomId, roomId) || other.roomId == roomId)&&(identical(other.revision, revision) || other.revision == revision)&&(identical(other.settings, settings) || other.settings == settings)&&(identical(other.phase, phase) || other.phase == phase)&&const DeepCollectionEquality().equals(other.players, players)&&const DeepCollectionEquality().equals(other.turnOrder, turnOrder)&&(identical(other.activePlayerId, activePlayerId) || other.activePlayerId == activePlayerId)&&(identical(other.doorOpenedThisTurn, doorOpenedThisTurn) || other.doorOpenedThisTurn == doorOpenedThisTurn)&&(identical(other.battleFoughtThisTurn, battleFoughtThisTurn) || other.battleFoughtThisTurn == battleFoughtThisTurn)&&(identical(other.battle, battle) || other.battle == battle)&&(identical(other.lastDiceRoll, lastDiceRoll) || other.lastDiceRoll == lastDiceRoll)&&(identical(other.winnerPlayerId, winnerPlayerId) || other.winnerPlayerId == winnerPlayerId)&&(identical(other.startedAt, startedAt) || other.startedAt == startedAt)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,schemaVersion,roomId,revision,settings,phase,const DeepCollectionEquality().hash(players),const DeepCollectionEquality().hash(turnOrder),activePlayerId,battleFoughtThisTurn,battle,lastDiceRoll,winnerPlayerId,startedAt,endedAt,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,schemaVersion,roomId,revision,settings,phase,const DeepCollectionEquality().hash(players),const DeepCollectionEquality().hash(turnOrder),activePlayerId,doorOpenedThisTurn,battleFoughtThisTurn,battle,lastDiceRoll,winnerPlayerId,startedAt,endedAt,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'GameState(schemaVersion: $schemaVersion, roomId: $roomId, revision: $revision, settings: $settings, phase: $phase, players: $players, turnOrder: $turnOrder, activePlayerId: $activePlayerId, battleFoughtThisTurn: $battleFoughtThisTurn, battle: $battle, lastDiceRoll: $lastDiceRoll, winnerPlayerId: $winnerPlayerId, startedAt: $startedAt, endedAt: $endedAt, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'GameState(schemaVersion: $schemaVersion, roomId: $roomId, revision: $revision, settings: $settings, phase: $phase, players: $players, turnOrder: $turnOrder, activePlayerId: $activePlayerId, doorOpenedThisTurn: $doorOpenedThisTurn, battleFoughtThisTurn: $battleFoughtThisTurn, battle: $battle, lastDiceRoll: $lastDiceRoll, winnerPlayerId: $winnerPlayerId, startedAt: $startedAt, endedAt: $endedAt, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -1190,7 +1190,7 @@ abstract mixin class $GameStateCopyWith<$Res>  {
   factory $GameStateCopyWith(GameState value, $Res Function(GameState) _then) = _$GameStateCopyWithImpl;
 @useResult
 $Res call({
- int schemaVersion, String roomId, int revision, RoomSettings settings, RoomPhase phase, List<Player> players, List<String> turnOrder, String? activePlayerId, bool battleFoughtThisTurn, BattleState? battle, DiceRoll? lastDiceRoll, String? winnerPlayerId, DateTime? startedAt, DateTime? endedAt, DateTime createdAt, DateTime updatedAt
+ int schemaVersion, String roomId, int revision, RoomSettings settings, RoomPhase phase, List<Player> players, List<String> turnOrder, String? activePlayerId, bool doorOpenedThisTurn, bool battleFoughtThisTurn, BattleState? battle, DiceRoll? lastDiceRoll, String? winnerPlayerId, DateTime? startedAt, DateTime? endedAt, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -1207,7 +1207,7 @@ class _$GameStateCopyWithImpl<$Res>
 
 /// Create a copy of GameState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? schemaVersion = null,Object? roomId = null,Object? revision = null,Object? settings = null,Object? phase = null,Object? players = null,Object? turnOrder = null,Object? activePlayerId = freezed,Object? battleFoughtThisTurn = null,Object? battle = freezed,Object? lastDiceRoll = freezed,Object? winnerPlayerId = freezed,Object? startedAt = freezed,Object? endedAt = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? schemaVersion = null,Object? roomId = null,Object? revision = null,Object? settings = null,Object? phase = null,Object? players = null,Object? turnOrder = null,Object? activePlayerId = freezed,Object? doorOpenedThisTurn = null,Object? battleFoughtThisTurn = null,Object? battle = freezed,Object? lastDiceRoll = freezed,Object? winnerPlayerId = freezed,Object? startedAt = freezed,Object? endedAt = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_self.copyWith(
 schemaVersion: null == schemaVersion ? _self.schemaVersion : schemaVersion // ignore: cast_nullable_to_non_nullable
 as int,roomId: null == roomId ? _self.roomId : roomId // ignore: cast_nullable_to_non_nullable
@@ -1217,7 +1217,8 @@ as RoomSettings,phase: null == phase ? _self.phase : phase // ignore: cast_nulla
 as RoomPhase,players: null == players ? _self.players : players // ignore: cast_nullable_to_non_nullable
 as List<Player>,turnOrder: null == turnOrder ? _self.turnOrder : turnOrder // ignore: cast_nullable_to_non_nullable
 as List<String>,activePlayerId: freezed == activePlayerId ? _self.activePlayerId : activePlayerId // ignore: cast_nullable_to_non_nullable
-as String?,battleFoughtThisTurn: null == battleFoughtThisTurn ? _self.battleFoughtThisTurn : battleFoughtThisTurn // ignore: cast_nullable_to_non_nullable
+as String?,doorOpenedThisTurn: null == doorOpenedThisTurn ? _self.doorOpenedThisTurn : doorOpenedThisTurn // ignore: cast_nullable_to_non_nullable
+as bool,battleFoughtThisTurn: null == battleFoughtThisTurn ? _self.battleFoughtThisTurn : battleFoughtThisTurn // ignore: cast_nullable_to_non_nullable
 as bool,battle: freezed == battle ? _self.battle : battle // ignore: cast_nullable_to_non_nullable
 as BattleState?,lastDiceRoll: freezed == lastDiceRoll ? _self.lastDiceRoll : lastDiceRoll // ignore: cast_nullable_to_non_nullable
 as DiceRoll?,winnerPlayerId: freezed == winnerPlayerId ? _self.winnerPlayerId : winnerPlayerId // ignore: cast_nullable_to_non_nullable
@@ -1343,10 +1344,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int schemaVersion,  String roomId,  int revision,  RoomSettings settings,  RoomPhase phase,  List<Player> players,  List<String> turnOrder,  String? activePlayerId,  bool battleFoughtThisTurn,  BattleState? battle,  DiceRoll? lastDiceRoll,  String? winnerPlayerId,  DateTime? startedAt,  DateTime? endedAt,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int schemaVersion,  String roomId,  int revision,  RoomSettings settings,  RoomPhase phase,  List<Player> players,  List<String> turnOrder,  String? activePlayerId,  bool doorOpenedThisTurn,  bool battleFoughtThisTurn,  BattleState? battle,  DiceRoll? lastDiceRoll,  String? winnerPlayerId,  DateTime? startedAt,  DateTime? endedAt,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _GameState() when $default != null:
-return $default(_that.schemaVersion,_that.roomId,_that.revision,_that.settings,_that.phase,_that.players,_that.turnOrder,_that.activePlayerId,_that.battleFoughtThisTurn,_that.battle,_that.lastDiceRoll,_that.winnerPlayerId,_that.startedAt,_that.endedAt,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.schemaVersion,_that.roomId,_that.revision,_that.settings,_that.phase,_that.players,_that.turnOrder,_that.activePlayerId,_that.doorOpenedThisTurn,_that.battleFoughtThisTurn,_that.battle,_that.lastDiceRoll,_that.winnerPlayerId,_that.startedAt,_that.endedAt,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -1364,10 +1365,10 @@ return $default(_that.schemaVersion,_that.roomId,_that.revision,_that.settings,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int schemaVersion,  String roomId,  int revision,  RoomSettings settings,  RoomPhase phase,  List<Player> players,  List<String> turnOrder,  String? activePlayerId,  bool battleFoughtThisTurn,  BattleState? battle,  DiceRoll? lastDiceRoll,  String? winnerPlayerId,  DateTime? startedAt,  DateTime? endedAt,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int schemaVersion,  String roomId,  int revision,  RoomSettings settings,  RoomPhase phase,  List<Player> players,  List<String> turnOrder,  String? activePlayerId,  bool doorOpenedThisTurn,  bool battleFoughtThisTurn,  BattleState? battle,  DiceRoll? lastDiceRoll,  String? winnerPlayerId,  DateTime? startedAt,  DateTime? endedAt,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _GameState():
-return $default(_that.schemaVersion,_that.roomId,_that.revision,_that.settings,_that.phase,_that.players,_that.turnOrder,_that.activePlayerId,_that.battleFoughtThisTurn,_that.battle,_that.lastDiceRoll,_that.winnerPlayerId,_that.startedAt,_that.endedAt,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.schemaVersion,_that.roomId,_that.revision,_that.settings,_that.phase,_that.players,_that.turnOrder,_that.activePlayerId,_that.doorOpenedThisTurn,_that.battleFoughtThisTurn,_that.battle,_that.lastDiceRoll,_that.winnerPlayerId,_that.startedAt,_that.endedAt,_that.createdAt,_that.updatedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1384,10 +1385,10 @@ return $default(_that.schemaVersion,_that.roomId,_that.revision,_that.settings,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int schemaVersion,  String roomId,  int revision,  RoomSettings settings,  RoomPhase phase,  List<Player> players,  List<String> turnOrder,  String? activePlayerId,  bool battleFoughtThisTurn,  BattleState? battle,  DiceRoll? lastDiceRoll,  String? winnerPlayerId,  DateTime? startedAt,  DateTime? endedAt,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int schemaVersion,  String roomId,  int revision,  RoomSettings settings,  RoomPhase phase,  List<Player> players,  List<String> turnOrder,  String? activePlayerId,  bool doorOpenedThisTurn,  bool battleFoughtThisTurn,  BattleState? battle,  DiceRoll? lastDiceRoll,  String? winnerPlayerId,  DateTime? startedAt,  DateTime? endedAt,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _GameState() when $default != null:
-return $default(_that.schemaVersion,_that.roomId,_that.revision,_that.settings,_that.phase,_that.players,_that.turnOrder,_that.activePlayerId,_that.battleFoughtThisTurn,_that.battle,_that.lastDiceRoll,_that.winnerPlayerId,_that.startedAt,_that.endedAt,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.schemaVersion,_that.roomId,_that.revision,_that.settings,_that.phase,_that.players,_that.turnOrder,_that.activePlayerId,_that.doorOpenedThisTurn,_that.battleFoughtThisTurn,_that.battle,_that.lastDiceRoll,_that.winnerPlayerId,_that.startedAt,_that.endedAt,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -1399,7 +1400,7 @@ return $default(_that.schemaVersion,_that.roomId,_that.revision,_that.settings,_
 @JsonSerializable()
 
 class _GameState extends GameState {
-  const _GameState({this.schemaVersion = 1, required this.roomId, this.revision = 0, required this.settings, this.phase = RoomPhase.lobby, final  List<Player> players = const <Player>[], final  List<String> turnOrder = const <String>[], this.activePlayerId, this.battleFoughtThisTurn = false, this.battle, this.lastDiceRoll, this.winnerPlayerId, this.startedAt, this.endedAt, required this.createdAt, required this.updatedAt}): _players = players,_turnOrder = turnOrder,super._();
+  const _GameState({this.schemaVersion = 1, required this.roomId, this.revision = 0, required this.settings, this.phase = RoomPhase.lobby, final  List<Player> players = const <Player>[], final  List<String> turnOrder = const <String>[], this.activePlayerId, this.doorOpenedThisTurn = false, this.battleFoughtThisTurn = false, this.battle, this.lastDiceRoll, this.winnerPlayerId, this.startedAt, this.endedAt, required this.createdAt, required this.updatedAt}): _players = players,_turnOrder = turnOrder,super._();
   factory _GameState.fromJson(Map<String, dynamic> json) => _$GameStateFromJson(json);
 
 @override@JsonKey() final  int schemaVersion;
@@ -1422,6 +1423,7 @@ class _GameState extends GameState {
 }
 
 @override final  String? activePlayerId;
+@override@JsonKey() final  bool doorOpenedThisTurn;
 @override@JsonKey() final  bool battleFoughtThisTurn;
 @override final  BattleState? battle;
 @override final  DiceRoll? lastDiceRoll;
@@ -1444,16 +1446,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GameState&&(identical(other.schemaVersion, schemaVersion) || other.schemaVersion == schemaVersion)&&(identical(other.roomId, roomId) || other.roomId == roomId)&&(identical(other.revision, revision) || other.revision == revision)&&(identical(other.settings, settings) || other.settings == settings)&&(identical(other.phase, phase) || other.phase == phase)&&const DeepCollectionEquality().equals(other._players, _players)&&const DeepCollectionEquality().equals(other._turnOrder, _turnOrder)&&(identical(other.activePlayerId, activePlayerId) || other.activePlayerId == activePlayerId)&&(identical(other.battleFoughtThisTurn, battleFoughtThisTurn) || other.battleFoughtThisTurn == battleFoughtThisTurn)&&(identical(other.battle, battle) || other.battle == battle)&&(identical(other.lastDiceRoll, lastDiceRoll) || other.lastDiceRoll == lastDiceRoll)&&(identical(other.winnerPlayerId, winnerPlayerId) || other.winnerPlayerId == winnerPlayerId)&&(identical(other.startedAt, startedAt) || other.startedAt == startedAt)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GameState&&(identical(other.schemaVersion, schemaVersion) || other.schemaVersion == schemaVersion)&&(identical(other.roomId, roomId) || other.roomId == roomId)&&(identical(other.revision, revision) || other.revision == revision)&&(identical(other.settings, settings) || other.settings == settings)&&(identical(other.phase, phase) || other.phase == phase)&&const DeepCollectionEquality().equals(other._players, _players)&&const DeepCollectionEquality().equals(other._turnOrder, _turnOrder)&&(identical(other.activePlayerId, activePlayerId) || other.activePlayerId == activePlayerId)&&(identical(other.doorOpenedThisTurn, doorOpenedThisTurn) || other.doorOpenedThisTurn == doorOpenedThisTurn)&&(identical(other.battleFoughtThisTurn, battleFoughtThisTurn) || other.battleFoughtThisTurn == battleFoughtThisTurn)&&(identical(other.battle, battle) || other.battle == battle)&&(identical(other.lastDiceRoll, lastDiceRoll) || other.lastDiceRoll == lastDiceRoll)&&(identical(other.winnerPlayerId, winnerPlayerId) || other.winnerPlayerId == winnerPlayerId)&&(identical(other.startedAt, startedAt) || other.startedAt == startedAt)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,schemaVersion,roomId,revision,settings,phase,const DeepCollectionEquality().hash(_players),const DeepCollectionEquality().hash(_turnOrder),activePlayerId,battleFoughtThisTurn,battle,lastDiceRoll,winnerPlayerId,startedAt,endedAt,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,schemaVersion,roomId,revision,settings,phase,const DeepCollectionEquality().hash(_players),const DeepCollectionEquality().hash(_turnOrder),activePlayerId,doorOpenedThisTurn,battleFoughtThisTurn,battle,lastDiceRoll,winnerPlayerId,startedAt,endedAt,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'GameState(schemaVersion: $schemaVersion, roomId: $roomId, revision: $revision, settings: $settings, phase: $phase, players: $players, turnOrder: $turnOrder, activePlayerId: $activePlayerId, battleFoughtThisTurn: $battleFoughtThisTurn, battle: $battle, lastDiceRoll: $lastDiceRoll, winnerPlayerId: $winnerPlayerId, startedAt: $startedAt, endedAt: $endedAt, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'GameState(schemaVersion: $schemaVersion, roomId: $roomId, revision: $revision, settings: $settings, phase: $phase, players: $players, turnOrder: $turnOrder, activePlayerId: $activePlayerId, doorOpenedThisTurn: $doorOpenedThisTurn, battleFoughtThisTurn: $battleFoughtThisTurn, battle: $battle, lastDiceRoll: $lastDiceRoll, winnerPlayerId: $winnerPlayerId, startedAt: $startedAt, endedAt: $endedAt, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -1464,7 +1466,7 @@ abstract mixin class _$GameStateCopyWith<$Res> implements $GameStateCopyWith<$Re
   factory _$GameStateCopyWith(_GameState value, $Res Function(_GameState) _then) = __$GameStateCopyWithImpl;
 @override @useResult
 $Res call({
- int schemaVersion, String roomId, int revision, RoomSettings settings, RoomPhase phase, List<Player> players, List<String> turnOrder, String? activePlayerId, bool battleFoughtThisTurn, BattleState? battle, DiceRoll? lastDiceRoll, String? winnerPlayerId, DateTime? startedAt, DateTime? endedAt, DateTime createdAt, DateTime updatedAt
+ int schemaVersion, String roomId, int revision, RoomSettings settings, RoomPhase phase, List<Player> players, List<String> turnOrder, String? activePlayerId, bool doorOpenedThisTurn, bool battleFoughtThisTurn, BattleState? battle, DiceRoll? lastDiceRoll, String? winnerPlayerId, DateTime? startedAt, DateTime? endedAt, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -1481,7 +1483,7 @@ class __$GameStateCopyWithImpl<$Res>
 
 /// Create a copy of GameState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? schemaVersion = null,Object? roomId = null,Object? revision = null,Object? settings = null,Object? phase = null,Object? players = null,Object? turnOrder = null,Object? activePlayerId = freezed,Object? battleFoughtThisTurn = null,Object? battle = freezed,Object? lastDiceRoll = freezed,Object? winnerPlayerId = freezed,Object? startedAt = freezed,Object? endedAt = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? schemaVersion = null,Object? roomId = null,Object? revision = null,Object? settings = null,Object? phase = null,Object? players = null,Object? turnOrder = null,Object? activePlayerId = freezed,Object? doorOpenedThisTurn = null,Object? battleFoughtThisTurn = null,Object? battle = freezed,Object? lastDiceRoll = freezed,Object? winnerPlayerId = freezed,Object? startedAt = freezed,Object? endedAt = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_GameState(
 schemaVersion: null == schemaVersion ? _self.schemaVersion : schemaVersion // ignore: cast_nullable_to_non_nullable
 as int,roomId: null == roomId ? _self.roomId : roomId // ignore: cast_nullable_to_non_nullable
@@ -1491,7 +1493,8 @@ as RoomSettings,phase: null == phase ? _self.phase : phase // ignore: cast_nulla
 as RoomPhase,players: null == players ? _self._players : players // ignore: cast_nullable_to_non_nullable
 as List<Player>,turnOrder: null == turnOrder ? _self._turnOrder : turnOrder // ignore: cast_nullable_to_non_nullable
 as List<String>,activePlayerId: freezed == activePlayerId ? _self.activePlayerId : activePlayerId // ignore: cast_nullable_to_non_nullable
-as String?,battleFoughtThisTurn: null == battleFoughtThisTurn ? _self.battleFoughtThisTurn : battleFoughtThisTurn // ignore: cast_nullable_to_non_nullable
+as String?,doorOpenedThisTurn: null == doorOpenedThisTurn ? _self.doorOpenedThisTurn : doorOpenedThisTurn // ignore: cast_nullable_to_non_nullable
+as bool,battleFoughtThisTurn: null == battleFoughtThisTurn ? _self.battleFoughtThisTurn : battleFoughtThisTurn // ignore: cast_nullable_to_non_nullable
 as bool,battle: freezed == battle ? _self.battle : battle // ignore: cast_nullable_to_non_nullable
 as BattleState?,lastDiceRoll: freezed == lastDiceRoll ? _self.lastDiceRoll : lastDiceRoll // ignore: cast_nullable_to_non_nullable
 as DiceRoll?,winnerPlayerId: freezed == winnerPlayerId ? _self.winnerPlayerId : winnerPlayerId // ignore: cast_nullable_to_non_nullable

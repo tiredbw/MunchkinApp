@@ -141,6 +141,13 @@ Map<String, dynamic> _$EndTurnToJson(EndTurn instance) => <String, dynamic>{
   'type': instance.$type,
 };
 
+OpenDoor _$OpenDoorFromJson(Map<String, dynamic> json) =>
+    OpenDoor($type: json['type'] as String?);
+
+Map<String, dynamic> _$OpenDoorToJson(OpenDoor instance) => <String, dynamic>{
+  'type': instance.$type,
+};
+
 StartBattle _$StartBattleFromJson(Map<String, dynamic> json) =>
     StartBattle($type: json['type'] as String?);
 
