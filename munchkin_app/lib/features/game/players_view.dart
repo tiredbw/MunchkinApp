@@ -15,20 +15,6 @@ String _identitySummary(AppLocalizations l10n, Player player) {
   return classes.isEmpty ? races : '$races · $classes';
 }
 
-const List<Color> _avatarPalette = <Color>[
-  Color(0xFFB3541E),
-  Color(0xFF5E7A3E),
-  Color(0xFF3E6B7A),
-  Color(0xFF7A3E6B),
-  Color(0xFF7A6B3E),
-  Color(0xFF3E4F7A),
-  Color(0xFF7A3E3E),
-  Color(0xFF3E7A5E),
-];
-
-Color _avatarColorFor(String playerId) =>
-    _avatarPalette[playerId.hashCode.abs() % _avatarPalette.length];
-
 class PlayersView extends ConsumerWidget {
   const PlayersView({super.key, required this.onOpenCharacter});
 
@@ -57,7 +43,7 @@ class PlayersView extends ConsumerWidget {
         final isWinner = player.id == game.winnerPlayerId;
         final isLeader = player.totalPower == maxPower && maxPower > 0;
         final scheme = Theme.of(context).colorScheme;
-        final avatarColor = _avatarColorFor(player.id);
+        final avatarColor = avatarColorFor(player.id);
 
         return AnimatedContainer(
           duration: const Duration(milliseconds: 250),

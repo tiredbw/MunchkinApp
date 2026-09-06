@@ -37,6 +37,19 @@ class CharacterView extends ConsumerWidget {
             children: <Widget>[
               for (final candidate in myPlayers)
                 ChoiceChip(
+                  avatar: CircleAvatar(
+                    backgroundColor: avatarColorFor(candidate.id),
+                    child: Text(
+                      candidate.name.isEmpty
+                          ? '?'
+                          : candidate.name.substring(0, 1).toUpperCase(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
                   label: Text(candidate.name),
                   selected: candidate.id == player.id,
                   onSelected: (_) => controller.selectViewedPlayer(

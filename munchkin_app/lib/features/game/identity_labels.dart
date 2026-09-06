@@ -3,6 +3,20 @@ import 'package:flutter/material.dart';
 import '../../domain/models/game_models.dart';
 import '../../l10n/app_localizations.dart';
 
+const List<Color> avatarPalette = <Color>[
+  Color(0xFFB3541E),
+  Color(0xFF5E7A3E),
+  Color(0xFF3E6B7A),
+  Color(0xFF7A3E6B),
+  Color(0xFF7A6B3E),
+  Color(0xFF3E4F7A),
+  Color(0xFF7A3E3E),
+  Color(0xFF3E7A5E),
+];
+
+Color avatarColorFor(String playerId) =>
+    avatarPalette[playerId.hashCode.abs() % avatarPalette.length];
+
 const Map<MunchkinRace, IconData> raceIcons = <MunchkinRace, IconData>{
   MunchkinRace.human: Icons.person,
   MunchkinRace.elf: Icons.forest,

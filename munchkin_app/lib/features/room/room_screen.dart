@@ -582,7 +582,14 @@ class _GameShell extends ConsumerWidget {
     );
     final body = Column(
       children: <Widget>[
-        if (game.winnerPlayerId != null) const _WinnerBanner(),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOut,
+          alignment: Alignment.topCenter,
+          child: game.winnerPlayerId != null
+              ? const _WinnerBanner()
+              : const SizedBox(width: double.infinity),
+        ),
         Expanded(
           child: wide
               ? Row(
@@ -634,35 +641,64 @@ class _WinnerBanner extends ConsumerWidget {
     final controller = ref.read(sessionControllerProvider.notifier);
     if (winner == null) return const SizedBox.shrink();
     final scheme = Theme.of(context).colorScheme;
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: AppSpacing.sm,
+    final gold = leaderGold(context);
+    return TweenAnimationBuilder<double>(
+      key: ValueKey<String>(winner.id),
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeOutCubic,
+      tween: Tween<double>(begin: 0, end: 1),
+      builder: (context, value, child) => Opacity(
+        opacity: value,
+        child: Transform.translate(
+          offset: Offset(0, (1 - value) * -12),
+          child: child,
+        ),
       ),
-      color: leaderGold(context).withValues(alpha: 0.18),
-      child: Row(
-        children: <Widget>[
-          Icon(Icons.emoji_events, color: leaderGold(context)),
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(
-            child: Text(
-              l10n.gameWinnerAnnouncement(winner.name, winner.level),
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w700,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.md,
+          AppSpacing.sm,
+          AppSpacing.sm,
+          AppSpacing.sm,
+        ),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: <Color>[
+              gold.withValues(alpha: 0.28),
+              gold.withValues(alpha: 0.08),
+            ],
+          ),
+          border: Border(
+            bottom: BorderSide(color: gold.withValues(alpha: 0.4)),
+          ),
+        ),
+        child: Row(
+          children: <Widget>[
+            Icon(Icons.emoji_events_rounded, color: gold, size: 26),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: Text(
+                l10n.gameWinnerAnnouncement(winner.name, winner.level),
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
               ),
             ),
-          ),
-          if (controller.isHost)
-            TextButton(
-              onPressed: () async {
-                if (await _confirmEndGame(context, l10n)) {
-                  await controller.send(const GameCommand.endGame());
-                }
-              },
-              child: Text(l10n.endGameNow, style: TextStyle(color: scheme.error)),
-            ),
-        ],
+            if (controller.isHost)
+              TextButton(
+                onPressed: () async {
+                  if (await _confirmEndGame(context, l10n)) {
+                    await controller.send(const GameCommand.endGame());
+                  }
+                },
+                child: Text(
+                  l10n.endGameNow,
+                  style: TextStyle(color: scheme.error),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

@@ -77,6 +77,7 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
                 children: profiles
                     .map(
                       (profile) => ChoiceChip(
+                        avatar: const Icon(Icons.person, size: 18),
                         selected: profile.id == statistics?.activeProfileId,
                         label: Text(profile.name),
                         onSelected: (_) {
