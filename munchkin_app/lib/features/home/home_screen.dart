@@ -121,10 +121,20 @@ class HomeScreen extends ConsumerWidget {
                             ),
                           ],
                           const SizedBox(height: AppSpacing.sm),
-                          TextButton.icon(
-                            onPressed: () => context.go('/statistics'),
-                            icon: const Icon(Icons.bar_chart),
-                            label: Text(l10n.viewStatistics),
+                          Wrap(
+                            alignment: WrapAlignment.center,
+                            children: <Widget>[
+                              TextButton.icon(
+                                onPressed: () => context.go('/statistics'),
+                                icon: const Icon(Icons.bar_chart),
+                                label: Text(l10n.viewStatistics),
+                              ),
+                              TextButton.icon(
+                                onPressed: () => context.go('/rules'),
+                                icon: const Icon(Icons.menu_book_outlined),
+                                label: Text(l10n.rules),
+                              ),
+                            ],
                           ),
                           AnimatedSwitcher(
                             duration: const Duration(milliseconds: 200),

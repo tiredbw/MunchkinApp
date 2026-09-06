@@ -763,6 +763,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Game history'**
   String get viewStatistics;
+
+  /// No description provided for @rules.
+  ///
+  /// In en, this message translates to:
+  /// **'How to play'**
+  String get rules;
+
+  /// No description provided for @rulesTurnTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your turn'**
+  String get rulesTurnTitle;
+
+  /// No description provided for @rulesTurnBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Open a door, deal with what\'s behind it (fight, loot, or run), then optionally loot the room. Finish with \"End turn\" so the next player goes.'**
+  String get rulesTurnBody;
+
+  /// No description provided for @rulesCombatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Combat'**
+  String get rulesCombatTitle;
+
+  /// No description provided for @rulesCombatBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare total power. If you\'re stronger, press \"I can win\" - a countdown starts before it\'s locked in. If you\'re weaker, ask for help, run away, or accept the monster\'s Bad Stuff.'**
+  String get rulesCombatBody;
+
+  /// No description provided for @rulesInterventionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Intervening'**
+  String get rulesInterventionTitle;
+
+  /// No description provided for @rulesInterventionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Any other player can intervene during the victory countdown by playing a card that changes the fight (a monster enhancer, a curse, help). Only the first intervention counts - the server rejects late ones.'**
+  String get rulesInterventionBody;
+
+  /// No description provided for @rulesEscapeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Running away'**
+  String get rulesEscapeTitle;
+
+  /// No description provided for @rulesEscapeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Roll to escape. If you make it, the battle ends with no reward and no penalty. If you don\'t, the monster\'s Bad Stuff applies - usually you shrink back down to the table\'s minimum level.'**
+  String get rulesEscapeBody;
+
+  /// No description provided for @rulesIdentityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Race & class'**
+  String get rulesIdentityTitle;
+
+  /// No description provided for @rulesIdentityBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Humans have no race card and no special ability. Elves, Dwarves, Halflings and the expansion races each grant abilities from their card. Super Munchkin lets you hold two classes at once, and Half-Breed lets you hold two races - the app supports selecting more than one.'**
+  String get rulesIdentityBody;
+
+  /// No description provided for @rulesWinningTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Winning'**
+  String get rulesWinningTitle;
+
+  /// No description provided for @rulesWinningBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The first munchkin to reach the table\'s maximum level (10 in the standard game) and defeat one more monster wins the game.'**
+  String get rulesWinningBody;
 }
 
 class _AppLocalizationsDelegate

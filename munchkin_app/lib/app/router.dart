@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 
+import '../features/help/rules_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/room/create_room_screen.dart';
 import '../features/room/join_room_screen.dart';
@@ -20,5 +21,6 @@ final GoRouter appRouter = GoRouter(
       path: '/statistics',
       builder: (context, state) => const StatisticsScreen(),
     ),
+    GoRoute(path: '/rules', builder: (context, state) => const RulesScreen()),
   ],
 );

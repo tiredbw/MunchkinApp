@@ -356,4 +356,49 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get viewStatistics => 'Game history';
+
+  @override
+  String get rules => 'How to play';
+
+  @override
+  String get rulesTurnTitle => 'Your turn';
+
+  @override
+  String get rulesTurnBody =>
+      'Open a door, deal with what\'s behind it (fight, loot, or run), then optionally loot the room. Finish with \"End turn\" so the next player goes.';
+
+  @override
+  String get rulesCombatTitle => 'Combat';
+
+  @override
+  String get rulesCombatBody =>
+      'Compare total power. If you\'re stronger, press \"I can win\" - a countdown starts before it\'s locked in. If you\'re weaker, ask for help, run away, or accept the monster\'s Bad Stuff.';
+
+  @override
+  String get rulesInterventionTitle => 'Intervening';
+
+  @override
+  String get rulesInterventionBody =>
+      'Any other player can intervene during the victory countdown by playing a card that changes the fight (a monster enhancer, a curse, help). Only the first intervention counts - the server rejects late ones.';
+
+  @override
+  String get rulesEscapeTitle => 'Running away';
+
+  @override
+  String get rulesEscapeBody =>
+      'Roll to escape. If you make it, the battle ends with no reward and no penalty. If you don\'t, the monster\'s Bad Stuff applies - usually you shrink back down to the table\'s minimum level.';
+
+  @override
+  String get rulesIdentityTitle => 'Race & class';
+
+  @override
+  String get rulesIdentityBody =>
+      'Humans have no race card and no special ability. Elves, Dwarves, Halflings and the expansion races each grant abilities from their card. Super Munchkin lets you hold two classes at once, and Half-Breed lets you hold two races - the app supports selecting more than one.';
+
+  @override
+  String get rulesWinningTitle => 'Winning';
+
+  @override
+  String get rulesWinningBody =>
+      'The first munchkin to reach the table\'s maximum level (10 in the standard game) and defeat one more monster wins the game.';
 }

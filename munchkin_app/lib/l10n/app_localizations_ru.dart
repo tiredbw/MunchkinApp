@@ -358,4 +358,49 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get viewStatistics => 'История игр';
+
+  @override
+  String get rules => 'Как играть';
+
+  @override
+  String get rulesTurnTitle => 'Ваш ход';
+
+  @override
+  String get rulesTurnBody =>
+      'Откройте дверь, разберитесь с тем, что за ней (бой, добыча или побег), затем при желании оберите комнату. Завершите ход кнопкой «Завершить ход», чтобы передать ход следующему.';
+
+  @override
+  String get rulesCombatTitle => 'Бой';
+
+  @override
+  String get rulesCombatBody =>
+      'Сравните общую мощь. Если вы сильнее — нажмите «Могу победить», начнётся отсчёт до фиксации победы. Если слабее — попросите помощи, убегайте или примите Гадость монстра.';
+
+  @override
+  String get rulesInterventionTitle => 'Вмешательство';
+
+  @override
+  String get rulesInterventionBody =>
+      'Любой другой игрок может вмешаться во время отсчёта победы, разыграв карту, меняющую исход боя (усиление монстра, проклятие, помощь). Засчитывается только первое вмешательство — сервер отклоняет запоздавшие.';
+
+  @override
+  String get rulesEscapeTitle => 'Побег';
+
+  @override
+  String get rulesEscapeBody =>
+      'Бросьте кубик на побег. Если удалось — бой заканчивается без награды и без штрафа. Если нет — действует Гадость монстра: обычно уровень падает до минимального за столом.';
+
+  @override
+  String get rulesIdentityTitle => 'Раса и класс';
+
+  @override
+  String get rulesIdentityBody =>
+      'У человека нет карты расы и особых способностей. Эльфы, дворфы, полурослики и расы из допов дают способности со своих карт. Super Munchkin позволяет иметь два класса одновременно, а Half-Breed — две расы; приложение поддерживает выбор нескольких.';
+
+  @override
+  String get rulesWinningTitle => 'Победа';
+
+  @override
+  String get rulesWinningBody =>
+      'Побеждает первый манчкин, достигший максимального уровня за столом (10 в базовой игре) и победивший ещё одного монстра.';
 }
