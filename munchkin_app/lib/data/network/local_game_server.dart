@@ -136,14 +136,38 @@ class LocalGameServer {
     pin: _pin,
   );
 
-  Future<CommandReply> sendAsHost(GameCommand command) {
+  Future<CommandReply> sendAsHost(
+    GameCommand command, {
+    String? actAsPlayerId,
+  }) {
     final host = _state.players.firstWhere((player) => player.isHost);
+    final actorId = _resolveActor(host.id, actAsPlayerId);
+    if (actorId == null) {
+      return Future.value(
+        const CommandRejected(
+          GameErrorCode.forbidden,
+          'This device does not control that player.',
+        ),
+      );
+    }
     return _enqueueCommand(
       messageId: _uuid.v4(),
-      actorId: host.id,
+      actorId: actorId,
       expectedRevision: _state.revision,
       command: command,
     );
+  }
+
+  /// Resolves who a command should be applied as: the connection's own
+  /// player, or one of the local players added on their device.
+  String? _resolveActor(String connectionPlayerId, String? actAsPlayerId) {
+    if (actAsPlayerId == null || actAsPlayerId == connectionPlayerId) {
+      return connectionPlayerId;
+    }
+    if (_state.controlledPlayerIds(connectionPlayerId).contains(actAsPlayerId)) {
+      return actAsPlayerId;
+    }
+    return null;
   }
 
   Future<void> stop() async {
@@ -326,9 +350,26 @@ class LocalGameServer {
       return;
     }
     final command = GameCommand.fromJson(rawCommand);
+    final actAsPlayerId = envelope.payload['actAs'] as String?;
+    final resolvedActorId = _resolveActor(actorId, actAsPlayerId);
+    if (resolvedActorId == null) {
+      socket.add(
+        NetworkEnvelope(
+          messageId: envelope.messageId,
+          type: 'rejected',
+          roomId: _state.roomId,
+          payload: <String, Object?>{
+            'code': GameErrorCode.forbidden.name,
+            'message': 'This device does not control that player.',
+            'state': _state.toJson(),
+          },
+        ).encode(),
+      );
+      return;
+    }
     final reply = await _enqueueCommand(
       messageId: envelope.messageId,
-      actorId: actorId,
+      actorId: resolvedActorId,
       expectedRevision: envelope.expectedRevision,
       command: command,
     );
@@ -512,7 +553,8 @@ class LocalHostConnection implements GameConnection {
   }
 
   @override
-  Future<CommandReply> send(GameCommand command) => server.sendAsHost(command);
+  Future<CommandReply> send(GameCommand command, {String? actAsPlayerId}) =>
+      server.sendAsHost(command, actAsPlayerId: actAsPlayerId);
 
   @override
   Future<void> disconnect() async {

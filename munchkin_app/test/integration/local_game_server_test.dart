@@ -57,6 +57,62 @@ void main() {
   );
 
   test(
+    'a device can act as its own local player but not one it does not control',
+    () async {
+      final store = MemoryGameSnapshotStore();
+      final server = await LocalGameServer.create(
+        roomId: 'room',
+        hostPlayerId: 'host',
+        hostName: 'Host',
+        snapshotStore: store,
+      );
+      addTearDown(server.stop);
+      final invite = server.inviteFor('127.0.0.1');
+      final alice = await _TestClient.connect(invite, 'Alice');
+      addTearDown(alice.close);
+
+      expect(
+        await server.sendAsHost(
+          const GameCommand.addLocalPlayer(name: 'Sidekick'),
+        ),
+        isA<CommandAccepted>(),
+      );
+      final sidekick = server.state.players.singleWhere(
+        (player) => player.name == 'Sidekick',
+      );
+
+      // The host can act on behalf of its own local player.
+      expect(
+        await server.sendAsHost(
+          const GameCommand.setIdentity(
+            races: <MunchkinRace>[MunchkinRace.dwarf],
+            classes: <MunchkinClass>[],
+          ),
+          actAsPlayerId: sidekick.id,
+        ),
+        isA<CommandAccepted>(),
+      );
+      expect(server.state.playerById(sidekick.id)?.races, <MunchkinRace>[
+        MunchkinRace.dwarf,
+      ]);
+
+      // A different connection cannot act as a player it does not control.
+      final reply = await alice.send(
+        const GameCommand.setIdentity(
+          races: <MunchkinRace>[MunchkinRace.elf],
+          classes: <MunchkinClass>[],
+        ),
+        revision: server.state.revision,
+        actAs: sidekick.id,
+      );
+      expect(reply.type, 'rejected');
+      expect(server.state.playerById(sidekick.id)?.races, <MunchkinRace>[
+        MunchkinRace.dwarf,
+      ]);
+    },
+  );
+
+  test(
     'saved resume secret reclaims the same player after host restore',
     () async {
       final store = MemoryGameSnapshotStore();
@@ -184,6 +240,7 @@ class _TestClient {
   Future<NetworkEnvelope> send(
     GameCommand command, {
     required int revision,
+    String? actAs,
   }) async {
     final messageId = 'command-${DateTime.now().microsecondsSinceEpoch}';
     socket.add(
@@ -193,7 +250,10 @@ class _TestClient {
         roomId: 'room',
         senderId: playerId,
         expectedRevision: revision,
-        payload: <String, Object?>{'command': command.toJson()},
+        payload: <String, Object?>{
+          'command': command.toJson(),
+          'actAs': ?actAs,
+        },
       ).encode(),
     );
     return (_externalMessages ?? _messages)

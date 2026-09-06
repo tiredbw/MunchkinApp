@@ -62,6 +62,8 @@ abstract class Player with _$Player {
     @Default(<MunchkinRace>[MunchkinRace.human]) List<MunchkinRace> races,
     @Default(<MunchkinClass>[]) List<MunchkinClass> classes,
     @Default(true) bool isConnected,
+    @Default(false) bool isLocal,
+    String? localControllerPlayerId,
     DateTime? lastSeenAt,
   }) = _Player;
 
@@ -131,4 +133,15 @@ abstract class GameState with _$GameState {
   }
 
   Player? get activePlayer => playerById(activePlayerId);
+
+  /// Ids of players controlled from [controllerPlayerId]'s connection: that
+  /// player themself plus any local players added on their device.
+  List<String> controlledPlayerIds(String? controllerPlayerId) {
+    if (controllerPlayerId == null) return const <String>[];
+    return <String>[
+      controllerPlayerId,
+      for (final player in players)
+        if (player.localControllerPlayerId == controllerPlayerId) player.id,
+    ];
+  }
 }

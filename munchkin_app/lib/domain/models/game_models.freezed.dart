@@ -302,7 +302,7 @@ as bool,
 /// @nodoc
 mixin _$Player {
 
- String get id; String get name; bool get isHost; int get level; int get peakLevel; int get strength; List<MunchkinRace> get races; List<MunchkinClass> get classes; bool get isConnected; DateTime? get lastSeenAt;
+ String get id; String get name; bool get isHost; int get level; int get peakLevel; int get strength; List<MunchkinRace> get races; List<MunchkinClass> get classes; bool get isConnected; bool get isLocal; String? get localControllerPlayerId; DateTime? get lastSeenAt;
 /// Create a copy of Player
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -315,16 +315,16 @@ $PlayerCopyWith<Player> get copyWith => _$PlayerCopyWithImpl<Player>(this as Pla
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Player&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.isHost, isHost) || other.isHost == isHost)&&(identical(other.level, level) || other.level == level)&&(identical(other.peakLevel, peakLevel) || other.peakLevel == peakLevel)&&(identical(other.strength, strength) || other.strength == strength)&&const DeepCollectionEquality().equals(other.races, races)&&const DeepCollectionEquality().equals(other.classes, classes)&&(identical(other.isConnected, isConnected) || other.isConnected == isConnected)&&(identical(other.lastSeenAt, lastSeenAt) || other.lastSeenAt == lastSeenAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Player&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.isHost, isHost) || other.isHost == isHost)&&(identical(other.level, level) || other.level == level)&&(identical(other.peakLevel, peakLevel) || other.peakLevel == peakLevel)&&(identical(other.strength, strength) || other.strength == strength)&&const DeepCollectionEquality().equals(other.races, races)&&const DeepCollectionEquality().equals(other.classes, classes)&&(identical(other.isConnected, isConnected) || other.isConnected == isConnected)&&(identical(other.isLocal, isLocal) || other.isLocal == isLocal)&&(identical(other.localControllerPlayerId, localControllerPlayerId) || other.localControllerPlayerId == localControllerPlayerId)&&(identical(other.lastSeenAt, lastSeenAt) || other.lastSeenAt == lastSeenAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,isHost,level,peakLevel,strength,const DeepCollectionEquality().hash(races),const DeepCollectionEquality().hash(classes),isConnected,lastSeenAt);
+int get hashCode => Object.hash(runtimeType,id,name,isHost,level,peakLevel,strength,const DeepCollectionEquality().hash(races),const DeepCollectionEquality().hash(classes),isConnected,isLocal,localControllerPlayerId,lastSeenAt);
 
 @override
 String toString() {
-  return 'Player(id: $id, name: $name, isHost: $isHost, level: $level, peakLevel: $peakLevel, strength: $strength, races: $races, classes: $classes, isConnected: $isConnected, lastSeenAt: $lastSeenAt)';
+  return 'Player(id: $id, name: $name, isHost: $isHost, level: $level, peakLevel: $peakLevel, strength: $strength, races: $races, classes: $classes, isConnected: $isConnected, isLocal: $isLocal, localControllerPlayerId: $localControllerPlayerId, lastSeenAt: $lastSeenAt)';
 }
 
 
@@ -335,7 +335,7 @@ abstract mixin class $PlayerCopyWith<$Res>  {
   factory $PlayerCopyWith(Player value, $Res Function(Player) _then) = _$PlayerCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, bool isHost, int level, int peakLevel, int strength, List<MunchkinRace> races, List<MunchkinClass> classes, bool isConnected, DateTime? lastSeenAt
+ String id, String name, bool isHost, int level, int peakLevel, int strength, List<MunchkinRace> races, List<MunchkinClass> classes, bool isConnected, bool isLocal, String? localControllerPlayerId, DateTime? lastSeenAt
 });
 
 
@@ -352,7 +352,7 @@ class _$PlayerCopyWithImpl<$Res>
 
 /// Create a copy of Player
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? isHost = null,Object? level = null,Object? peakLevel = null,Object? strength = null,Object? races = null,Object? classes = null,Object? isConnected = null,Object? lastSeenAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? isHost = null,Object? level = null,Object? peakLevel = null,Object? strength = null,Object? races = null,Object? classes = null,Object? isConnected = null,Object? isLocal = null,Object? localControllerPlayerId = freezed,Object? lastSeenAt = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -363,7 +363,9 @@ as int,strength: null == strength ? _self.strength : strength // ignore: cast_nu
 as int,races: null == races ? _self.races : races // ignore: cast_nullable_to_non_nullable
 as List<MunchkinRace>,classes: null == classes ? _self.classes : classes // ignore: cast_nullable_to_non_nullable
 as List<MunchkinClass>,isConnected: null == isConnected ? _self.isConnected : isConnected // ignore: cast_nullable_to_non_nullable
-as bool,lastSeenAt: freezed == lastSeenAt ? _self.lastSeenAt : lastSeenAt // ignore: cast_nullable_to_non_nullable
+as bool,isLocal: null == isLocal ? _self.isLocal : isLocal // ignore: cast_nullable_to_non_nullable
+as bool,localControllerPlayerId: freezed == localControllerPlayerId ? _self.localControllerPlayerId : localControllerPlayerId // ignore: cast_nullable_to_non_nullable
+as String?,lastSeenAt: freezed == lastSeenAt ? _self.lastSeenAt : lastSeenAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));
 }
@@ -449,10 +451,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  bool isHost,  int level,  int peakLevel,  int strength,  List<MunchkinRace> races,  List<MunchkinClass> classes,  bool isConnected,  DateTime? lastSeenAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  bool isHost,  int level,  int peakLevel,  int strength,  List<MunchkinRace> races,  List<MunchkinClass> classes,  bool isConnected,  bool isLocal,  String? localControllerPlayerId,  DateTime? lastSeenAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Player() when $default != null:
-return $default(_that.id,_that.name,_that.isHost,_that.level,_that.peakLevel,_that.strength,_that.races,_that.classes,_that.isConnected,_that.lastSeenAt);case _:
+return $default(_that.id,_that.name,_that.isHost,_that.level,_that.peakLevel,_that.strength,_that.races,_that.classes,_that.isConnected,_that.isLocal,_that.localControllerPlayerId,_that.lastSeenAt);case _:
   return orElse();
 
 }
@@ -470,10 +472,10 @@ return $default(_that.id,_that.name,_that.isHost,_that.level,_that.peakLevel,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  bool isHost,  int level,  int peakLevel,  int strength,  List<MunchkinRace> races,  List<MunchkinClass> classes,  bool isConnected,  DateTime? lastSeenAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  bool isHost,  int level,  int peakLevel,  int strength,  List<MunchkinRace> races,  List<MunchkinClass> classes,  bool isConnected,  bool isLocal,  String? localControllerPlayerId,  DateTime? lastSeenAt)  $default,) {final _that = this;
 switch (_that) {
 case _Player():
-return $default(_that.id,_that.name,_that.isHost,_that.level,_that.peakLevel,_that.strength,_that.races,_that.classes,_that.isConnected,_that.lastSeenAt);case _:
+return $default(_that.id,_that.name,_that.isHost,_that.level,_that.peakLevel,_that.strength,_that.races,_that.classes,_that.isConnected,_that.isLocal,_that.localControllerPlayerId,_that.lastSeenAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -490,10 +492,10 @@ return $default(_that.id,_that.name,_that.isHost,_that.level,_that.peakLevel,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  bool isHost,  int level,  int peakLevel,  int strength,  List<MunchkinRace> races,  List<MunchkinClass> classes,  bool isConnected,  DateTime? lastSeenAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  bool isHost,  int level,  int peakLevel,  int strength,  List<MunchkinRace> races,  List<MunchkinClass> classes,  bool isConnected,  bool isLocal,  String? localControllerPlayerId,  DateTime? lastSeenAt)?  $default,) {final _that = this;
 switch (_that) {
 case _Player() when $default != null:
-return $default(_that.id,_that.name,_that.isHost,_that.level,_that.peakLevel,_that.strength,_that.races,_that.classes,_that.isConnected,_that.lastSeenAt);case _:
+return $default(_that.id,_that.name,_that.isHost,_that.level,_that.peakLevel,_that.strength,_that.races,_that.classes,_that.isConnected,_that.isLocal,_that.localControllerPlayerId,_that.lastSeenAt);case _:
   return null;
 
 }
@@ -505,7 +507,7 @@ return $default(_that.id,_that.name,_that.isHost,_that.level,_that.peakLevel,_th
 @JsonSerializable()
 
 class _Player extends Player {
-  const _Player({required this.id, required this.name, required this.isHost, required this.level, this.peakLevel = 1, required this.strength, final  List<MunchkinRace> races = const <MunchkinRace>[MunchkinRace.human], final  List<MunchkinClass> classes = const <MunchkinClass>[], this.isConnected = true, this.lastSeenAt}): _races = races,_classes = classes,super._();
+  const _Player({required this.id, required this.name, required this.isHost, required this.level, this.peakLevel = 1, required this.strength, final  List<MunchkinRace> races = const <MunchkinRace>[MunchkinRace.human], final  List<MunchkinClass> classes = const <MunchkinClass>[], this.isConnected = true, this.isLocal = false, this.localControllerPlayerId, this.lastSeenAt}): _races = races,_classes = classes,super._();
   factory _Player.fromJson(Map<String, dynamic> json) => _$PlayerFromJson(json);
 
 @override final  String id;
@@ -529,6 +531,8 @@ class _Player extends Player {
 }
 
 @override@JsonKey() final  bool isConnected;
+@override@JsonKey() final  bool isLocal;
+@override final  String? localControllerPlayerId;
 @override final  DateTime? lastSeenAt;
 
 /// Create a copy of Player
@@ -544,16 +548,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Player&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.isHost, isHost) || other.isHost == isHost)&&(identical(other.level, level) || other.level == level)&&(identical(other.peakLevel, peakLevel) || other.peakLevel == peakLevel)&&(identical(other.strength, strength) || other.strength == strength)&&const DeepCollectionEquality().equals(other._races, _races)&&const DeepCollectionEquality().equals(other._classes, _classes)&&(identical(other.isConnected, isConnected) || other.isConnected == isConnected)&&(identical(other.lastSeenAt, lastSeenAt) || other.lastSeenAt == lastSeenAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Player&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.isHost, isHost) || other.isHost == isHost)&&(identical(other.level, level) || other.level == level)&&(identical(other.peakLevel, peakLevel) || other.peakLevel == peakLevel)&&(identical(other.strength, strength) || other.strength == strength)&&const DeepCollectionEquality().equals(other._races, _races)&&const DeepCollectionEquality().equals(other._classes, _classes)&&(identical(other.isConnected, isConnected) || other.isConnected == isConnected)&&(identical(other.isLocal, isLocal) || other.isLocal == isLocal)&&(identical(other.localControllerPlayerId, localControllerPlayerId) || other.localControllerPlayerId == localControllerPlayerId)&&(identical(other.lastSeenAt, lastSeenAt) || other.lastSeenAt == lastSeenAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,isHost,level,peakLevel,strength,const DeepCollectionEquality().hash(_races),const DeepCollectionEquality().hash(_classes),isConnected,lastSeenAt);
+int get hashCode => Object.hash(runtimeType,id,name,isHost,level,peakLevel,strength,const DeepCollectionEquality().hash(_races),const DeepCollectionEquality().hash(_classes),isConnected,isLocal,localControllerPlayerId,lastSeenAt);
 
 @override
 String toString() {
-  return 'Player(id: $id, name: $name, isHost: $isHost, level: $level, peakLevel: $peakLevel, strength: $strength, races: $races, classes: $classes, isConnected: $isConnected, lastSeenAt: $lastSeenAt)';
+  return 'Player(id: $id, name: $name, isHost: $isHost, level: $level, peakLevel: $peakLevel, strength: $strength, races: $races, classes: $classes, isConnected: $isConnected, isLocal: $isLocal, localControllerPlayerId: $localControllerPlayerId, lastSeenAt: $lastSeenAt)';
 }
 
 
@@ -564,7 +568,7 @@ abstract mixin class _$PlayerCopyWith<$Res> implements $PlayerCopyWith<$Res> {
   factory _$PlayerCopyWith(_Player value, $Res Function(_Player) _then) = __$PlayerCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, bool isHost, int level, int peakLevel, int strength, List<MunchkinRace> races, List<MunchkinClass> classes, bool isConnected, DateTime? lastSeenAt
+ String id, String name, bool isHost, int level, int peakLevel, int strength, List<MunchkinRace> races, List<MunchkinClass> classes, bool isConnected, bool isLocal, String? localControllerPlayerId, DateTime? lastSeenAt
 });
 
 
@@ -581,7 +585,7 @@ class __$PlayerCopyWithImpl<$Res>
 
 /// Create a copy of Player
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? isHost = null,Object? level = null,Object? peakLevel = null,Object? strength = null,Object? races = null,Object? classes = null,Object? isConnected = null,Object? lastSeenAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? isHost = null,Object? level = null,Object? peakLevel = null,Object? strength = null,Object? races = null,Object? classes = null,Object? isConnected = null,Object? isLocal = null,Object? localControllerPlayerId = freezed,Object? lastSeenAt = freezed,}) {
   return _then(_Player(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -592,7 +596,9 @@ as int,strength: null == strength ? _self.strength : strength // ignore: cast_nu
 as int,races: null == races ? _self._races : races // ignore: cast_nullable_to_non_nullable
 as List<MunchkinRace>,classes: null == classes ? _self._classes : classes // ignore: cast_nullable_to_non_nullable
 as List<MunchkinClass>,isConnected: null == isConnected ? _self.isConnected : isConnected // ignore: cast_nullable_to_non_nullable
-as bool,lastSeenAt: freezed == lastSeenAt ? _self.lastSeenAt : lastSeenAt // ignore: cast_nullable_to_non_nullable
+as bool,isLocal: null == isLocal ? _self.isLocal : isLocal // ignore: cast_nullable_to_non_nullable
+as bool,localControllerPlayerId: freezed == localControllerPlayerId ? _self.localControllerPlayerId : localControllerPlayerId // ignore: cast_nullable_to_non_nullable
+as String?,lastSeenAt: freezed == lastSeenAt ? _self.lastSeenAt : lastSeenAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));
 }

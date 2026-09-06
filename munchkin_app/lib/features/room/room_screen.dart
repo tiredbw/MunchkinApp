@@ -79,6 +79,39 @@ Future<bool> _confirmEndGame(
   return result ?? false;
 }
 
+Future<void> _addLocalPlayerDialog(
+  BuildContext context,
+  AppLocalizations l10n,
+  SessionController controller,
+) async {
+  final nameController = TextEditingController();
+  final name = await showDialog<String>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(l10n.addLocalPlayerTitle),
+      content: TextField(
+        controller: nameController,
+        autofocus: true,
+        maxLength: 24,
+        decoration: InputDecoration(labelText: l10n.playerNameLabel),
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.cancel),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, nameController.text.trim()),
+          child: Text(l10n.addLocalPlayer),
+        ),
+      ],
+    ),
+  );
+  nameController.dispose();
+  if (name == null || name.isEmpty) return;
+  await controller.send(GameCommand.addLocalPlayer(name: name));
+}
+
 Future<bool> _confirmRemovePlayer(
   BuildContext context,
   AppLocalizations l10n,
@@ -160,60 +193,93 @@ class _LobbyView extends ConsumerWidget {
                     _OrderList(game: game, enabled: isHost && !session.busy)
                   else
                     ...game.players.map(
-                      (player) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 2),
-                        child: ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          leading: CircleAvatar(
-                            backgroundColor: player.isConnected
-                                ? Theme.of(context).colorScheme.primaryContainer
-                                : Theme.of(
-                                    context,
-                                  ).colorScheme.surfaceContainerHighest,
-                            child: Icon(
-                              player.isConnected
-                                  ? Icons.person
-                                  : Icons.person_off,
-                              color: player.isConnected
+                      (player) {
+                        final canRemove =
+                            isHost || controller.controlsPlayer(player.id);
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 2),
+                          child: ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            leading: CircleAvatar(
+                              backgroundColor: player.isConnected
                                   ? Theme.of(
                                       context,
-                                    ).colorScheme.onPrimaryContainer
+                                    ).colorScheme.primaryContainer
                                   : Theme.of(
                                       context,
-                                    ).colorScheme.onSurfaceVariant,
+                                    ).colorScheme.surfaceContainerHighest,
+                              child: Icon(
+                                player.isLocal
+                                    ? Icons.smartphone
+                                    : player.isConnected
+                                    ? Icons.person
+                                    : Icons.person_off,
+                                color: player.isConnected
+                                    ? Theme.of(
+                                        context,
+                                      ).colorScheme.onPrimaryContainer
+                                    : Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
+                              ),
                             ),
+                            title: Text(player.name),
+                            subtitle: Text(
+                              player.isLocal
+                                  ? l10n.localPlayerTag
+                                  : player.isConnected
+                                  ? l10n.connected
+                                  : l10n.offline,
+                            ),
+                            trailing: player.isHost
+                                ? const Icon(
+                                    Icons.admin_panel_settings_outlined,
+                                  )
+                                : canRemove
+                                ? IconButton(
+                                    tooltip: l10n.removePlayer,
+                                    onPressed: session.busy
+                                        ? null
+                                        : () async {
+                                            if (!await _confirmRemovePlayer(
+                                              context,
+                                              l10n,
+                                              player.name,
+                                            )) {
+                                              return;
+                                            }
+                                            await controller.send(
+                                              GameCommand.removePlayer(
+                                                player.id,
+                                              ),
+                                            );
+                                          },
+                                    icon: const Icon(
+                                      Icons.person_remove_outlined,
+                                    ),
+                                  )
+                                : null,
                           ),
-                          title: Text(player.name),
-                          subtitle: Text(
-                            player.isConnected ? l10n.connected : l10n.offline,
-                          ),
-                          trailing: player.isHost
-                              ? const Icon(Icons.admin_panel_settings_outlined)
-                              : isHost
-                              ? IconButton(
-                                  tooltip: l10n.removePlayer,
-                                  onPressed: session.busy
-                                      ? null
-                                      : () async {
-                                          if (!await _confirmRemovePlayer(
-                                            context,
-                                            l10n,
-                                            player.name,
-                                          )) {
-                                            return;
-                                          }
-                                          await controller.send(
-                                            GameCommand.removePlayer(player.id),
-                                          );
-                                        },
-                                  icon: const Icon(
-                                    Icons.person_remove_outlined,
-                                  ),
-                                )
-                              : null,
-                        ),
+                        );
+                      },
+                    ),
+                  if (game.phase == RoomPhase.lobby) ...<Widget>[
+                    const SizedBox(height: AppSpacing.sm),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: OutlinedButton.icon(
+                        onPressed: session.busy
+                            ? null
+                            : () => _addLocalPlayerDialog(
+                                context,
+                                l10n,
+                                controller,
+                              ),
+                        icon: const Icon(Icons.person_add_alt_1),
+                        label: Text(l10n.addLocalPlayer),
                       ),
                     ),
+                  ],
                 ],
               ),
             ),

@@ -43,7 +43,7 @@ class _TurnViewState extends ConsumerState<TurnView> {
     final game = session.game!;
     final l10n = AppLocalizations.of(context);
     final active = game.activePlayer;
-    final isActive = controller.playerId == game.activePlayerId;
+    final isActive = controller.controlsPlayer(game.activePlayerId);
     final scheme = Theme.of(context).colorScheme;
     _tickCountdownHaptic(game);
     return ListView(
@@ -92,6 +92,9 @@ class _TurnViewState extends ConsumerState<TurnView> {
               child: _BattlePanel(
                 game: game,
                 isActive: isActive,
+                actingPlayerId: isActive
+                    ? game.activePlayerId
+                    : controller.playerId,
                 busy: session.busy,
                 remainingSeconds: _remaining(game.battle?.endsAt),
               ),
@@ -106,7 +109,10 @@ class _TurnViewState extends ConsumerState<TurnView> {
           OutlinedButton.icon(
             onPressed: session.busy
                 ? null
-                : () => controller.send(const GameCommand.rollDice()),
+                : () => controller.send(
+                    const GameCommand.rollDice(),
+                    actAsPlayerId: game.activePlayerId,
+                  ),
             icon: const Icon(Icons.casino),
             label: Text(l10n.rollDice),
           ),
@@ -144,10 +150,16 @@ class _TurnViewState extends ConsumerState<TurnView> {
 /// Shown on both "Мой персонаж" and "Текущий ход" whenever no battle is in
 /// progress: turn actions for the active player, or whose turn it is.
 class TurnActions extends ConsumerWidget {
-  const TurnActions({super.key, required this.isActive, required this.busy});
+  const TurnActions({
+    super.key,
+    required this.isActive,
+    required this.busy,
+    this.actingPlayerId,
+  });
 
   final bool isActive;
   final bool busy;
+  final String? actingPlayerId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -180,7 +192,10 @@ class TurnActions extends ConsumerWidget {
               ? null
               : () => battleFoughtThisTurn
                     ? _confirmSecondBattle(context, controller)
-                    : controller.send(const GameCommand.startBattle()),
+                    : controller.send(
+                        const GameCommand.startBattle(),
+                        actAsPlayerId: actingPlayerId,
+                      ),
           icon: const Icon(Icons.shield),
           label: Text(l10n.startBattle),
         ),
@@ -188,7 +203,10 @@ class TurnActions extends ConsumerWidget {
         OutlinedButton(
           onPressed: busy
               ? null
-              : () => controller.send(const GameCommand.endTurn()),
+              : () => controller.send(
+                  const GameCommand.endTurn(),
+                  actAsPlayerId: actingPlayerId,
+                ),
           child: Text(l10n.endTurn),
         ),
       ],
@@ -218,7 +236,10 @@ class TurnActions extends ConsumerWidget {
       ),
     );
     if (confirmed == true) {
-      await controller.send(const GameCommand.startBattle());
+      await controller.send(
+        const GameCommand.startBattle(),
+        actAsPlayerId: actingPlayerId,
+      );
     }
   }
 }
@@ -229,12 +250,14 @@ class _BattlePanel extends ConsumerWidget {
     required this.isActive,
     required this.busy,
     required this.remainingSeconds,
+    this.actingPlayerId,
   });
 
   final GameState game;
   final bool isActive;
   final bool busy;
   final int remainingSeconds;
+  final String? actingPlayerId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -242,7 +265,11 @@ class _BattlePanel extends ConsumerWidget {
     final controller = ref.read(sessionControllerProvider.notifier);
     final battle = game.battle;
     if (battle == null) {
-      return TurnActions(isActive: isActive, busy: busy);
+      return TurnActions(
+        isActive: isActive,
+        busy: busy,
+        actingPlayerId: actingPlayerId,
+      );
     }
 
     switch (battle.status) {
@@ -261,7 +288,10 @@ class _BattlePanel extends ConsumerWidget {
                   ? null
                   : () {
                       HapticFeedback.mediumImpact();
-                      controller.send(const GameCommand.declareVictory());
+                      controller.send(
+                        const GameCommand.declareVictory(),
+                        actAsPlayerId: actingPlayerId,
+                      );
                     },
               child: Text(l10n.canWin),
             ),
@@ -269,7 +299,7 @@ class _BattlePanel extends ConsumerWidget {
             OutlinedButton(
               onPressed: busy
                   ? null
-                  : () => _showCannotWin(context, controller),
+                  : () => _showCannotWin(context, controller, actingPlayerId),
               child: Text(l10n.cannotWin),
             ),
           ],
@@ -304,6 +334,7 @@ class _BattlePanel extends ConsumerWidget {
           message: l10n.interventionReceived,
           active: isActive,
           busy: busy,
+          actingPlayerId: actingPlayerId,
         );
       case BattleStatus.helpRequested:
         return _ResumePanel(
@@ -311,6 +342,7 @@ class _BattlePanel extends ConsumerWidget {
           active: isActive,
           busy: busy,
           allowEscape: true,
+          actingPlayerId: actingPlayerId,
         );
       case BattleStatus.escaping:
         if (!isActive) {
@@ -333,20 +365,29 @@ class _BattlePanel extends ConsumerWidget {
               OutlinedButton.icon(
                 onPressed: busy
                     ? null
-                    : () => controller.send(const GameCommand.rollDice()),
+                    : () => controller.send(
+                        const GameCommand.rollDice(),
+                        actAsPlayerId: actingPlayerId,
+                      ),
                 icon: const Icon(Icons.casino),
                 label: Text(l10n.rollDice),
               ),
             FilledButton(
               onPressed: busy
                   ? null
-                  : () => controller.send(const GameCommand.resolveEscape()),
+                  : () => controller.send(
+                      const GameCommand.resolveEscape(),
+                      actAsPlayerId: actingPlayerId,
+                    ),
               child: Text(l10n.finishEscape),
             ),
             TextButton(
               onPressed: busy
                   ? null
-                  : () => controller.send(const GameCommand.resumeBattle()),
+                  : () => controller.send(
+                      const GameCommand.resumeBattle(),
+                      actAsPlayerId: actingPlayerId,
+                    ),
               child: Text(l10n.resumeBattle),
             ),
           ],
@@ -381,7 +422,10 @@ class _BattlePanel extends ConsumerWidget {
                   ? null
                   : () {
                       HapticFeedback.mediumImpact();
-                      controller.send(const GameCommand.raiseLevel());
+                      controller.send(
+                        const GameCommand.raiseLevel(),
+                        actAsPlayerId: actingPlayerId,
+                      );
                     },
               icon: const Icon(Icons.arrow_upward),
               label: Text(l10n.raiseLevel),
@@ -389,7 +433,10 @@ class _BattlePanel extends ConsumerWidget {
             FilledButton(
               onPressed: busy
                   ? null
-                  : () => controller.send(const GameCommand.finishBattle()),
+                  : () => controller.send(
+                      const GameCommand.finishBattle(),
+                      actAsPlayerId: actingPlayerId,
+                    ),
               child: Text(l10n.finishBattle),
             ),
           ],
@@ -413,7 +460,10 @@ class _BattlePanel extends ConsumerWidget {
             FilledButton.icon(
               onPressed: busy
                   ? null
-                  : () => controller.send(const GameCommand.finishBattle()),
+                  : () => controller.send(
+                      const GameCommand.finishBattle(),
+                      actAsPlayerId: actingPlayerId,
+                    ),
               icon: const Icon(Icons.check_circle_outline),
               label: Text(l10n.survivedEscape),
             ),
@@ -421,7 +471,8 @@ class _BattlePanel extends ConsumerWidget {
             OutlinedButton.icon(
               onPressed: busy
                   ? null
-                  : () => _confirmDeath(context, controller, game),
+                  : () =>
+                        _confirmDeath(context, controller, game, actingPlayerId),
               icon: const Icon(Icons.dangerous),
               label: Text(l10n.diedInBattle),
             ),
@@ -434,6 +485,7 @@ class _BattlePanel extends ConsumerWidget {
     BuildContext context,
     SessionController controller,
     GameState game,
+    String? actingPlayerId,
   ) async {
     final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
@@ -454,13 +506,17 @@ class _BattlePanel extends ConsumerWidget {
       ),
     );
     if (confirmed == true) {
-      await controller.send(const GameCommand.dieInBattle());
+      await controller.send(
+        const GameCommand.dieInBattle(),
+        actAsPlayerId: actingPlayerId,
+      );
     }
   }
 
   Future<void> _showCannotWin(
     BuildContext context,
     SessionController controller,
+    String? actingPlayerId,
   ) async {
     final l10n = AppLocalizations.of(context);
     await showModalBottomSheet<void>(
@@ -476,7 +532,10 @@ class _BattlePanel extends ConsumerWidget {
               FilledButton.tonal(
                 onPressed: () {
                   Navigator.pop(context);
-                  controller.send(const GameCommand.requestHelp());
+                  controller.send(
+                    const GameCommand.requestHelp(),
+                    actAsPlayerId: actingPlayerId,
+                  );
                 },
                 child: Text(l10n.requestHelp),
               ),
@@ -484,7 +543,10 @@ class _BattlePanel extends ConsumerWidget {
               FilledButton.tonal(
                 onPressed: () {
                   Navigator.pop(context);
-                  controller.send(const GameCommand.startEscape());
+                  controller.send(
+                    const GameCommand.startEscape(),
+                    actAsPlayerId: actingPlayerId,
+                  );
                 },
                 child: Text(l10n.escape),
               ),
@@ -617,12 +679,14 @@ class _ResumePanel extends ConsumerWidget {
     required this.active,
     required this.busy,
     this.allowEscape = false,
+    this.actingPlayerId,
   });
 
   final String message;
   final bool active;
   final bool busy;
   final bool allowEscape;
+  final String? actingPlayerId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -639,21 +703,30 @@ class _ResumePanel extends ConsumerWidget {
                 ? null
                 : () {
                     HapticFeedback.mediumImpact();
-                    controller.send(const GameCommand.declareVictory());
+                    controller.send(
+                      const GameCommand.declareVictory(),
+                      actAsPlayerId: actingPlayerId,
+                    );
                   },
             child: Text(l10n.canWin),
           ),
           OutlinedButton(
             onPressed: busy
                 ? null
-                : () => controller.send(const GameCommand.resumeBattle()),
+                : () => controller.send(
+                    const GameCommand.resumeBattle(),
+                    actAsPlayerId: actingPlayerId,
+                  ),
             child: Text(l10n.resumeBattle),
           ),
           if (allowEscape)
             TextButton(
               onPressed: busy
                   ? null
-                  : () => controller.send(const GameCommand.startEscape()),
+                  : () => controller.send(
+                      const GameCommand.startEscape(),
+                      actAsPlayerId: actingPlayerId,
+                    ),
               child: Text(l10n.escape),
             ),
         ],

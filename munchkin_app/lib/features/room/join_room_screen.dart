@@ -5,7 +5,9 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../app/theme.dart';
 import '../../application/session_controller.dart';
+import '../../application/statistics_controller.dart';
 import '../../core/network/network_protocol.dart';
+import '../../data/storage/statistics_store.dart';
 import '../../l10n/app_localizations.dart';
 
 class JoinRoomScreen extends ConsumerStatefulWidget {
@@ -42,6 +44,8 @@ class _JoinRoomScreenState extends ConsumerState<JoinRoomScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final session = ref.watch(sessionControllerProvider);
+    final statistics = ref.watch(statisticsControllerProvider).value;
+    final profiles = statistics?.profiles ?? const <UserProfile>[];
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -56,6 +60,27 @@ class _JoinRoomScreenState extends ConsumerState<JoinRoomScreen> {
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.all(AppSpacing.lg),
           children: <Widget>[
+            if (profiles.isNotEmpty) ...<Widget>[
+              Wrap(
+                spacing: AppSpacing.xs,
+                runSpacing: AppSpacing.xs,
+                children: profiles
+                    .map(
+                      (profile) => ChoiceChip(
+                        selected: profile.id == statistics?.activeProfileId,
+                        label: Text(profile.name),
+                        onSelected: (_) {
+                          setState(() => _name.text = profile.name);
+                          ref
+                              .read(statisticsControllerProvider.notifier)
+                              .selectProfile(profile.id);
+                        },
+                      ),
+                    )
+                    .toList(growable: false),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+            ],
             TextFormField(
               controller: _name,
               maxLength: 24,

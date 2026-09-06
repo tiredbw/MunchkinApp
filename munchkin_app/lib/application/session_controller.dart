@@ -22,6 +22,7 @@ class SessionState {
     this.error,
     this.busy = false,
     this.hasRecovery = false,
+    this.viewedPlayerId,
   });
 
   final GameState? game;
@@ -30,6 +31,7 @@ class SessionState {
   final String? error;
   final bool busy;
   final bool hasRecovery;
+  final String? viewedPlayerId;
 
   SessionState copyWith({
     GameState? game,
@@ -39,6 +41,8 @@ class SessionState {
     bool clearError = false,
     bool? busy,
     bool? hasRecovery,
+    String? viewedPlayerId,
+    bool clearViewedPlayerId = false,
   }) => SessionState(
     game: game ?? this.game,
     status: status ?? this.status,
@@ -46,6 +50,9 @@ class SessionState {
     error: clearError ? null : error ?? this.error,
     busy: busy ?? this.busy,
     hasRecovery: hasRecovery ?? this.hasRecovery,
+    viewedPlayerId: clearViewedPlayerId
+        ? null
+        : viewedPlayerId ?? this.viewedPlayerId,
   );
 }
 
@@ -71,9 +78,28 @@ class SessionController extends Notifier<SessionState> {
   String? get playerId => _connection?.playerId;
   bool get isHost => state.game?.playerById(playerId)?.isHost ?? false;
 
+  /// Ids of the players this device controls: the connected player
+  /// themself, plus any players added locally on this device.
+  List<String> get controlledPlayerIds =>
+      state.game?.controlledPlayerIds(playerId) ?? const <String>[];
+
+  bool controlsPlayer(String? id) =>
+      id != null && controlledPlayerIds.contains(id);
+
+  /// The player whose character/stats the "Мой персонаж" tab is currently
+  /// showing: defaults to this device's own player.
+  String? get viewedPlayerId =>
+      controlsPlayer(state.viewedPlayerId) ? state.viewedPlayerId : playerId;
+
+  void selectViewedPlayer(String id) {
+    if (!controlsPlayer(id)) return;
+    state = state.copyWith(viewedPlayerId: id);
+  }
+
   Future<void> createRoom({
     required String hostName,
     required RoomSettings settings,
+    List<String> localPlayerNames = const <String>[],
   }) async {
     state = state.copyWith(busy: true, clearError: true);
     try {
@@ -87,6 +113,10 @@ class SessionController extends Notifier<SessionState> {
       final addresses = await localIpv4Addresses();
       final invite = server.inviteFor(addresses.firstOrNull ?? '127.0.0.1');
       await _attach(LocalHostConnection(server), invite: invite);
+      for (final name in localPlayerNames) {
+        if (name.trim().isEmpty) continue;
+        await _connection?.send(GameCommand.addLocalPlayer(name: name));
+      }
       await _ensureProfile(hostName);
       state = state.copyWith(busy: false, hasRecovery: true);
     } on Object catch (error) {
@@ -145,7 +175,7 @@ class SessionController extends Notifier<SessionState> {
     }
   }
 
-  Future<CommandReply> send(GameCommand command) async {
+  Future<CommandReply> send(GameCommand command, {String? actAsPlayerId}) async {
     final connection = _connection;
     if (connection == null || state.busy) {
       return const CommandRejected(
@@ -154,7 +184,7 @@ class SessionController extends Notifier<SessionState> {
       );
     }
     state = state.copyWith(busy: true, clearError: true);
-    final reply = await connection.send(command);
+    final reply = await connection.send(command, actAsPlayerId: actAsPlayerId);
     if (reply is CommandRejected) {
       state = state.copyWith(busy: false, error: reply.message);
     } else {

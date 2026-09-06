@@ -17,14 +17,36 @@ class CharacterView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final session = ref.watch(sessionControllerProvider);
     final controller = ref.read(sessionControllerProvider.notifier);
-    final player = session.game!.playerById(controller.playerId);
+    final viewedPlayerId = controller.viewedPlayerId;
+    final player = session.game!.playerById(viewedPlayerId);
     final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
     if (player == null) return const Center(child: CircularProgressIndicator());
+    final myPlayers = controller.controlledPlayerIds
+        .map((id) => session.game!.playerById(id))
+        .whereType<Player>()
+        .toList(growable: false);
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.all(AppSpacing.lg),
       children: <Widget>[
+        if (myPlayers.length > 1) ...<Widget>[
+          Wrap(
+            spacing: AppSpacing.xs,
+            runSpacing: AppSpacing.xs,
+            children: <Widget>[
+              for (final candidate in myPlayers)
+                ChoiceChip(
+                  label: Text(candidate.name),
+                  selected: candidate.id == player.id,
+                  onSelected: (_) => controller.selectViewedPlayer(
+                    candidate.id,
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+        ],
         Row(
           children: <Widget>[
             CircleAvatar(
@@ -63,6 +85,7 @@ class CharacterView extends ConsumerWidget {
                       HapticFeedback.selectionClick();
                       controller.send(
                         const GameCommand.adjustStats(levelDelta: -1),
+                        actAsPlayerId: viewedPlayerId,
                       );
                     },
               icon: const Icon(Icons.remove),
@@ -74,6 +97,7 @@ class CharacterView extends ConsumerWidget {
                       HapticFeedback.selectionClick();
                       controller.send(
                         const GameCommand.adjustStats(levelDelta: 1),
+                        actAsPlayerId: viewedPlayerId,
                       );
                     },
               icon: const Icon(Icons.add),
@@ -92,6 +116,7 @@ class CharacterView extends ConsumerWidget {
                     ? null
                     : () => controller.send(
                         GameCommand.adjustStats(strengthDelta: delta),
+                        actAsPlayerId: viewedPlayerId,
                       ),
                 child: Text(delta > 0 ? '+$delta' : '$delta'),
               ),
@@ -128,6 +153,7 @@ class CharacterView extends ConsumerWidget {
             player: player,
             busy: session.busy,
             controller: controller,
+            viewedPlayerId: viewedPlayerId,
           ),
         ],
         if (session.game!.battle == null) ...<Widget>[
@@ -138,6 +164,7 @@ class CharacterView extends ConsumerWidget {
               child: TurnActions(
                 isActive: player.id == session.game!.activePlayerId,
                 busy: session.busy,
+                actingPlayerId: player.id,
               ),
             ),
           ),
@@ -208,11 +235,13 @@ class _IdentityCard extends StatelessWidget {
     required this.player,
     required this.busy,
     required this.controller,
+    required this.viewedPlayerId,
   });
 
   final Player player;
   final bool busy;
   final SessionController controller;
+  final String? viewedPlayerId;
 
   @override
   Widget build(BuildContext context) {
@@ -263,6 +292,7 @@ class _IdentityCard extends StatelessWidget {
                                 races: next.toList(growable: false),
                                 classes: player.classes,
                               ),
+                              actAsPlayerId: viewedPlayerId,
                             );
                           },
                   ),
@@ -292,6 +322,7 @@ class _IdentityCard extends StatelessWidget {
                                 races: player.races,
                                 classes: next.toList(growable: false),
                               ),
+                              actAsPlayerId: viewedPlayerId,
                             );
                           },
                   ),

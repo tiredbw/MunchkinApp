@@ -58,6 +58,8 @@ _Player _$PlayerFromJson(Map<String, dynamic> json) => _Player(
           .toList() ??
       const <MunchkinClass>[],
   isConnected: json['isConnected'] as bool? ?? true,
+  isLocal: json['isLocal'] as bool? ?? false,
+  localControllerPlayerId: json['localControllerPlayerId'] as String?,
   lastSeenAt: json['lastSeenAt'] == null
       ? null
       : DateTime.parse(json['lastSeenAt'] as String),
@@ -73,6 +75,8 @@ Map<String, dynamic> _$PlayerToJson(_Player instance) => <String, dynamic>{
   'races': instance.races.map((e) => _$MunchkinRaceEnumMap[e]!).toList(),
   'classes': instance.classes.map((e) => _$MunchkinClassEnumMap[e]!).toList(),
   'isConnected': instance.isConnected,
+  'isLocal': instance.isLocal,
+  'localControllerPlayerId': instance.localControllerPlayerId,
   'lastSeenAt': instance.lastSeenAt?.toIso8601String(),
 };
 

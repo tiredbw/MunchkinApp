@@ -37,7 +37,8 @@ class PlayersView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final game = ref.watch(sessionControllerProvider).game!;
-    final myPlayerId = ref.read(sessionControllerProvider.notifier).playerId;
+    final controller = ref.read(sessionControllerProvider.notifier);
+    final myPlayerId = controller.playerId;
     final l10n = AppLocalizations.of(context);
     final maxPower = game.players.isEmpty
         ? 0
@@ -52,6 +53,7 @@ class PlayersView extends ConsumerWidget {
         final player = game.playerById(game.turnOrder[index])!;
         final active = player.id == game.activePlayerId;
         final isMe = player.id == myPlayerId;
+        final isMine = controller.controlsPlayer(player.id);
         final isLeader = player.totalPower == maxPower && maxPower > 0;
         final scheme = Theme.of(context).colorScheme;
         final avatarColor = _avatarColorFor(player.id);
@@ -61,7 +63,7 @@ class PlayersView extends ConsumerWidget {
           curve: Curves.easeOut,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(AppRadius.lg),
-            border: isMe
+            border: isMine
                 ? Border.all(color: scheme.primary, width: 2)
                 : Border.all(color: Colors.transparent, width: 2),
           ),
@@ -69,7 +71,12 @@ class PlayersView extends ConsumerWidget {
             color: active ? scheme.primaryContainer : null,
             child: InkWell(
               borderRadius: BorderRadius.circular(AppRadius.lg),
-              onTap: isMe ? onOpenCharacter : null,
+              onTap: isMine
+                  ? () {
+                      controller.selectViewedPlayer(player.id);
+                      onOpenCharacter();
+                    }
+                  : null,
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.md,
@@ -127,6 +134,13 @@ class PlayersView extends ConsumerWidget {
                               if (isMe) ...<Widget>[
                                 const SizedBox(width: AppSpacing.xs),
                                 _Tag(label: l10n.youTag, color: scheme.primary),
+                              ] else if (isMine) ...<Widget>[
+                                const SizedBox(width: AppSpacing.xs),
+                                _Tag(
+                                  label: l10n.localPlayerTag,
+                                  color: scheme.primary,
+                                  outlined: true,
+                                ),
                               ],
                               if (active) ...<Widget>[
                                 const SizedBox(width: AppSpacing.xs),

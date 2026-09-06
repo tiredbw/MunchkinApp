@@ -285,6 +285,73 @@ void main() {
       expect(state.playerById('p2'), isNull);
     },
   );
+
+  test('a connected player can add a local player controlled by them', () {
+    accept(const GameCommand.addLocalPlayer(name: 'Sidekick'), 'host');
+    final local = state.players.singleWhere((p) => p.id != 'host');
+    expect(local.name, 'Sidekick');
+    expect(local.isLocal, isTrue);
+    expect(local.localControllerPlayerId, 'host');
+    expect(local.isConnected, isFalse);
+    expect(
+      state.controlledPlayerIds('host'),
+      containsAll(<String>['host', local.id]),
+    );
+  });
+
+  test('an offline player cannot add a local player', () {
+    accept(
+      const GameCommand.joinPlayer(playerId: 'p2', name: 'Alice'),
+      'system',
+    );
+    accept(
+      const GameCommand.setConnection(playerId: 'p2', connected: false),
+      'system',
+    );
+    final result = engine.apply(
+      state,
+      const GameCommand.addLocalPlayer(name: 'Ghost'),
+      actorId: 'p2',
+    );
+    expect(result, isA<GameRejected>());
+    expect((result as GameRejected).code, GameErrorCode.forbidden);
+  });
+
+  test('a local player can act once its controller is used as actor', () {
+    accept(const GameCommand.addLocalPlayer(name: 'Sidekick'), 'host');
+    final local = state.players.singleWhere((p) => p.id != 'host');
+    accept(const GameCommand.closeLobby(), 'host');
+    accept(const GameCommand.confirmOrder(), 'host');
+    accept(const GameCommand.startGame(), 'host');
+    // Turn order is [host, local]; end host's turn so the local player acts.
+    accept(const GameCommand.endTurn(), 'host');
+    expect(state.activePlayerId, local.id);
+    accept(const GameCommand.startBattle(), local.id);
+    expect(state.battle?.playerId, local.id);
+  });
+
+  test('removing a player cascades to the local players they own', () {
+    accept(
+      const GameCommand.joinPlayer(playerId: 'p2', name: 'Alice'),
+      'system',
+    );
+    accept(const GameCommand.addLocalPlayer(name: 'Sidekick'), 'p2');
+    final local = state.players.singleWhere((p) => p.id != 'host' && p.id != 'p2');
+    accept(const GameCommand.removePlayer('p2'), 'host');
+    expect(state.playerById('p2'), isNull);
+    expect(state.playerById(local.id), isNull);
+  });
+
+  test('the owning device can remove its own local player', () {
+    accept(
+      const GameCommand.joinPlayer(playerId: 'p2', name: 'Alice'),
+      'system',
+    );
+    accept(const GameCommand.addLocalPlayer(name: 'Sidekick'), 'p2');
+    final local = state.players.singleWhere((p) => p.id != 'host' && p.id != 'p2');
+    accept(GameCommand.removePlayer(local.id), 'p2');
+    expect(state.playerById(local.id), isNull);
+  });
 }
 
 class FakeClock implements Clock {

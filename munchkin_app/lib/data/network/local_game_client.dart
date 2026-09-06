@@ -173,7 +173,7 @@ class LocalGameClient implements GameConnection {
   }
 
   @override
-  Future<CommandReply> send(GameCommand command) async {
+  Future<CommandReply> send(GameCommand command, {String? actAsPlayerId}) async {
     final socket = _socket;
     final state = _state;
     final sender = _playerId;
@@ -193,7 +193,10 @@ class LocalGameClient implements GameConnection {
         roomId: invite.roomId,
         senderId: sender,
         expectedRevision: state.revision,
-        payload: <String, Object?>{'command': command.toJson()},
+        payload: <String, Object?>{
+          'command': command.toJson(),
+          'actAs': ?actAsPlayerId,
+        },
       ).encode(),
     );
     return completer.future.timeout(

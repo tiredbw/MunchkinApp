@@ -46,6 +46,8 @@ sealed class GameCommand with _$GameCommand {
   const factory GameCommand.finishBattle() = FinishBattle;
   const factory GameCommand.dieInBattle() = DieInBattle;
   const factory GameCommand.rollDice() = RollDice;
+  const factory GameCommand.addLocalPlayer({required String name}) =
+      AddLocalPlayer;
   const factory GameCommand.removePlayer(String playerId) = RemovePlayer;
   const factory GameCommand.leaveRoom() = LeaveRoom;
   const factory GameCommand.endGame() = EndGame;

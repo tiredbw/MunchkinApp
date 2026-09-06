@@ -105,6 +105,8 @@ class GameEngine {
         finishBattle: (_) => _finishBattle(state, actorId),
         dieInBattle: (_) => _dieInBattle(state, actorId),
         rollDice: (_) => _rollDice(state, actorId),
+        addLocalPlayer: (value) =>
+            _addLocalPlayer(state, actorId, name: value.name),
         removePlayer: (value) => _removePlayer(state, actorId, value.playerId),
         leaveRoom: (_) => _leaveRoom(state, actorId),
         endGame: (_) => _endGame(state, actorId),
@@ -128,7 +130,21 @@ class GameEngine {
     );
   }
 
-  GameState _join(GameState state, JoinPlayer command) {
+  GameState _join(GameState state, JoinPlayer command) => _addPlayer(
+    state,
+    playerId: command.playerId,
+    name: command.name,
+    isHost: command.isHost,
+  );
+
+  GameState _addPlayer(
+    GameState state, {
+    required String playerId,
+    required String name,
+    bool isHost = false,
+    bool isLocal = false,
+    String? localControllerPlayerId,
+  }) {
     _require(
       state.phase == RoomPhase.lobby,
       GameErrorCode.invalidState,
@@ -139,29 +155,52 @@ class GameEngine {
       GameErrorCode.roomFull,
       'The room is full.',
     );
-    final name = _normalizeName(command.name);
+    final normalized = _normalizeName(name);
     _require(
-      name.isNotEmpty && name.length <= 24,
+      normalized.isNotEmpty && normalized.length <= 24,
       GameErrorCode.invalidValue,
       'Name must contain 1 to 24 characters.',
     );
     _require(
       state.players.every(
-        (player) => player.name.toLowerCase() != name.toLowerCase(),
+        (player) => player.name.toLowerCase() != normalized.toLowerCase(),
       ),
       GameErrorCode.duplicateName,
       'This name is already in use.',
     );
     final player = Player(
-      id: command.playerId,
-      name: name,
-      isHost: command.isHost,
+      id: playerId,
+      name: normalized,
+      isHost: isHost,
       level: state.settings.initialLevel,
       peakLevel: state.settings.initialLevel,
       strength: state.settings.initialStrength,
+      isLocal: isLocal,
+      localControllerPlayerId: localControllerPlayerId,
+      isConnected: localControllerPlayerId == null,
       lastSeenAt: _clock.now(),
     );
     return state.copyWith(players: <Player>[...state.players, player]);
+  }
+
+  GameState _addLocalPlayer(
+    GameState state,
+    String actorId, {
+    required String name,
+  }) {
+    final controller = _requirePlayer(state, actorId);
+    _require(
+      controller.isConnected,
+      GameErrorCode.forbidden,
+      'Only a connected player can add a player on this device.',
+    );
+    return _addPlayer(
+      state,
+      playerId: '$actorId-local-${state.players.length}-${_clock.now().microsecondsSinceEpoch}',
+      name: name,
+      isLocal: true,
+      localControllerPlayerId: actorId,
+    );
   }
 
   GameState _setConnection(GameState state, SetConnection command) {
@@ -555,8 +594,14 @@ class GameEngine {
   }
 
   GameState _removePlayer(GameState state, String actorId, String playerId) {
-    _requireHost(state, actorId);
-    return _removePlayerCore(state, playerId);
+    final actor = _requirePlayer(state, actorId);
+    final removed = _requirePlayer(state, playerId);
+    _require(
+      actor.isHost || removed.localControllerPlayerId == actorId,
+      GameErrorCode.forbidden,
+      'Only the host or the owning device can remove this player.',
+    );
+    return _removePlayerAndOwned(state, playerId);
   }
 
   GameState _leaveRoom(GameState state, String actorId) {
@@ -566,7 +611,19 @@ class GameEngine {
       GameErrorCode.forbidden,
       'The host must end the game instead of leaving.',
     );
-    return _removePlayerCore(state, actorId);
+    return _removePlayerAndOwned(state, actorId);
+  }
+
+  GameState _removePlayerAndOwned(GameState state, String playerId) {
+    var next = state;
+    final ownedIds = state.players
+        .where((player) => player.localControllerPlayerId == playerId)
+        .map((player) => player.id)
+        .toList(growable: false);
+    for (final ownedId in ownedIds) {
+      next = _removePlayerCore(next, ownedId);
+    }
+    return _removePlayerCore(next, playerId);
   }
 
   GameState _removePlayerCore(GameState state, String playerId) {

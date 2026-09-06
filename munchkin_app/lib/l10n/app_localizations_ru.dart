@@ -408,4 +408,26 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get rulesWinningBody =>
       'Побеждает первый манчкин, достигший максимального уровня за столом (10 в базовой игре) и победивший ещё одного монстра.';
+
+  @override
+  String get localPlayers => 'Игроки на этом устройстве';
+
+  @override
+  String get localPlayersHint =>
+      'Добавьте игроков, которые будут по очереди играть на этом устройстве. Отдельные телефоны им не нужны.';
+
+  @override
+  String get addLocalPlayer => 'Добавить игрока';
+
+  @override
+  String get duplicatePlayerName => 'Имена игроков не должны повторяться.';
+
+  @override
+  String get localPlayerTag => 'На этом устройстве';
+
+  @override
+  String get addLocalPlayerTitle => 'Добавить игрока на этом устройстве';
+
+  @override
+  String get playerNameLabel => 'Имя игрока';
 }

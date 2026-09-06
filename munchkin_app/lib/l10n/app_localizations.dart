@@ -847,6 +847,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The first munchkin to reach the table\'s maximum level (10 in the standard game) and defeat one more monster wins the game.'**
   String get rulesWinningBody;
+
+  /// No description provided for @localPlayers.
+  ///
+  /// In en, this message translates to:
+  /// **'Players on this device'**
+  String get localPlayers;
+
+  /// No description provided for @localPlayersHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add players who will take turns using this device. They do not need their own phones.'**
+  String get localPlayersHint;
+
+  /// No description provided for @addLocalPlayer.
+  ///
+  /// In en, this message translates to:
+  /// **'Add player'**
+  String get addLocalPlayer;
+
+  /// No description provided for @duplicatePlayerName.
+  ///
+  /// In en, this message translates to:
+  /// **'Player names must be unique.'**
+  String get duplicatePlayerName;
+
+  /// No description provided for @localPlayerTag.
+  ///
+  /// In en, this message translates to:
+  /// **'This device'**
+  String get localPlayerTag;
+
+  /// No description provided for @addLocalPlayerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a player on this device'**
+  String get addLocalPlayerTitle;
+
+  /// No description provided for @playerNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Player name'**
+  String get playerNameLabel;
 }
 
 class _AppLocalizationsDelegate

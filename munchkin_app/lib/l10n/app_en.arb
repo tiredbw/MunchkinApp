@@ -132,5 +132,12 @@
   "rulesIdentityTitle": "Race & class",
   "rulesIdentityBody": "Humans have no race card and no special ability. Elves, Dwarves, Halflings and the expansion races each grant abilities from their card. Super Munchkin lets you hold two classes at once, and Half-Breed lets you hold two races - the app supports selecting more than one.",
   "rulesWinningTitle": "Winning",
-  "rulesWinningBody": "The first munchkin to reach the table's maximum level (10 in the standard game) and defeat one more monster wins the game."
+  "rulesWinningBody": "The first munchkin to reach the table's maximum level (10 in the standard game) and defeat one more monster wins the game.",
+  "localPlayers": "Players on this device",
+  "localPlayersHint": "Add players who will take turns using this device. They do not need their own phones.",
+  "addLocalPlayer": "Add player",
+  "duplicatePlayerName": "Player names must be unique.",
+  "localPlayerTag": "This device",
+  "addLocalPlayerTitle": "Add a player on this device",
+  "playerNameLabel": "Player name"
 }

@@ -406,4 +406,26 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get rulesWinningBody =>
       'The first munchkin to reach the table\'s maximum level (10 in the standard game) and defeat one more monster wins the game.';
+
+  @override
+  String get localPlayers => 'Players on this device';
+
+  @override
+  String get localPlayersHint =>
+      'Add players who will take turns using this device. They do not need their own phones.';
+
+  @override
+  String get addLocalPlayer => 'Add player';
+
+  @override
+  String get duplicatePlayerName => 'Player names must be unique.';
+
+  @override
+  String get localPlayerTag => 'This device';
+
+  @override
+  String get addLocalPlayerTitle => 'Add a player on this device';
+
+  @override
+  String get playerNameLabel => 'Player name';
 }

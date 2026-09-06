@@ -209,6 +209,15 @@ Map<String, dynamic> _$RollDiceToJson(RollDice instance) => <String, dynamic>{
   'type': instance.$type,
 };
 
+AddLocalPlayer _$AddLocalPlayerFromJson(Map<String, dynamic> json) =>
+    AddLocalPlayer(
+      name: json['name'] as String,
+      $type: json['type'] as String?,
+    );
+
+Map<String, dynamic> _$AddLocalPlayerToJson(AddLocalPlayer instance) =>
+    <String, dynamic>{'name': instance.name, 'type': instance.$type};
+
 RemovePlayer _$RemovePlayerFromJson(Map<String, dynamic> json) =>
     RemovePlayer(json['playerId'] as String, $type: json['type'] as String?);
 
