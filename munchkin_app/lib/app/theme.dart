@@ -242,26 +242,29 @@ ThemeData buildAppTheme(Brightness brightness) {
 }
 
 TextTheme _buildTextTheme(ColorScheme colorScheme) {
-  const base = Typography.blackMountainView;
-  return base
-      .apply(
-        bodyColor: colorScheme.onSurface,
-        displayColor: colorScheme.onSurface,
-      )
-      .copyWith(
-        headlineMedium: base.headlineMedium?.copyWith(
-          fontWeight: FontWeight.w800,
-          letterSpacing: -0.5,
-        ),
-        headlineSmall: base.headlineSmall?.copyWith(
-          fontWeight: FontWeight.w700,
-          letterSpacing: -0.3,
-        ),
-        titleLarge: base.titleLarge?.copyWith(fontWeight: FontWeight.w700),
-        titleMedium: base.titleMedium?.copyWith(fontWeight: FontWeight.w600),
-        labelLarge: base.labelLarge?.copyWith(
-          fontWeight: FontWeight.w700,
-          letterSpacing: 0.2,
-        ),
-      );
+  final colored = Typography.blackMountainView.apply(
+    bodyColor: colorScheme.onSurface,
+    displayColor: colorScheme.onSurface,
+  );
+  // Re-derive the weight/spacing overrides from the already-colored theme,
+  // not the raw black typography preset - copying from the uncolored base
+  // here would silently discard the applied color on every dark theme
+  // (it went unnoticed in light mode, where near-black text on a light
+  // background still happened to look correct).
+  return colored.copyWith(
+    headlineMedium: colored.headlineMedium?.copyWith(
+      fontWeight: FontWeight.w800,
+      letterSpacing: -0.5,
+    ),
+    headlineSmall: colored.headlineSmall?.copyWith(
+      fontWeight: FontWeight.w700,
+      letterSpacing: -0.3,
+    ),
+    titleLarge: colored.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+    titleMedium: colored.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+    labelLarge: colored.labelLarge?.copyWith(
+      fontWeight: FontWeight.w700,
+      letterSpacing: 0.2,
+    ),
+  );
 }
