@@ -451,4 +451,8 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get openDoorHint =>
       'Deal with whatever is behind it, then start a battle or end your turn.';
+
+  @override
+  String get escapeRollHint =>
+      'A roll of 5 or 6 usually succeeds, unless a card says otherwise.';
 }

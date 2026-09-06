@@ -453,4 +453,8 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get openDoorHint =>
       'Разыграйте то, что за ней, затем начните бой или завершите ход.';
+
+  @override
+  String get escapeRollHint =>
+      'Обычно побег удаётся при значении 5 или 6, если карта не говорит иначе.';
 }

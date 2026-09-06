@@ -394,7 +394,7 @@ class _BattlePanel extends ConsumerWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.sm),
-            if (game.settings.diceMode == DiceMode.virtual)
+            if (game.settings.diceMode == DiceMode.virtual) ...<Widget>[
               OutlinedButton.icon(
                 onPressed: busy
                     ? null
@@ -405,6 +405,16 @@ class _BattlePanel extends ConsumerWidget {
                 icon: const Icon(Icons.casino),
                 label: Text(l10n.rollDice),
               ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                l10n.escapeRollHint,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+            ],
             FilledButton(
               onPressed: busy
                   ? null
@@ -609,33 +619,47 @@ class _CountdownRing extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final urgent = remainingSeconds <= 3;
     final color = urgent ? scheme.error : scheme.primary;
-    return SizedBox(
-      width: 128,
-      height: 128,
-      child: Stack(
-        alignment: Alignment.center,
-        children: <Widget>[
-          TweenAnimationBuilder<double>(
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.linear,
-            tween: Tween<double>(begin: progress, end: progress),
-            builder: (context, value, _) => CustomPaint(
-              size: const Size.square(128),
-              painter: _RingPainter(
-                progress: value,
-                color: color,
-                trackColor: scheme.surfaceContainerHighest,
+    // Driven by the parent's existing 200ms ticker rather than a dedicated
+    // AnimationController - a gentle heartbeat once the countdown is urgent.
+    final pulse = urgent
+        ? 1 +
+              0.05 *
+                  (0.5 +
+                      0.5 *
+                          math.sin(
+                            DateTime.now().millisecondsSinceEpoch / 180,
+                          ))
+        : 1.0;
+    return Transform.scale(
+      scale: pulse,
+      child: SizedBox(
+        width: 128,
+        height: 128,
+        child: Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+            TweenAnimationBuilder<double>(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.linear,
+              tween: Tween<double>(begin: progress, end: progress),
+              builder: (context, value, _) => CustomPaint(
+                size: const Size.square(128),
+                painter: _RingPainter(
+                  progress: value,
+                  color: color,
+                  trackColor: scheme.surfaceContainerHighest,
+                ),
               ),
             ),
-          ),
-          Text(
-            '$remainingSeconds',
-            style: Theme.of(context).textTheme.displaySmall?.copyWith(
-              fontWeight: FontWeight.w800,
-              color: color,
+            Text(
+              '$remainingSeconds',
+              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                fontWeight: FontWeight.w800,
+                color: color,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

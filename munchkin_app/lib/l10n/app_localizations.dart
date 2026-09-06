@@ -925,6 +925,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Deal with whatever is behind it, then start a battle or end your turn.'**
   String get openDoorHint;
+
+  /// No description provided for @escapeRollHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A roll of 5 or 6 usually succeeds, unless a card says otherwise.'**
+  String get escapeRollHint;
 }
 
 class _AppLocalizationsDelegate
