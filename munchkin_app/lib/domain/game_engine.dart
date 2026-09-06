@@ -530,6 +530,9 @@ class GameEngine {
     );
   }
 
+  /// A munchkin who reaches the table's maximum level after winning a
+  /// battle satisfies the core rules' win condition; the first to do so
+  /// is remembered as the game's winner.
   GameState _raiseLevel(GameState state, String actorId) {
     _requireActive(state, actorId);
     final battle = _requireBattle(state);
@@ -538,7 +541,14 @@ class GameEngine {
       GameErrorCode.invalidState,
       'The battle has not been won.',
     );
-    return _adjustStats(state, actorId, levelDelta: 1, strengthDelta: 0);
+    final next = _adjustStats(state, actorId, levelDelta: 1, strengthDelta: 0);
+    final player = next.playerById(actorId);
+    if (next.winnerPlayerId == null &&
+        player != null &&
+        player.level >= next.settings.maxLevel) {
+      return next.copyWith(winnerPlayerId: actorId);
+    }
+    return next;
   }
 
   GameState _finishBattle(GameState state, String actorId) {

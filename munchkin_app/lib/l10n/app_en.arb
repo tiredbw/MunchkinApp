@@ -139,5 +139,9 @@
   "duplicatePlayerName": "Player names must be unique.",
   "localPlayerTag": "This device",
   "addLocalPlayerTitle": "Add a player on this device",
-  "playerNameLabel": "Player name"
+  "playerNameLabel": "Player name",
+  "gameWinnerBadge": "Winner",
+  "gameWinnerAnnouncement": "{name} reached level {level} and won the game!",
+  "@gameWinnerAnnouncement": {"placeholders": {"name": {"type": "String"}, "level": {"type": "int"}}},
+  "endGameNow": "End the game"
 }

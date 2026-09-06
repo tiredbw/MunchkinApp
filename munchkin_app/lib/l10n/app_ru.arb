@@ -139,5 +139,9 @@
   "duplicatePlayerName": "Имена игроков не должны повторяться.",
   "localPlayerTag": "На этом устройстве",
   "addLocalPlayerTitle": "Добавить игрока на этом устройстве",
-  "playerNameLabel": "Имя игрока"
+  "playerNameLabel": "Имя игрока",
+  "gameWinnerBadge": "Победитель",
+  "gameWinnerAnnouncement": "{name} достиг {level} уровня и победил в игре!",
+  "@gameWinnerAnnouncement": {"placeholders": {"name": {"type": "String"}, "level": {"type": "int"}}},
+  "endGameNow": "Завершить партию"
 }

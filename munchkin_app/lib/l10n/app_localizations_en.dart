@@ -428,4 +428,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get playerNameLabel => 'Player name';
+
+  @override
+  String get gameWinnerBadge => 'Winner';
+
+  @override
+  String gameWinnerAnnouncement(String name, int level) {
+    return '$name reached level $level and won the game!';
+  }
+
+  @override
+  String get endGameNow => 'End the game';
 }

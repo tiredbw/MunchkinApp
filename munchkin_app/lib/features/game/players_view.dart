@@ -54,6 +54,7 @@ class PlayersView extends ConsumerWidget {
         final active = player.id == game.activePlayerId;
         final isMe = player.id == myPlayerId;
         final isMine = controller.controlsPlayer(player.id);
+        final isWinner = player.id == game.winnerPlayerId;
         final isLeader = player.totalPower == maxPower && maxPower > 0;
         final scheme = Theme.of(context).colorScheme;
         final avatarColor = _avatarColorFor(player.id);
@@ -63,7 +64,9 @@ class PlayersView extends ConsumerWidget {
           curve: Curves.easeOut,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(AppRadius.lg),
-            border: isMine
+            border: isWinner
+                ? Border.all(color: leaderGold(context), width: 2)
+                : isMine
                 ? Border.all(color: scheme.primary, width: 2)
                 : Border.all(color: Colors.transparent, width: 2),
           ),
@@ -148,6 +151,13 @@ class PlayersView extends ConsumerWidget {
                                   label: l10n.currentTurn,
                                   color: scheme.onPrimaryContainer,
                                   outlined: true,
+                                ),
+                              ],
+                              if (isWinner) ...<Widget>[
+                                const SizedBox(width: AppSpacing.xs),
+                                _Tag(
+                                  label: l10n.gameWinnerBadge,
+                                  color: leaderGold(context),
                                 ),
                               ],
                               if (!player.isConnected) ...<Widget>[

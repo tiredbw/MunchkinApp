@@ -889,6 +889,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Player name'**
   String get playerNameLabel;
+
+  /// No description provided for @gameWinnerBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Winner'**
+  String get gameWinnerBadge;
+
+  /// No description provided for @gameWinnerAnnouncement.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} reached level {level} and won the game!'**
+  String gameWinnerAnnouncement(String name, int level);
+
+  /// No description provided for @endGameNow.
+  ///
+  /// In en, this message translates to:
+  /// **'End the game'**
+  String get endGameNow;
 }
 
 class _AppLocalizationsDelegate

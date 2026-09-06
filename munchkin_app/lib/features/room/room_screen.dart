@@ -580,10 +580,38 @@ class _GameShell extends ConsumerWidget {
       title: InkWell(onTap: () => onIndexChanged(2), child: Text(title)),
       actions: <Widget>[const _GameMenu()],
     );
+    final body = Column(
+      children: <Widget>[
+        if (game.winnerPlayerId != null) const _WinnerBanner(),
+        Expanded(
+          child: wide
+              ? Row(
+                  children: <Widget>[
+                    NavigationRail(
+                      selectedIndex: index,
+                      onDestinationSelected: onIndexChanged,
+                      labelType: NavigationRailLabelType.all,
+                      destinations: destinations
+                          .map(
+                            (destination) => NavigationRailDestination(
+                              icon: destination.icon,
+                              label: Text(destination.label),
+                            ),
+                          )
+                          .toList(growable: false),
+                    ),
+                    const VerticalDivider(width: 1),
+                    Expanded(child: IndexedStack(index: index, children: views)),
+                  ],
+                )
+              : IndexedStack(index: index, children: views),
+        ),
+      ],
+    );
     if (!wide) {
       return Scaffold(
         appBar: appBar,
-        body: IndexedStack(index: index, children: views),
+        body: body,
         bottomNavigationBar: NavigationBar(
           selectedIndex: index,
           onDestinationSelected: onIndexChanged,
@@ -591,27 +619,49 @@ class _GameShell extends ConsumerWidget {
         ),
       );
     }
-    return Scaffold(
-      appBar: appBar,
-      body: Row(
+    return Scaffold(appBar: appBar, body: body);
+  }
+}
+
+class _WinnerBanner extends ConsumerWidget {
+  const _WinnerBanner();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final game = ref.watch(sessionControllerProvider).game!;
+    final winner = game.playerById(game.winnerPlayerId);
+    final controller = ref.read(sessionControllerProvider.notifier);
+    if (winner == null) return const SizedBox.shrink();
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
+      color: leaderGold(context).withValues(alpha: 0.18),
+      child: Row(
         children: <Widget>[
-          NavigationRail(
-            selectedIndex: index,
-            onDestinationSelected: onIndexChanged,
-            labelType: NavigationRailLabelType.all,
-            destinations: destinations
-                .map(
-                  (destination) => NavigationRailDestination(
-                    icon: destination.icon,
-                    label: Text(destination.label),
-                  ),
-                )
-                .toList(growable: false),
-          ),
-          const VerticalDivider(width: 1),
+          Icon(Icons.emoji_events, color: leaderGold(context)),
+          const SizedBox(width: AppSpacing.sm),
           Expanded(
-            child: IndexedStack(index: index, children: views),
+            child: Text(
+              l10n.gameWinnerAnnouncement(winner.name, winner.level),
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ),
+          if (controller.isHost)
+            TextButton(
+              onPressed: () async {
+                if (await _confirmEndGame(context, l10n)) {
+                  await controller.send(const GameCommand.endGame());
+                }
+              },
+              child: Text(l10n.endGameNow, style: TextStyle(color: scheme.error)),
+            ),
         ],
       ),
     );

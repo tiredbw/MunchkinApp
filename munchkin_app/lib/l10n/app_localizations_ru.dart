@@ -430,4 +430,15 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get playerNameLabel => 'Имя игрока';
+
+  @override
+  String get gameWinnerBadge => 'Победитель';
+
+  @override
+  String gameWinnerAnnouncement(String name, int level) {
+    return '$name достиг $level уровня и победил в игре!';
+  }
+
+  @override
+  String get endGameNow => 'Завершить партию';
 }

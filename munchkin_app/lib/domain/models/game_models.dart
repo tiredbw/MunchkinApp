@@ -115,6 +115,7 @@ abstract class GameState with _$GameState {
     @Default(false) bool battleFoughtThisTurn,
     BattleState? battle,
     DiceRoll? lastDiceRoll,
+    String? winnerPlayerId,
     DateTime? startedAt,
     DateTime? endedAt,
     required DateTime createdAt,

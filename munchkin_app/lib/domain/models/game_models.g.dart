@@ -168,6 +168,7 @@ _GameState _$GameStateFromJson(Map<String, dynamic> json) => _GameState(
   lastDiceRoll: json['lastDiceRoll'] == null
       ? null
       : DiceRoll.fromJson(json['lastDiceRoll'] as Map<String, dynamic>),
+  winnerPlayerId: json['winnerPlayerId'] as String?,
   startedAt: json['startedAt'] == null
       ? null
       : DateTime.parse(json['startedAt'] as String),
@@ -191,6 +192,7 @@ Map<String, dynamic> _$GameStateToJson(_GameState instance) =>
       'battleFoughtThisTurn': instance.battleFoughtThisTurn,
       'battle': instance.battle,
       'lastDiceRoll': instance.lastDiceRoll,
+      'winnerPlayerId': instance.winnerPlayerId,
       'startedAt': instance.startedAt?.toIso8601String(),
       'endedAt': instance.endedAt?.toIso8601String(),
       'createdAt': instance.createdAt.toIso8601String(),

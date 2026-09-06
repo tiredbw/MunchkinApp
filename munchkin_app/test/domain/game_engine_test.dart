@@ -219,6 +219,29 @@ void main() {
     expect(state.battle?.status, BattleStatus.won);
   });
 
+  test(
+    'reaching the room max level by winning a battle records the winner',
+    () {
+      state = engine.createRoom(
+        roomId: 'room2',
+        hostPlayerId: 'host',
+        hostName: 'Host',
+        settings: const RoomSettings(maxLevel: 2, initialLevel: 1),
+      );
+      accept(const GameCommand.closeLobby(), 'host');
+      accept(const GameCommand.confirmOrder(), 'host');
+      accept(const GameCommand.startGame(), 'host');
+      accept(const GameCommand.startBattle(), 'host');
+      accept(const GameCommand.declareVictory(), 'host');
+      clock.advance(const Duration(seconds: 5));
+      state = engine.resolveExpiredTimers(state);
+      expect(state.winnerPlayerId, isNull);
+      accept(const GameCommand.raiseLevel(), 'host');
+      expect(state.playerById('host')?.level, 2);
+      expect(state.winnerPlayerId, 'host');
+    },
+  );
+
   test('virtual die is host generated and restricted to active player', () {
     accept(
       const GameCommand.joinPlayer(playerId: 'p2', name: 'Alice'),
