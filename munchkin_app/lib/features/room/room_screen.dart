@@ -85,13 +85,37 @@ Future<void> _addLocalPlayerDialog(
   AppLocalizations l10n,
   SessionController controller,
 ) async {
-  final nameController = TextEditingController();
   final name = await showDialog<String>(
     context: context,
-    builder: (context) => AlertDialog(
+    builder: (context) => const _AddLocalPlayerDialog(),
+  );
+  if (name == null || name.isEmpty) return;
+  await controller.send(GameCommand.addLocalPlayer(name: name));
+}
+
+class _AddLocalPlayerDialog extends StatefulWidget {
+  const _AddLocalPlayerDialog();
+
+  @override
+  State<_AddLocalPlayerDialog> createState() => _AddLocalPlayerDialogState();
+}
+
+class _AddLocalPlayerDialogState extends State<_AddLocalPlayerDialog> {
+  final _nameController = TextEditingController();
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return AlertDialog(
       title: Text(l10n.addLocalPlayerTitle),
       content: TextField(
-        controller: nameController,
+        controller: _nameController,
         autofocus: true,
         maxLength: 24,
         decoration: InputDecoration(
@@ -105,15 +129,13 @@ Future<void> _addLocalPlayerDialog(
           child: Text(l10n.cancel),
         ),
         FilledButton(
-          onPressed: () => Navigator.pop(context, nameController.text.trim()),
+          onPressed: () =>
+              Navigator.pop(context, _nameController.text.trim()),
           child: Text(l10n.addLocalPlayer),
         ),
       ],
-    ),
-  );
-  nameController.dispose();
-  if (name == null || name.isEmpty) return;
-  await controller.send(GameCommand.addLocalPlayer(name: name));
+    );
+  }
 }
 
 Future<bool> _confirmRemovePlayer(

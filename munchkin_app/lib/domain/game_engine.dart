@@ -681,6 +681,9 @@ class GameEngine {
       turnOrder: order,
       activePlayerId: active,
       battle: battle,
+      winnerPlayerId: state.winnerPlayerId == playerId
+          ? null
+          : state.winnerPlayerId,
     );
   }
 

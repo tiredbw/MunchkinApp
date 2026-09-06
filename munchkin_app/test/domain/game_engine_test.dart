@@ -259,6 +259,32 @@ void main() {
     },
   );
 
+  test('removing the winner clears the dangling winnerPlayerId reference', () {
+    state = engine.createRoom(
+      roomId: 'room3',
+      hostPlayerId: 'host',
+      hostName: 'Host',
+      settings: const RoomSettings(maxLevel: 2, initialLevel: 1),
+    );
+    accept(
+      const GameCommand.joinPlayer(playerId: 'p2', name: 'Alice'),
+      'system',
+    );
+    accept(const GameCommand.closeLobby(), 'host');
+    accept(const GameCommand.confirmOrder(), 'host');
+    accept(const GameCommand.startGame(), 'host');
+    accept(const GameCommand.endTurn(), 'host');
+    accept(const GameCommand.startBattle(), 'p2');
+    accept(const GameCommand.declareVictory(), 'p2');
+    clock.advance(const Duration(seconds: 5));
+    state = engine.resolveExpiredTimers(state);
+    accept(const GameCommand.raiseLevel(), 'p2');
+    expect(state.winnerPlayerId, 'p2');
+
+    accept(const GameCommand.removePlayer('p2'), 'host');
+    expect(state.winnerPlayerId, isNull);
+  });
+
   test('virtual die is host generated and restricted to active player', () {
     accept(
       const GameCommand.joinPlayer(playerId: 'p2', name: 'Alice'),
