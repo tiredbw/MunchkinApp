@@ -148,5 +148,6 @@
   "@peakLevelCaption": {"placeholders": {"level": {"type": "int"}}},
   "openDoor": "Open a door",
   "openDoorHint": "Deal with whatever is behind it, then start a battle or end your turn.",
-  "escapeRollHint": "A roll of 5 or 6 usually succeeds, unless a card says otherwise."
+  "escapeRollHint": "A roll of 5 or 6 usually succeeds, unless a card says otherwise.",
+  "upNextTag": "Up next"
 }

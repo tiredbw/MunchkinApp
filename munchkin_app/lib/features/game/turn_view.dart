@@ -10,6 +10,7 @@ import '../../application/session_controller.dart';
 import '../../domain/commands/game_command.dart';
 import '../../domain/models/game_models.dart';
 import '../../l10n/app_localizations.dart';
+import 'identity_labels.dart';
 
 class TurnView extends ConsumerStatefulWidget {
   const TurnView({super.key});
@@ -63,10 +64,19 @@ class _TurnViewState extends ConsumerState<TurnView> {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Icon(
-                  Icons.person_pin,
-                  size: 18,
-                  color: scheme.onSecondaryContainer,
+                CircleAvatar(
+                  radius: 11,
+                  backgroundColor: avatarColorFor(active.id),
+                  child: Text(
+                    active.name.isEmpty
+                        ? '?'
+                        : active.name.substring(0, 1).toUpperCase(),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 6),
                 Flexible(

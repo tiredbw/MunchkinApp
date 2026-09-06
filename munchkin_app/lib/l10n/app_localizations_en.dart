@@ -455,4 +455,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get escapeRollHint =>
       'A roll of 5 or 6 usually succeeds, unless a card says otherwise.';
+
+  @override
+  String get upNextTag => 'Up next';
 }

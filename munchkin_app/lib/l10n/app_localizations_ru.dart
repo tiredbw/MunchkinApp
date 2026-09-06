@@ -457,4 +457,7 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get escapeRollHint =>
       'Обычно побег удаётся при значении 5 или 6, если карта не говорит иначе.';
+
+  @override
+  String get upNextTag => 'Следующий ход';
 }

@@ -29,6 +29,13 @@ class PlayersView extends ConsumerWidget {
     final maxPower = game.players.isEmpty
         ? 0
         : game.players.map((p) => p.totalPower).reduce((a, b) => a > b ? a : b);
+    final activePlayerId = game.activePlayerId;
+    final activeIndex = activePlayerId == null
+        ? -1
+        : game.turnOrder.indexOf(activePlayerId);
+    final nextPlayerId = activeIndex >= 0 && game.turnOrder.length > 1
+        ? game.turnOrder[(activeIndex + 1) % game.turnOrder.length]
+        : null;
 
     return ListView.separated(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -38,6 +45,7 @@ class PlayersView extends ConsumerWidget {
       itemBuilder: (context, index) {
         final player = game.playerById(game.turnOrder[index])!;
         final active = player.id == game.activePlayerId;
+        final isNext = player.id == nextPlayerId;
         final isMe = player.id == myPlayerId;
         final isMine = controller.controlsPlayer(player.id);
         final isWinner = player.id == game.winnerPlayerId;
@@ -144,6 +152,13 @@ class PlayersView extends ConsumerWidget {
                                 _Tag(
                                   label: l10n.gameWinnerBadge,
                                   color: leaderGold(context),
+                                ),
+                              ] else if (isNext) ...<Widget>[
+                                const SizedBox(width: AppSpacing.xs),
+                                _Tag(
+                                  label: l10n.upNextTag,
+                                  color: scheme.onSurfaceVariant,
+                                  outlined: true,
                                 ),
                               ],
                               if (!player.isConnected) ...<Widget>[

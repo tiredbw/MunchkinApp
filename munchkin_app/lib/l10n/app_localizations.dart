@@ -931,6 +931,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'A roll of 5 or 6 usually succeeds, unless a card says otherwise.'**
   String get escapeRollHint;
+
+  /// No description provided for @upNextTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Up next'**
+  String get upNextTag;
 }
 
 class _AppLocalizationsDelegate
