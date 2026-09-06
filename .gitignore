@@ -1,3 +1,6 @@
 .DS_Store
 flutter/
 munchkin_app/web/
+*.jks
+*.keystore
+*.pem

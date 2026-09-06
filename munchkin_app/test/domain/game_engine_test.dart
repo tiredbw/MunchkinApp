@@ -35,6 +35,29 @@ void main() {
     expect(state.revision, 0);
   });
 
+  test('equipment bonuses add to total power and are range-limited', () {
+    accept(
+      const GameCommand.adjustEquipment(slot: EquipmentSlot.weapon, delta: 1),
+      'host',
+    );
+    accept(
+      const GameCommand.adjustEquipment(slot: EquipmentSlot.armor, delta: 1),
+      'host',
+    );
+    final player = state.playerById('host')!;
+    expect(player.equipment.weapon, 1);
+    expect(player.equipment.armor, 1);
+    expect(player.totalPower, player.level + player.strength + 2);
+
+    final tooBig = engine.apply(
+      state,
+      const GameCommand.adjustEquipment(slot: EquipmentSlot.weapon, delta: 2),
+      actorId: 'host',
+    );
+    expect(tooBig, isA<GameRejected>());
+    expect((tooBig as GameRejected).code, GameErrorCode.invalidValue);
+  });
+
   test('normalizes names and rejects duplicates case-insensitively', () {
     accept(
       const GameCommand.joinPlayer(playerId: 'p2', name: '  Alice  '),
@@ -148,6 +171,24 @@ void main() {
       engine.apply(state, const GameCommand.rollDice(), actorId: 'p2'),
       isA<GameRejected>(),
     );
+  });
+
+  test('removing the intervening player clears the dangling reference', () {
+    accept(
+      const GameCommand.joinPlayer(playerId: 'p2', name: 'Alice'),
+      'system',
+    );
+    accept(const GameCommand.joinPlayer(playerId: 'p3', name: 'Bob'), 'system');
+    accept(const GameCommand.closeLobby(), 'host');
+    accept(const GameCommand.confirmOrder(), 'host');
+    accept(const GameCommand.startGame(), 'host');
+    accept(const GameCommand.startBattle(), 'host');
+    accept(const GameCommand.declareVictory(), 'host');
+    accept(const GameCommand.intervene(), 'p2');
+    expect(state.battle?.intervenedBy, 'p2');
+    accept(const GameCommand.removePlayer('p2'), 'host');
+    expect(state.battle, isNotNull);
+    expect(state.battle?.intervenedBy, isNull);
   });
 
   test('removing the active player cancels battle and advances turn', () {

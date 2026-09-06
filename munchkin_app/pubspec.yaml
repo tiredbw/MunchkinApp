@@ -1,7 +1,7 @@
 name: munchkin_app
 description: "A local-first tabletop companion for Munchkin-style card games."
 publish_to: 'none'
-version: 0.1.0+1
+version: 0.1.0+4
 
 environment:
   sdk: ^3.12.2
@@ -23,6 +23,7 @@ dependencies:
   path_provider: ^2.1.0
   crypto: ^3.0.0
   intl: any
+  google_mobile_ads: ^9.0.0
 
 dev_dependencies:
   flutter_test:

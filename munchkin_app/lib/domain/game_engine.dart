@@ -87,6 +87,12 @@ class GameEngine {
           levelDelta: value.levelDelta,
           strengthDelta: value.strengthDelta,
         ),
+        adjustEquipment: (value) => _adjustEquipment(
+          state,
+          actorId,
+          slot: value.slot,
+          delta: value.delta,
+        ),
         endTurn: (_) => _endTurn(state, actorId),
         startBattle: (_) => _startBattle(state, actorId),
         declareVictory: (_) => _declareVictory(state, actorId),
@@ -312,6 +318,36 @@ class GameEngine {
     return state.copyWith(players: players);
   }
 
+  static const int _minEquipmentBonus = -10;
+  static const int _maxEquipmentBonus = 30;
+
+  GameState _adjustEquipment(
+    GameState state,
+    String actorId, {
+    required EquipmentSlot slot,
+    required int delta,
+  }) {
+    _require(
+      delta == 1 || delta == -1,
+      GameErrorCode.invalidValue,
+      'Unsupported equipment adjustment.',
+    );
+    final index = state.players.indexWhere((player) => player.id == actorId);
+    _require(index >= 0, GameErrorCode.playerNotFound, 'Player was not found.');
+    final player = state.players[index];
+    final value = player.equipment.forSlot(slot) + delta;
+    _require(
+      value >= _minEquipmentBonus && value <= _maxEquipmentBonus,
+      GameErrorCode.invalidValue,
+      'Equipment bonus is outside the supported range.',
+    );
+    final players = [...state.players];
+    players[index] = player.copyWith(
+      equipment: player.equipment.withSlot(slot, value),
+    );
+    return state.copyWith(players: players);
+  }
+
   GameState _endTurn(GameState state, String actorId) {
     _requireActive(state, actorId);
     _require(
@@ -532,6 +568,8 @@ class GameEngine {
         final oldIndex = state.turnOrder.indexOf(playerId);
         active = order[oldIndex % order.length];
       }
+    } else if (battle != null && battle.intervenedBy == playerId) {
+      battle = battle.copyWith(intervenedBy: null);
     }
     return state.copyWith(
       players: players,

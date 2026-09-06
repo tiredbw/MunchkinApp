@@ -96,6 +96,28 @@ Map<String, dynamic> _$AdjustStatsToJson(AdjustStats instance) =>
       'type': instance.$type,
     };
 
+AdjustEquipment _$AdjustEquipmentFromJson(Map<String, dynamic> json) =>
+    AdjustEquipment(
+      slot: $enumDecode(_$EquipmentSlotEnumMap, json['slot']),
+      delta: (json['delta'] as num).toInt(),
+      $type: json['type'] as String?,
+    );
+
+Map<String, dynamic> _$AdjustEquipmentToJson(AdjustEquipment instance) =>
+    <String, dynamic>{
+      'slot': _$EquipmentSlotEnumMap[instance.slot]!,
+      'delta': instance.delta,
+      'type': instance.$type,
+    };
+
+const _$EquipmentSlotEnumMap = {
+  EquipmentSlot.headgear: 'headgear',
+  EquipmentSlot.armor: 'armor',
+  EquipmentSlot.weapon: 'weapon',
+  EquipmentSlot.footgear: 'footgear',
+  EquipmentSlot.other: 'other',
+};
+
 EndTurn _$EndTurnFromJson(Map<String, dynamic> json) =>
     EndTurn($type: json['type'] as String?);
 

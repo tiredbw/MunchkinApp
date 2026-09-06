@@ -12,6 +12,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'Tabletop Companion';
 
   @override
+  String get homeTagline => 'Local Wi-Fi companion for tabletop game nights';
+
+  @override
   String get createRoom => 'Create room';
 
   @override
@@ -52,6 +55,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get totalPower => 'Total power';
+
+  @override
+  String totalPowerBreakdown(int level, int strength, int equipment) {
+    return '$level level + $strength strength + $equipment gear';
+  }
+
+  @override
+  String get equipment => 'Equipment';
+
+  @override
+  String get equipmentHeadgear => 'Headgear';
+
+  @override
+  String get equipmentArmor => 'Armor';
+
+  @override
+  String get equipmentWeapon => 'Weapon';
+
+  @override
+  String get equipmentFootgear => 'Footgear';
+
+  @override
+  String get equipmentOther => 'Other items';
 
   @override
   String get closeLobby => 'Close lobby';
@@ -100,6 +126,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get endGame => 'End game';
+
+  @override
+  String get endGameConfirm =>
+      'End the game for everyone? This cannot be undone.';
 
   @override
   String get connected => 'Connected';
@@ -151,6 +181,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get leave => 'Leave room';
+
+  @override
+  String get youTag => 'You';
 
   @override
   String get error => 'Something went wrong';
@@ -223,4 +256,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get connectionError => 'Could not connect to the host';
+
+  @override
+  String get adPrivacyOptions => 'Ad privacy options';
 }

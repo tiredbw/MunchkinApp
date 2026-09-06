@@ -1,6 +1,7 @@
 {
   "@@locale": "en",
   "appTitle": "Tabletop Companion",
+  "homeTagline": "Local Wi-Fi companion for tabletop game nights",
   "createRoom": "Create room",
   "joinRoom": "Join room",
   "restoreGame": "Restore saved game",
@@ -15,6 +16,14 @@
   "level": "Level",
   "strength": "Strength",
   "totalPower": "Total power",
+  "totalPowerBreakdown": "{level} level + {strength} strength + {equipment} gear",
+  "@totalPowerBreakdown": {"placeholders": {"level": {"type": "int"}, "strength": {"type": "int"}, "equipment": {"type": "int"}}},
+  "equipment": "Equipment",
+  "equipmentHeadgear": "Headgear",
+  "equipmentArmor": "Armor",
+  "equipmentWeapon": "Weapon",
+  "equipmentFootgear": "Footgear",
+  "equipmentOther": "Other items",
   "closeLobby": "Close lobby",
   "startGame": "Start game",
   "shuffle": "Shuffle",
@@ -31,6 +40,7 @@
   "rollDice": "Roll D6",
   "physicalDice": "Roll the physical die",
   "endGame": "End game",
+  "endGameConfirm": "End the game for everyone? This cannot be undone.",
   "connected": "Connected",
   "offline": "Offline",
   "activePlayer": "Current player: {name}",
@@ -49,6 +59,7 @@
   "cancel": "Cancel",
   "retry": "Retry",
   "leave": "Leave room",
+  "youTag": "You",
   "error": "Something went wrong",
   "manualJoin": "Join manually",
   "roomId": "Room ID",
@@ -72,5 +83,6 @@
   "roomClosed": "Joining is closed",
   "resumeBattle": "Resume battle",
   "hostMustStayOpen": "The host app must remain open",
-  "connectionError": "Could not connect to the host"
+  "connectionError": "Could not connect to the host",
+  "adPrivacyOptions": "Ad privacy options"
 }

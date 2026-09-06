@@ -104,6 +104,12 @@ abstract class AppLocalizations {
   /// **'Tabletop Companion'**
   String get appTitle;
 
+  /// No description provided for @homeTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'Local Wi-Fi companion for tabletop game nights'**
+  String get homeTagline;
+
   /// No description provided for @createRoom.
   ///
   /// In en, this message translates to:
@@ -187,6 +193,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Total power'**
   String get totalPower;
+
+  /// No description provided for @totalPowerBreakdown.
+  ///
+  /// In en, this message translates to:
+  /// **'{level} level + {strength} strength + {equipment} gear'**
+  String totalPowerBreakdown(int level, int strength, int equipment);
+
+  /// No description provided for @equipment.
+  ///
+  /// In en, this message translates to:
+  /// **'Equipment'**
+  String get equipment;
+
+  /// No description provided for @equipmentHeadgear.
+  ///
+  /// In en, this message translates to:
+  /// **'Headgear'**
+  String get equipmentHeadgear;
+
+  /// No description provided for @equipmentArmor.
+  ///
+  /// In en, this message translates to:
+  /// **'Armor'**
+  String get equipmentArmor;
+
+  /// No description provided for @equipmentWeapon.
+  ///
+  /// In en, this message translates to:
+  /// **'Weapon'**
+  String get equipmentWeapon;
+
+  /// No description provided for @equipmentFootgear.
+  ///
+  /// In en, this message translates to:
+  /// **'Footgear'**
+  String get equipmentFootgear;
+
+  /// No description provided for @equipmentOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other items'**
+  String get equipmentOther;
 
   /// No description provided for @closeLobby.
   ///
@@ -284,6 +332,12 @@ abstract class AppLocalizations {
   /// **'End game'**
   String get endGame;
 
+  /// No description provided for @endGameConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'End the game for everyone? This cannot be undone.'**
+  String get endGameConfirm;
+
   /// No description provided for @connected.
   ///
   /// In en, this message translates to:
@@ -373,6 +427,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Leave room'**
   String get leave;
+
+  /// No description provided for @youTag.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get youTag;
 
   /// No description provided for @error.
   ///
@@ -517,6 +577,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not connect to the host'**
   String get connectionError;
+
+  /// No description provided for @adPrivacyOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Ad privacy options'**
+  String get adPrivacyOptions;
 }
 
 class _AppLocalizationsDelegate

@@ -82,6 +82,7 @@ class RoomInvite {
       'port': '$port',
       'room': roomId,
       'token': token,
+      'pin': pin,
     },
   );
 
@@ -102,7 +103,7 @@ class RoomInvite {
       port: port,
       roomId: room,
       token: token,
-      pin: '',
+      pin: uri.queryParameters['pin'] ?? '',
     );
   }
 

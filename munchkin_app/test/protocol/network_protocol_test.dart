@@ -33,6 +33,7 @@ void main() {
     expect(parsed.port, invite.port);
     expect(parsed.roomId, invite.roomId);
     expect(parsed.token, invite.token);
+    expect(parsed.pin, invite.pin);
   });
 
   test('rejects malformed and oversized messages', () {

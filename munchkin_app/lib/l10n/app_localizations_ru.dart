@@ -12,6 +12,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get appTitle => 'Настольный помощник';
 
   @override
+  String get homeTagline => 'Локальный компаньон для настольных игр по Wi-Fi';
+
+  @override
   String get createRoom => 'Создать комнату';
 
   @override
@@ -52,6 +55,29 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get totalPower => 'Общая мощь';
+
+  @override
+  String totalPowerBreakdown(int level, int strength, int equipment) {
+    return '$level уровень + $strength сила + $equipment снаряжение';
+  }
+
+  @override
+  String get equipment => 'Снаряжение';
+
+  @override
+  String get equipmentHeadgear => 'Голова';
+
+  @override
+  String get equipmentArmor => 'Броня';
+
+  @override
+  String get equipmentWeapon => 'Оружие';
+
+  @override
+  String get equipmentFootgear => 'Обувь';
+
+  @override
+  String get equipmentOther => 'Прочие предметы';
 
   @override
   String get closeLobby => 'Закрыть лобби';
@@ -100,6 +126,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get endGame => 'Завершить партию';
+
+  @override
+  String get endGameConfirm =>
+      'Завершить партию для всех? Это действие необратимо.';
 
   @override
   String get connected => 'В сети';
@@ -151,6 +181,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get leave => 'Покинуть комнату';
+
+  @override
+  String get youTag => 'Вы';
 
   @override
   String get error => 'Что-то пошло не так';
@@ -224,4 +257,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get connectionError => 'Не удалось подключиться к ведущему';
+
+  @override
+  String get adPrivacyOptions => 'Настройки конфиденциальности рекламы';
 }

@@ -297,9 +297,284 @@ as int,
 
 
 /// @nodoc
+mixin _$Equipment {
+
+ int get headgear; int get armor; int get weapon; int get footgear; int get other;
+/// Create a copy of Equipment
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$EquipmentCopyWith<Equipment> get copyWith => _$EquipmentCopyWithImpl<Equipment>(this as Equipment, _$identity);
+
+  /// Serializes this Equipment to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Equipment&&(identical(other.headgear, headgear) || other.headgear == headgear)&&(identical(other.armor, armor) || other.armor == armor)&&(identical(other.weapon, weapon) || other.weapon == weapon)&&(identical(other.footgear, footgear) || other.footgear == footgear)&&(identical(other.other, this.other) || other.other == this.other));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,headgear,armor,weapon,footgear,other);
+
+@override
+String toString() {
+  return 'Equipment(headgear: $headgear, armor: $armor, weapon: $weapon, footgear: $footgear, other: $other)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $EquipmentCopyWith<$Res>  {
+  factory $EquipmentCopyWith(Equipment value, $Res Function(Equipment) _then) = _$EquipmentCopyWithImpl;
+@useResult
+$Res call({
+ int headgear, int armor, int weapon, int footgear, int other
+});
+
+
+
+
+}
+/// @nodoc
+class _$EquipmentCopyWithImpl<$Res>
+    implements $EquipmentCopyWith<$Res> {
+  _$EquipmentCopyWithImpl(this._self, this._then);
+
+  final Equipment _self;
+  final $Res Function(Equipment) _then;
+
+/// Create a copy of Equipment
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? headgear = null,Object? armor = null,Object? weapon = null,Object? footgear = null,Object? other = null,}) {
+  return _then(_self.copyWith(
+headgear: null == headgear ? _self.headgear : headgear // ignore: cast_nullable_to_non_nullable
+as int,armor: null == armor ? _self.armor : armor // ignore: cast_nullable_to_non_nullable
+as int,weapon: null == weapon ? _self.weapon : weapon // ignore: cast_nullable_to_non_nullable
+as int,footgear: null == footgear ? _self.footgear : footgear // ignore: cast_nullable_to_non_nullable
+as int,other: null == other ? _self.other : other // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [Equipment].
+extension EquipmentPatterns on Equipment {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _Equipment value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _Equipment() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _Equipment value)  $default,){
+final _that = this;
+switch (_that) {
+case _Equipment():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _Equipment value)?  $default,){
+final _that = this;
+switch (_that) {
+case _Equipment() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int headgear,  int armor,  int weapon,  int footgear,  int other)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _Equipment() when $default != null:
+return $default(_that.headgear,_that.armor,_that.weapon,_that.footgear,_that.other);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int headgear,  int armor,  int weapon,  int footgear,  int other)  $default,) {final _that = this;
+switch (_that) {
+case _Equipment():
+return $default(_that.headgear,_that.armor,_that.weapon,_that.footgear,_that.other);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int headgear,  int armor,  int weapon,  int footgear,  int other)?  $default,) {final _that = this;
+switch (_that) {
+case _Equipment() when $default != null:
+return $default(_that.headgear,_that.armor,_that.weapon,_that.footgear,_that.other);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _Equipment extends Equipment {
+  const _Equipment({this.headgear = 0, this.armor = 0, this.weapon = 0, this.footgear = 0, this.other = 0}): super._();
+  factory _Equipment.fromJson(Map<String, dynamic> json) => _$EquipmentFromJson(json);
+
+@override@JsonKey() final  int headgear;
+@override@JsonKey() final  int armor;
+@override@JsonKey() final  int weapon;
+@override@JsonKey() final  int footgear;
+@override@JsonKey() final  int other;
+
+/// Create a copy of Equipment
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$EquipmentCopyWith<_Equipment> get copyWith => __$EquipmentCopyWithImpl<_Equipment>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$EquipmentToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Equipment&&(identical(other.headgear, headgear) || other.headgear == headgear)&&(identical(other.armor, armor) || other.armor == armor)&&(identical(other.weapon, weapon) || other.weapon == weapon)&&(identical(other.footgear, footgear) || other.footgear == footgear)&&(identical(other.other, this.other) || other.other == this.other));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,headgear,armor,weapon,footgear,other);
+
+@override
+String toString() {
+  return 'Equipment(headgear: $headgear, armor: $armor, weapon: $weapon, footgear: $footgear, other: $other)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$EquipmentCopyWith<$Res> implements $EquipmentCopyWith<$Res> {
+  factory _$EquipmentCopyWith(_Equipment value, $Res Function(_Equipment) _then) = __$EquipmentCopyWithImpl;
+@override @useResult
+$Res call({
+ int headgear, int armor, int weapon, int footgear, int other
+});
+
+
+
+
+}
+/// @nodoc
+class __$EquipmentCopyWithImpl<$Res>
+    implements _$EquipmentCopyWith<$Res> {
+  __$EquipmentCopyWithImpl(this._self, this._then);
+
+  final _Equipment _self;
+  final $Res Function(_Equipment) _then;
+
+/// Create a copy of Equipment
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? headgear = null,Object? armor = null,Object? weapon = null,Object? footgear = null,Object? other = null,}) {
+  return _then(_Equipment(
+headgear: null == headgear ? _self.headgear : headgear // ignore: cast_nullable_to_non_nullable
+as int,armor: null == armor ? _self.armor : armor // ignore: cast_nullable_to_non_nullable
+as int,weapon: null == weapon ? _self.weapon : weapon // ignore: cast_nullable_to_non_nullable
+as int,footgear: null == footgear ? _self.footgear : footgear // ignore: cast_nullable_to_non_nullable
+as int,other: null == other ? _self.other : other // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
 mixin _$Player {
 
- String get id; String get name; bool get isHost; int get level; int get strength; bool get isConnected; DateTime? get lastSeenAt;
+ String get id; String get name; bool get isHost; int get level; int get strength; Equipment get equipment; bool get isConnected; DateTime? get lastSeenAt;
 /// Create a copy of Player
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -312,16 +587,16 @@ $PlayerCopyWith<Player> get copyWith => _$PlayerCopyWithImpl<Player>(this as Pla
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Player&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.isHost, isHost) || other.isHost == isHost)&&(identical(other.level, level) || other.level == level)&&(identical(other.strength, strength) || other.strength == strength)&&(identical(other.isConnected, isConnected) || other.isConnected == isConnected)&&(identical(other.lastSeenAt, lastSeenAt) || other.lastSeenAt == lastSeenAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Player&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.isHost, isHost) || other.isHost == isHost)&&(identical(other.level, level) || other.level == level)&&(identical(other.strength, strength) || other.strength == strength)&&(identical(other.equipment, equipment) || other.equipment == equipment)&&(identical(other.isConnected, isConnected) || other.isConnected == isConnected)&&(identical(other.lastSeenAt, lastSeenAt) || other.lastSeenAt == lastSeenAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,isHost,level,strength,isConnected,lastSeenAt);
+int get hashCode => Object.hash(runtimeType,id,name,isHost,level,strength,equipment,isConnected,lastSeenAt);
 
 @override
 String toString() {
-  return 'Player(id: $id, name: $name, isHost: $isHost, level: $level, strength: $strength, isConnected: $isConnected, lastSeenAt: $lastSeenAt)';
+  return 'Player(id: $id, name: $name, isHost: $isHost, level: $level, strength: $strength, equipment: $equipment, isConnected: $isConnected, lastSeenAt: $lastSeenAt)';
 }
 
 
@@ -332,11 +607,11 @@ abstract mixin class $PlayerCopyWith<$Res>  {
   factory $PlayerCopyWith(Player value, $Res Function(Player) _then) = _$PlayerCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, bool isHost, int level, int strength, bool isConnected, DateTime? lastSeenAt
+ String id, String name, bool isHost, int level, int strength, Equipment equipment, bool isConnected, DateTime? lastSeenAt
 });
 
 
-
+$EquipmentCopyWith<$Res> get equipment;
 
 }
 /// @nodoc
@@ -349,19 +624,29 @@ class _$PlayerCopyWithImpl<$Res>
 
 /// Create a copy of Player
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? isHost = null,Object? level = null,Object? strength = null,Object? isConnected = null,Object? lastSeenAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? isHost = null,Object? level = null,Object? strength = null,Object? equipment = null,Object? isConnected = null,Object? lastSeenAt = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,isHost: null == isHost ? _self.isHost : isHost // ignore: cast_nullable_to_non_nullable
 as bool,level: null == level ? _self.level : level // ignore: cast_nullable_to_non_nullable
 as int,strength: null == strength ? _self.strength : strength // ignore: cast_nullable_to_non_nullable
-as int,isConnected: null == isConnected ? _self.isConnected : isConnected // ignore: cast_nullable_to_non_nullable
+as int,equipment: null == equipment ? _self.equipment : equipment // ignore: cast_nullable_to_non_nullable
+as Equipment,isConnected: null == isConnected ? _self.isConnected : isConnected // ignore: cast_nullable_to_non_nullable
 as bool,lastSeenAt: freezed == lastSeenAt ? _self.lastSeenAt : lastSeenAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));
 }
-
+/// Create a copy of Player
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$EquipmentCopyWith<$Res> get equipment {
+  
+  return $EquipmentCopyWith<$Res>(_self.equipment, (value) {
+    return _then(_self.copyWith(equipment: value));
+  });
+}
 }
 
 
@@ -443,10 +728,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  bool isHost,  int level,  int strength,  bool isConnected,  DateTime? lastSeenAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  bool isHost,  int level,  int strength,  Equipment equipment,  bool isConnected,  DateTime? lastSeenAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Player() when $default != null:
-return $default(_that.id,_that.name,_that.isHost,_that.level,_that.strength,_that.isConnected,_that.lastSeenAt);case _:
+return $default(_that.id,_that.name,_that.isHost,_that.level,_that.strength,_that.equipment,_that.isConnected,_that.lastSeenAt);case _:
   return orElse();
 
 }
@@ -464,10 +749,10 @@ return $default(_that.id,_that.name,_that.isHost,_that.level,_that.strength,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  bool isHost,  int level,  int strength,  bool isConnected,  DateTime? lastSeenAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  bool isHost,  int level,  int strength,  Equipment equipment,  bool isConnected,  DateTime? lastSeenAt)  $default,) {final _that = this;
 switch (_that) {
 case _Player():
-return $default(_that.id,_that.name,_that.isHost,_that.level,_that.strength,_that.isConnected,_that.lastSeenAt);case _:
+return $default(_that.id,_that.name,_that.isHost,_that.level,_that.strength,_that.equipment,_that.isConnected,_that.lastSeenAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -484,10 +769,10 @@ return $default(_that.id,_that.name,_that.isHost,_that.level,_that.strength,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  bool isHost,  int level,  int strength,  bool isConnected,  DateTime? lastSeenAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  bool isHost,  int level,  int strength,  Equipment equipment,  bool isConnected,  DateTime? lastSeenAt)?  $default,) {final _that = this;
 switch (_that) {
 case _Player() when $default != null:
-return $default(_that.id,_that.name,_that.isHost,_that.level,_that.strength,_that.isConnected,_that.lastSeenAt);case _:
+return $default(_that.id,_that.name,_that.isHost,_that.level,_that.strength,_that.equipment,_that.isConnected,_that.lastSeenAt);case _:
   return null;
 
 }
@@ -499,7 +784,7 @@ return $default(_that.id,_that.name,_that.isHost,_that.level,_that.strength,_tha
 @JsonSerializable()
 
 class _Player extends Player {
-  const _Player({required this.id, required this.name, required this.isHost, required this.level, required this.strength, this.isConnected = true, this.lastSeenAt}): super._();
+  const _Player({required this.id, required this.name, required this.isHost, required this.level, required this.strength, this.equipment = const Equipment(), this.isConnected = true, this.lastSeenAt}): super._();
   factory _Player.fromJson(Map<String, dynamic> json) => _$PlayerFromJson(json);
 
 @override final  String id;
@@ -507,6 +792,7 @@ class _Player extends Player {
 @override final  bool isHost;
 @override final  int level;
 @override final  int strength;
+@override@JsonKey() final  Equipment equipment;
 @override@JsonKey() final  bool isConnected;
 @override final  DateTime? lastSeenAt;
 
@@ -523,16 +809,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Player&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.isHost, isHost) || other.isHost == isHost)&&(identical(other.level, level) || other.level == level)&&(identical(other.strength, strength) || other.strength == strength)&&(identical(other.isConnected, isConnected) || other.isConnected == isConnected)&&(identical(other.lastSeenAt, lastSeenAt) || other.lastSeenAt == lastSeenAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Player&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.isHost, isHost) || other.isHost == isHost)&&(identical(other.level, level) || other.level == level)&&(identical(other.strength, strength) || other.strength == strength)&&(identical(other.equipment, equipment) || other.equipment == equipment)&&(identical(other.isConnected, isConnected) || other.isConnected == isConnected)&&(identical(other.lastSeenAt, lastSeenAt) || other.lastSeenAt == lastSeenAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,isHost,level,strength,isConnected,lastSeenAt);
+int get hashCode => Object.hash(runtimeType,id,name,isHost,level,strength,equipment,isConnected,lastSeenAt);
 
 @override
 String toString() {
-  return 'Player(id: $id, name: $name, isHost: $isHost, level: $level, strength: $strength, isConnected: $isConnected, lastSeenAt: $lastSeenAt)';
+  return 'Player(id: $id, name: $name, isHost: $isHost, level: $level, strength: $strength, equipment: $equipment, isConnected: $isConnected, lastSeenAt: $lastSeenAt)';
 }
 
 
@@ -543,11 +829,11 @@ abstract mixin class _$PlayerCopyWith<$Res> implements $PlayerCopyWith<$Res> {
   factory _$PlayerCopyWith(_Player value, $Res Function(_Player) _then) = __$PlayerCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, bool isHost, int level, int strength, bool isConnected, DateTime? lastSeenAt
+ String id, String name, bool isHost, int level, int strength, Equipment equipment, bool isConnected, DateTime? lastSeenAt
 });
 
 
-
+@override $EquipmentCopyWith<$Res> get equipment;
 
 }
 /// @nodoc
@@ -560,20 +846,30 @@ class __$PlayerCopyWithImpl<$Res>
 
 /// Create a copy of Player
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? isHost = null,Object? level = null,Object? strength = null,Object? isConnected = null,Object? lastSeenAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? isHost = null,Object? level = null,Object? strength = null,Object? equipment = null,Object? isConnected = null,Object? lastSeenAt = freezed,}) {
   return _then(_Player(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,isHost: null == isHost ? _self.isHost : isHost // ignore: cast_nullable_to_non_nullable
 as bool,level: null == level ? _self.level : level // ignore: cast_nullable_to_non_nullable
 as int,strength: null == strength ? _self.strength : strength // ignore: cast_nullable_to_non_nullable
-as int,isConnected: null == isConnected ? _self.isConnected : isConnected // ignore: cast_nullable_to_non_nullable
+as int,equipment: null == equipment ? _self.equipment : equipment // ignore: cast_nullable_to_non_nullable
+as Equipment,isConnected: null == isConnected ? _self.isConnected : isConnected // ignore: cast_nullable_to_non_nullable
 as bool,lastSeenAt: freezed == lastSeenAt ? _self.lastSeenAt : lastSeenAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));
 }
 
-
+/// Create a copy of Player
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$EquipmentCopyWith<$Res> get equipment {
+  
+  return $EquipmentCopyWith<$Res>(_self.equipment, (value) {
+    return _then(_self.copyWith(equipment: value));
+  });
+}
 }
 
 
@@ -1199,7 +1495,7 @@ as DateTime,
 @override
 @pragma('vm:prefer-inline')
 $RoomSettingsCopyWith<$Res> get settings {
-
+  
   return $RoomSettingsCopyWith<$Res>(_self.settings, (value) {
     return _then(_self.copyWith(settings: value));
   });
@@ -1466,7 +1762,7 @@ as DateTime,
 @override
 @pragma('vm:prefer-inline')
 $RoomSettingsCopyWith<$Res> get settings {
-
+  
   return $RoomSettingsCopyWith<$Res>(_self.settings, (value) {
     return _then(_self.copyWith(settings: value));
   });

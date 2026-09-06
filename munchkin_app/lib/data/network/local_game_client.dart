@@ -210,6 +210,14 @@ class LocalGameClient implements GameConnection {
 
   void _handleDisconnect() {
     _socket = null;
+    for (final completer in _pending.values) {
+      if (!completer.isCompleted) {
+        completer.complete(
+          const CommandRejected(GameErrorCode.invalidState, 'Disconnected.'),
+        );
+      }
+    }
+    _pending.clear();
     if (_manualClose) return;
     _statuses.add(ConnectionStatus.reconnecting);
     _scheduleReconnect();

@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../app/theme.dart';
 import '../../application/session_controller.dart';
 import '../../domain/commands/game_command.dart';
 import '../../domain/models/game_models.dart';
@@ -21,7 +23,7 @@ class _TurnViewState extends ConsumerState<TurnView> {
   @override
   void initState() {
     super.initState();
-    _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
+    _ticker = Timer.periodic(const Duration(milliseconds: 200), (_) {
       if (mounted) setState(() {});
     });
   }
@@ -40,32 +42,64 @@ class _TurnViewState extends ConsumerState<TurnView> {
     final l10n = AppLocalizations.of(context);
     final active = game.activePlayer;
     final isActive = controller.playerId == game.activePlayerId;
+    final scheme = Theme.of(context).colorScheme;
     return ListView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       children: <Widget>[
         if (active != null)
-          Text(
-            l10n.activePlayer(active.name),
-            style: Theme.of(context).textTheme.headlineSmall,
-            textAlign: TextAlign.center,
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.sm,
+            ),
+            decoration: BoxDecoration(
+              color: scheme.secondaryContainer,
+              borderRadius: BorderRadius.circular(AppRadius.lg),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Icon(
+                  Icons.person_pin,
+                  size: 18,
+                  color: scheme.onSecondaryContainer,
+                ),
+                const SizedBox(width: 6),
+                Flexible(
+                  child: Text(
+                    l10n.activePlayer(active.name),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: scheme.onSecondaryContainer,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
           ),
-        const SizedBox(height: 16),
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: _BattlePanel(
-              game: game,
-              isActive: isActive,
-              busy: session.busy,
-              remainingSeconds: _remaining(game.battle?.endsAt),
+        const SizedBox(height: AppSpacing.md),
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 220),
+          switchInCurve: Curves.easeOut,
+          child: Card(
+            key: ValueKey<String>(game.battle?.status.name ?? 'idle'),
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: _BattlePanel(
+                game: game,
+                isActive: isActive,
+                busy: session.busy,
+                remainingSeconds: _remaining(game.battle?.endsAt),
+              ),
             ),
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.md),
         if (game.lastDiceRoll != null)
           _DiceResult(game: game, roll: game.lastDiceRoll!),
         if (isActive && game.settings.diceMode == DiceMode.virtual) ...<Widget>[
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.sm),
           OutlinedButton.icon(
             onPressed: session.busy
                 ? null
@@ -88,6 +122,54 @@ class _TurnViewState extends ConsumerState<TurnView> {
   }
 }
 
+/// Shown on both "Мой персонаж" and "Текущий ход" whenever no battle is in
+/// progress: turn actions for the active player, or whose turn it is.
+class TurnActions extends ConsumerWidget {
+  const TurnActions({super.key, required this.isActive, required this.busy});
+
+  final bool isActive;
+  final bool busy;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final controller = ref.read(sessionControllerProvider.notifier);
+    if (!isActive) {
+      final activeName = ref.watch(
+        sessionControllerProvider.select(
+          (value) => value.game?.activePlayer?.name,
+        ),
+      );
+      return Center(
+        child: Text(
+          activeName == null
+              ? l10n.waitingForHost
+              : l10n.activePlayer(activeName),
+        ),
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        FilledButton.icon(
+          onPressed: busy
+              ? null
+              : () => controller.send(const GameCommand.startBattle()),
+          icon: const Icon(Icons.shield),
+          label: Text(l10n.startBattle),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        OutlinedButton(
+          onPressed: busy
+              ? null
+              : () => controller.send(const GameCommand.endTurn()),
+          child: Text(l10n.endTurn),
+        ),
+      ],
+    );
+  }
+}
+
 class _BattlePanel extends ConsumerWidget {
   const _BattlePanel({
     required this.game,
@@ -107,31 +189,17 @@ class _BattlePanel extends ConsumerWidget {
     final controller = ref.read(sessionControllerProvider.notifier);
     final battle = game.battle;
     if (battle == null) {
-      if (!isActive) return Center(child: Text(l10n.waitingForHost));
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          FilledButton.icon(
-            onPressed: busy
-                ? null
-                : () => controller.send(const GameCommand.startBattle()),
-            icon: const Icon(Icons.shield),
-            label: Text(l10n.startBattle),
-          ),
-          const SizedBox(height: 8),
-          OutlinedButton(
-            onPressed: busy
-                ? null
-                : () => controller.send(const GameCommand.endTurn()),
-            child: Text(l10n.endTurn),
-          ),
-        ],
-      );
+      return TurnActions(isActive: isActive, busy: busy);
     }
 
     switch (battle.status) {
       case BattleStatus.fighting:
-        if (!isActive) return Center(child: Text(l10n.currentTurn));
+        if (!isActive) {
+          return _WaitingState(
+            icon: Icons.sports_kabaddi,
+            message: l10n.currentTurn,
+          );
+        }
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
@@ -141,7 +209,7 @@ class _BattlePanel extends ConsumerWidget {
                   : () => controller.send(const GameCommand.declareVictory()),
               child: Text(l10n.canWin),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             OutlinedButton(
               onPressed: busy
                   ? null
@@ -151,13 +219,20 @@ class _BattlePanel extends ConsumerWidget {
           ],
         );
       case BattleStatus.countdown:
+        final total = game.settings.victoryCountdownSeconds.clamp(1, 1 << 30);
+        final progress = (remainingSeconds / total).clamp(0.0, 1.0);
         return Column(
           children: <Widget>[
+            _CountdownRing(
+              progress: progress,
+              remainingSeconds: remainingSeconds,
+            ),
+            const SizedBox(height: AppSpacing.md),
             Text(
               l10n.victoryCountdown(remainingSeconds),
-              style: Theme.of(context).textTheme.headlineMedium,
+              style: Theme.of(context).textTheme.titleMedium,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             if (!isActive)
               FilledButton.tonalIcon(
                 onPressed: busy
@@ -182,7 +257,12 @@ class _BattlePanel extends ConsumerWidget {
           allowEscape: true,
         );
       case BattleStatus.escaping:
-        if (!isActive) return Center(child: Text(l10n.escapingNow));
+        if (!isActive) {
+          return _WaitingState(
+            icon: Icons.directions_run,
+            message: l10n.escapingNow,
+          );
+        }
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
@@ -192,7 +272,7 @@ class _BattlePanel extends ConsumerWidget {
                   : l10n.escapingNow,
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.sm),
             if (game.settings.diceMode == DiceMode.virtual)
               OutlinedButton.icon(
                 onPressed: busy
@@ -216,16 +296,30 @@ class _BattlePanel extends ConsumerWidget {
           ],
         );
       case BattleStatus.won:
-        if (!isActive) return Center(child: Text(l10n.battleWon));
+        if (!isActive) {
+          return _WaitingState(
+            icon: Icons.emoji_events,
+            message: l10n.battleWon,
+            color: Colors.amber.shade700,
+          );
+        }
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            Icon(Icons.emoji_events, size: 40, color: Colors.amber.shade600),
+            const SizedBox(height: 8),
             Text(
               l10n.battleWon,
               style: Theme.of(context).textTheme.headlineSmall,
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              '${l10n.level}: ${game.activePlayer?.level ?? 0}',
+              style: Theme.of(context).textTheme.titleMedium,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppSpacing.sm),
             OutlinedButton.icon(
               onPressed: busy
                   ? null
@@ -242,7 +336,12 @@ class _BattlePanel extends ConsumerWidget {
           ],
         );
       case BattleStatus.endedWithoutVictory:
-        if (!isActive) return Center(child: Text(l10n.escapingNow));
+        if (!isActive) {
+          return _WaitingState(
+            icon: Icons.directions_run,
+            message: l10n.escapingNow,
+          );
+        }
         return FilledButton(
           onPressed: busy
               ? null
@@ -262,7 +361,7 @@ class _BattlePanel extends ConsumerWidget {
       showDragHandle: true,
       builder: (context) => SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -274,7 +373,7 @@ class _BattlePanel extends ConsumerWidget {
                 },
                 child: Text(l10n.requestHelp),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.sm),
               FilledButton.tonal(
                 onPressed: () {
                   Navigator.pop(context);
@@ -290,6 +389,117 @@ class _BattlePanel extends ConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _CountdownRing extends StatelessWidget {
+  const _CountdownRing({
+    required this.progress,
+    required this.remainingSeconds,
+  });
+
+  final double progress;
+  final int remainingSeconds;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final urgent = remainingSeconds <= 3;
+    final color = urgent ? scheme.error : scheme.primary;
+    return SizedBox(
+      width: 128,
+      height: 128,
+      child: Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          TweenAnimationBuilder<double>(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.linear,
+            tween: Tween<double>(begin: progress, end: progress),
+            builder: (context, value, _) => CustomPaint(
+              size: const Size.square(128),
+              painter: _RingPainter(
+                progress: value,
+                color: color,
+                trackColor: scheme.surfaceContainerHighest,
+              ),
+            ),
+          ),
+          Text(
+            '$remainingSeconds',
+            style: Theme.of(context).textTheme.displaySmall?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RingPainter extends CustomPainter {
+  _RingPainter({
+    required this.progress,
+    required this.color,
+    required this.trackColor,
+  });
+
+  final double progress;
+  final Color color;
+  final Color trackColor;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = size.center(Offset.zero);
+    final radius = size.width / 2 - 8;
+    final track = Paint()
+      ..color = trackColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 10
+      ..strokeCap = StrokeCap.round;
+    final arc = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 10
+      ..strokeCap = StrokeCap.round;
+    canvas.drawCircle(center, radius, track);
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      -math.pi / 2,
+      2 * math.pi * progress,
+      false,
+      arc,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_RingPainter oldDelegate) =>
+      oldDelegate.progress != progress || oldDelegate.color != color;
+}
+
+class _WaitingState extends StatelessWidget {
+  const _WaitingState({required this.icon, required this.message, this.color});
+
+  final IconData icon;
+  final String message;
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Icon(icon, size: 32, color: color ?? scheme.onSurfaceVariant),
+        const SizedBox(height: AppSpacing.sm),
+        Text(
+          message,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+      ],
     );
   }
 }
@@ -316,7 +526,7 @@ class _ResumePanel extends ConsumerWidget {
       children: <Widget>[
         Text(message, textAlign: TextAlign.center),
         if (active) ...<Widget>[
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.sm),
           FilledButton(
             onPressed: busy
                 ? null

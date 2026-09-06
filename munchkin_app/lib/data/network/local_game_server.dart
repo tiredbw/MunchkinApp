@@ -441,15 +441,18 @@ class LocalGameServer {
   void _scheduleBattleTimer() {
     _battleTimer?.cancel();
     final endsAt = _state.battle?.endsAt;
-    if (_state.battle?.status != BattleStatus.countdown || endsAt == null)
+    if (_state.battle?.status != BattleStatus.countdown || endsAt == null) {
       return;
+    }
     final delay = endsAt.difference(DateTime.now().toUtc());
     _battleTimer = Timer(delay.isNegative ? Duration.zero : delay, () {
-      final resolved = _engine.resolveExpiredTimers(_state);
-      if (resolved.revision != _state.revision) {
-        _state = resolved;
-        unawaited(_publish());
-      }
+      _queue = _queue.then((_) async {
+        final resolved = _engine.resolveExpiredTimers(_state);
+        if (resolved.revision != _state.revision) {
+          _state = resolved;
+          await _publish();
+        }
+      });
     });
   }
 

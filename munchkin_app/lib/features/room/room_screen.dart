@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+import '../../app/theme.dart';
 import '../../application/session_controller.dart';
 import '../../domain/commands/game_command.dart';
 import '../../domain/models/game_models.dart';
@@ -54,6 +55,30 @@ class _RoomScreenState extends ConsumerState<RoomScreen> {
   }
 }
 
+Future<bool> _confirmEndGame(
+  BuildContext context,
+  AppLocalizations l10n,
+) async {
+  final result = await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(l10n.endGame),
+      content: Text(l10n.endGameConfirm),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: Text(l10n.cancel),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, true),
+          child: Text(l10n.endGame),
+        ),
+      ],
+    ),
+  );
+  return result ?? false;
+}
+
 class _LobbyView extends ConsumerWidget {
   const _LobbyView();
 
@@ -69,64 +94,97 @@ class _LobbyView extends ConsumerWidget {
         title: Text(l10n.waitingForPlayers),
         actions: <Widget>[
           IconButton(
-            tooltip: l10n.leave,
+            tooltip: isHost ? l10n.endGame : l10n.leave,
             onPressed: session.busy
                 ? null
                 : () async {
+                    if (isHost) {
+                      if (!await _confirmEndGame(context, l10n)) return;
+                      await controller.send(const GameCommand.endGame());
+                      return;
+                    }
                     await controller.leave();
                     if (context.mounted) context.go('/');
                   },
-            icon: const Icon(Icons.logout),
+            icon: Icon(isHost ? Icons.stop_circle_outlined : Icons.logout),
           ),
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(AppSpacing.lg),
         children: <Widget>[
           if (game.phase == RoomPhase.lobby && isHost) const _InviteCard(),
           Card(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  Text(
-                    l10n.players,
-                    style: Theme.of(context).textTheme.titleLarge,
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        l10n.players,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      _CountBadge(count: game.players.length),
+                    ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppSpacing.sm),
                   if (game.phase == RoomPhase.ordering)
                     _OrderList(game: game, enabled: isHost && !session.busy)
                   else
                     ...game.players.map(
-                      (player) => ListTile(
-                        leading: Icon(
-                          player.isConnected ? Icons.person : Icons.person_off,
+                      (player) => Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 2),
+                        child: ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: CircleAvatar(
+                            backgroundColor: player.isConnected
+                                ? Theme.of(context).colorScheme.primaryContainer
+                                : Theme.of(
+                                    context,
+                                  ).colorScheme.surfaceContainerHighest,
+                            child: Icon(
+                              player.isConnected
+                                  ? Icons.person
+                                  : Icons.person_off,
+                              color: player.isConnected
+                                  ? Theme.of(
+                                      context,
+                                    ).colorScheme.onPrimaryContainer
+                                  : Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                          title: Text(player.name),
+                          subtitle: Text(
+                            player.isConnected ? l10n.connected : l10n.offline,
+                          ),
+                          trailing: player.isHost
+                              ? const Icon(Icons.admin_panel_settings_outlined)
+                              : isHost
+                              ? IconButton(
+                                  tooltip: l10n.removePlayer,
+                                  onPressed: session.busy
+                                      ? null
+                                      : () => controller.send(
+                                          GameCommand.removePlayer(player.id),
+                                        ),
+                                  icon: const Icon(
+                                    Icons.person_remove_outlined,
+                                  ),
+                                )
+                              : null,
                         ),
-                        title: Text(player.name),
-                        subtitle: Text(
-                          player.isConnected ? l10n.connected : l10n.offline,
-                        ),
-                        trailing: player.isHost
-                            ? const Icon(Icons.admin_panel_settings_outlined)
-                            : isHost
-                            ? IconButton(
-                                tooltip: l10n.removePlayer,
-                                onPressed: session.busy
-                                    ? null
-                                    : () => controller.send(
-                                        GameCommand.removePlayer(player.id),
-                                      ),
-                                icon: const Icon(Icons.person_remove_outlined),
-                              )
-                            : null,
                       ),
                     ),
                 ],
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.lg),
           if (!isHost)
             Center(
               child: Text(
@@ -137,7 +195,7 @@ class _LobbyView extends ConsumerWidget {
             ),
           if (isHost) ..._hostActions(l10n, game, controller, session.busy),
           if (session.busy) ...<Widget>[
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.md),
             const LinearProgressIndicator(),
           ],
         ],
@@ -208,6 +266,31 @@ class _LobbyView extends ConsumerWidget {
   }
 }
 
+class _CountBadge extends StatelessWidget {
+  const _CountBadge({required this.count});
+
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: scheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(AppRadius.sm),
+      ),
+      child: Text(
+        '$count',
+        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+          color: scheme.onSecondaryContainer,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+  }
+}
+
 class _InviteCard extends ConsumerWidget {
   const _InviteCard();
 
@@ -216,46 +299,103 @@ class _InviteCard extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final invite = ref.watch(sessionControllerProvider).invite!;
     final encoded = invite.toUri().toString();
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: <Widget>[
-            Text(
-              l10n.roomInvite,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 12),
-            DecoratedBox(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
+    final scheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(Icons.qr_code_2, color: scheme.primary),
+                  const SizedBox(width: 6),
+                  Text(
+                    l10n.roomInvite,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ],
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(12),
+              const SizedBox(height: AppSpacing.md),
+              Container(
+                padding: const EdgeInsets.all(AppSpacing.sm),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                  border: Border.all(color: scheme.outlineVariant),
+                ),
                 child: QrImageView(data: encoded, size: 190),
               ),
-            ),
-            const SizedBox(height: 12),
-            SelectableText('${invite.host}:${invite.port}'),
-            SelectableText('${l10n.roomId}: ${invite.roomId}'),
-            SelectableText('${l10n.pin}: ${invite.pin}'),
-            const SizedBox(height: 8),
-            Text(l10n.hostMustStayOpen, textAlign: TextAlign.center),
-            TextButton.icon(
-              onPressed: () async {
-                await Clipboard.setData(ClipboardData(text: encoded));
-                if (context.mounted) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text(l10n.inviteCopied)));
-                }
-              },
-              icon: const Icon(Icons.copy),
-              label: Text(l10n.copyInvite),
-            ),
-          ],
+              const SizedBox(height: AppSpacing.md),
+              Wrap(
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.xs,
+                alignment: WrapAlignment.center,
+                children: <Widget>[
+                  _InviteChip(
+                    icon: Icons.dns_outlined,
+                    text: '${invite.host}:${invite.port}',
+                  ),
+                  _InviteChip(icon: Icons.meeting_room, text: invite.roomId),
+                  _InviteChip(icon: Icons.password, text: invite.pin),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                l10n.hostMustStayOpen,
+                textAlign: TextAlign.center,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              TextButton.icon(
+                onPressed: () async {
+                  await Clipboard.setData(ClipboardData(text: encoded));
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text(l10n.inviteCopied)));
+                  }
+                },
+                icon: const Icon(Icons.copy),
+                label: Text(l10n.copyInvite),
+              ),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+}
+
+class _InviteChip extends StatelessWidget {
+  const _InviteChip({required this.icon, required this.text});
+
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: 6,
+      ),
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(AppRadius.sm),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Icon(icon, size: 16, color: scheme.onSurfaceVariant),
+          const SizedBox(width: 4),
+          SelectableText(text, style: Theme.of(context).textTheme.bodyMedium),
+        ],
       ),
     );
   }
@@ -306,7 +446,7 @@ class _GameShell extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final game = ref.watch(sessionControllerProvider).game!;
     final views = <Widget>[
-      const PlayersView(),
+      PlayersView(onOpenCharacter: () => onIndexChanged(1)),
       const CharacterView(),
       const TurnView(),
     ];
@@ -379,7 +519,11 @@ class _GameMenu extends ConsumerWidget {
     final controller = ref.read(sessionControllerProvider.notifier);
     return PopupMenuButton<String>(
       onSelected: (value) async {
-        if (value == 'end') await controller.send(const GameCommand.endGame());
+        if (value == 'end') {
+          if (await _confirmEndGame(context, l10n)) {
+            await controller.send(const GameCommand.endGame());
+          }
+        }
         if (value == 'leave') {
           await controller.leave();
           if (context.mounted) context.go('/');
@@ -387,8 +531,9 @@ class _GameMenu extends ConsumerWidget {
       },
       itemBuilder: (context) => <PopupMenuEntry<String>>[
         if (controller.isHost)
-          PopupMenuItem(value: 'end', child: Text(l10n.endGame)),
-        PopupMenuItem(value: 'leave', child: Text(l10n.leave)),
+          PopupMenuItem(value: 'end', child: Text(l10n.endGame))
+        else
+          PopupMenuItem(value: 'leave', child: Text(l10n.leave)),
       ],
     );
   }
@@ -398,27 +543,54 @@ class _EndedView extends ConsumerWidget {
   const _EndedView();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => Scaffold(
-    body: Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          const Icon(Icons.flag_circle, size: 72),
-          const SizedBox(height: 16),
-          Text(
-            AppLocalizations.of(context).gameEnded,
-            style: Theme.of(context).textTheme.headlineMedium,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final scheme = Theme.of(context).colorScheme;
+    return Scaffold(
+      body: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: <Color>[
+              scheme.primaryContainer.withValues(alpha: 0.4),
+              scheme.surface,
+            ],
           ),
-          const SizedBox(height: 24),
-          FilledButton(
-            onPressed: () async {
-              await ref.read(sessionControllerProvider.notifier).leave();
-              if (context.mounted) context.go('/');
-            },
-            child: Text(AppLocalizations.of(context).leave),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Container(
+                width: 96,
+                height: 96,
+                decoration: BoxDecoration(
+                  color: scheme.primary,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.flag_circle,
+                  size: 56,
+                  color: scheme.onPrimary,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              Text(
+                AppLocalizations.of(context).gameEnded,
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+              const SizedBox(height: AppSpacing.xl),
+              FilledButton(
+                onPressed: () async {
+                  await ref.read(sessionControllerProvider.notifier).leave();
+                  if (context.mounted) context.go('/');
+                },
+                child: Text(AppLocalizations.of(context).leave),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }

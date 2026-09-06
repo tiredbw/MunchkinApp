@@ -48,7 +48,13 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
       sessionControllerProvider.select((value) => value.busy),
     );
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.createRoom)),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.go('/'),
+        ),
+        title: Text(l10n.createRoom),
+      ),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -171,9 +177,12 @@ class _CreateRoomScreenState extends ConsumerState<CreateRoomScreen> {
       if (mounted) context.go('/room');
     } on Object {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context).error)),
-        );
+        final message =
+            ref.read(sessionControllerProvider).error ??
+            AppLocalizations.of(context).error;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(message)));
       }
     }
   }

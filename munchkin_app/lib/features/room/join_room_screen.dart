@@ -42,7 +42,13 @@ class _JoinRoomScreenState extends ConsumerState<JoinRoomScreen> {
     final l10n = AppLocalizations.of(context);
     final session = ref.watch(sessionControllerProvider);
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.joinRoom)),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.go('/'),
+        ),
+        title: Text(l10n.joinRoom),
+      ),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -132,20 +138,19 @@ class _JoinRoomScreenState extends ConsumerState<JoinRoomScreen> {
       _host.text = invite.host;
       _port.text = '${invite.port}';
       _room.text = invite.roomId;
+      if (invite.pin.isNotEmpty) _pin.text = invite.pin;
     });
   }
 
   Future<void> _join() async {
     if (!_formKey.currentState!.validate()) return;
-    final invite =
-        _scannedInvite ??
-        RoomInvite(
-          host: _host.text.trim(),
-          port: int.tryParse(_port.text) ?? 0,
-          roomId: _room.text.trim(),
-          token: '',
-          pin: _pin.text.trim(),
-        );
+    final invite = RoomInvite(
+      host: _host.text.trim(),
+      port: int.tryParse(_port.text) ?? 0,
+      roomId: _room.text.trim(),
+      token: _scannedInvite?.token ?? '',
+      pin: _pin.text.trim(),
+    );
     if (invite.host.isEmpty || invite.port < 1 || invite.roomId.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppLocalizations.of(context).invalidForm)),
@@ -158,11 +163,7 @@ class _JoinRoomScreenState extends ConsumerState<JoinRoomScreen> {
           .joinRoom(invite: invite, playerName: _name.text);
       if (mounted) context.go('/room');
     } on Object {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context).connectionError)),
-        );
-      }
+      // session.error is set by joinRoom() and rendered inline above.
     }
   }
 }

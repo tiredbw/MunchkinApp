@@ -30,6 +30,8 @@
 	<string>Scan a room QR code to join a local game.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Connect players and host the game on your local Wi-Fi network.</string>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-3940256099942544~1458002511</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsLocalNetworking</key>

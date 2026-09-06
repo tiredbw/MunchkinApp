@@ -1,6 +1,7 @@
 {
   "@@locale": "ru",
   "appTitle": "Настольный помощник",
+  "homeTagline": "Локальный компаньон для настольных игр по Wi-Fi",
   "createRoom": "Создать комнату",
   "joinRoom": "Войти в комнату",
   "restoreGame": "Восстановить партию",
@@ -15,6 +16,14 @@
   "level": "Уровень",
   "strength": "Сила",
   "totalPower": "Общая мощь",
+  "totalPowerBreakdown": "{level} уровень + {strength} сила + {equipment} снаряжение",
+  "@totalPowerBreakdown": {"placeholders": {"level": {"type": "int"}, "strength": {"type": "int"}, "equipment": {"type": "int"}}},
+  "equipment": "Снаряжение",
+  "equipmentHeadgear": "Голова",
+  "equipmentArmor": "Броня",
+  "equipmentWeapon": "Оружие",
+  "equipmentFootgear": "Обувь",
+  "equipmentOther": "Прочие предметы",
   "closeLobby": "Закрыть лобби",
   "startGame": "Начать игру",
   "shuffle": "Перемешать",
@@ -31,6 +40,7 @@
   "rollDice": "Бросить D6",
   "physicalDice": "Бросьте реальный кубик",
   "endGame": "Завершить партию",
+  "endGameConfirm": "Завершить партию для всех? Это действие необратимо.",
   "connected": "В сети",
   "offline": "Не в сети",
   "activePlayer": "Сейчас ходит: {name}",
@@ -49,6 +59,7 @@
   "cancel": "Отмена",
   "retry": "Повторить",
   "leave": "Покинуть комнату",
+  "youTag": "Вы",
   "error": "Что-то пошло не так",
   "manualJoin": "Ввести данные вручную",
   "roomId": "ID комнаты",
@@ -72,5 +83,6 @@
   "roomClosed": "Подключение закрыто",
   "resumeBattle": "Продолжить бой",
   "hostMustStayOpen": "Приложение ведущего должно оставаться открытым",
-  "connectionError": "Не удалось подключиться к ведущему"
+  "connectionError": "Не удалось подключиться к ведущему",
+  "adPrivacyOptions": "Настройки конфиденциальности рекламы"
 }

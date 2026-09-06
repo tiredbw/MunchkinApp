@@ -30,6 +30,10 @@ sealed class GameCommand with _$GameCommand {
     @Default(0) int levelDelta,
     @Default(0) int strengthDelta,
   }) = AdjustStats;
+  const factory GameCommand.adjustEquipment({
+    required EquipmentSlot slot,
+    required int delta,
+  }) = AdjustEquipment;
   const factory GameCommand.endTurn() = EndTurn;
   const factory GameCommand.startBattle() = StartBattle;
   const factory GameCommand.declareVictory() = DeclareVictory;

@@ -38,12 +38,32 @@ const _$DiceModeEnumMap = {
   DiceMode.virtual: 'virtual',
 };
 
+_Equipment _$EquipmentFromJson(Map<String, dynamic> json) => _Equipment(
+  headgear: (json['headgear'] as num?)?.toInt() ?? 0,
+  armor: (json['armor'] as num?)?.toInt() ?? 0,
+  weapon: (json['weapon'] as num?)?.toInt() ?? 0,
+  footgear: (json['footgear'] as num?)?.toInt() ?? 0,
+  other: (json['other'] as num?)?.toInt() ?? 0,
+);
+
+Map<String, dynamic> _$EquipmentToJson(_Equipment instance) =>
+    <String, dynamic>{
+      'headgear': instance.headgear,
+      'armor': instance.armor,
+      'weapon': instance.weapon,
+      'footgear': instance.footgear,
+      'other': instance.other,
+    };
+
 _Player _$PlayerFromJson(Map<String, dynamic> json) => _Player(
   id: json['id'] as String,
   name: json['name'] as String,
   isHost: json['isHost'] as bool,
   level: (json['level'] as num).toInt(),
   strength: (json['strength'] as num).toInt(),
+  equipment: json['equipment'] == null
+      ? const Equipment()
+      : Equipment.fromJson(json['equipment'] as Map<String, dynamic>),
   isConnected: json['isConnected'] as bool? ?? true,
   lastSeenAt: json['lastSeenAt'] == null
       ? null
@@ -56,6 +76,7 @@ Map<String, dynamic> _$PlayerToJson(_Player instance) => <String, dynamic>{
   'isHost': instance.isHost,
   'level': instance.level,
   'strength': instance.strength,
+  'equipment': instance.equipment,
   'isConnected': instance.isConnected,
   'lastSeenAt': instance.lastSeenAt?.toIso8601String(),
 };

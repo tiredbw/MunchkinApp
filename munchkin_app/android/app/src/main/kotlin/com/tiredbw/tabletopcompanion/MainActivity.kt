@@ -1,4 +1,4 @@
-package com.example.munchkin_app
+package com.tiredbw.tabletopcompanion
 
 import io.flutter.embedding.android.FlutterActivity
 
